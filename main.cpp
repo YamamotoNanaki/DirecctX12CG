@@ -516,7 +516,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 // グラフィックスパイプライン設定
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc{};
 
-
 	pipelineDesc.VS.pShaderBytecode = vsBlob->GetBufferPointer();
 	pipelineDesc.VS.BytecodeLength = vsBlob->GetBufferSize();
 	pipelineDesc.PS.pShaderBytecode = psBlob->GetBufferPointer();
@@ -534,22 +533,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	pipelineDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
 	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;  // カリングしない
-	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME; // ワイヤーフレーム
+	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 
 	//ブレンド設定
-	pipelineDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;  // RBGA全てのチャンネルを描画
-	//D3D12_RENDER_TARGET_BLEND_DESC& blenddesc = pipelineDesc.BlendState.RenderTarget[0];
-	//blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	//pipelineDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;  // RBGA全てのチャンネルを描画
+	D3D12_RENDER_TARGET_BLEND_DESC& blenddesc = pipelineDesc.BlendState.RenderTarget[0];
+	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
-	//blenddesc.BlendEnable = true;						//ブレンドを有効にする
-	//blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;		//加算
-	//blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;			//ソースの値を100%使う
-	//blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;		//デストの値を  0%使う
+	blenddesc.BlendEnable = true;						//ブレンドを有効にする
+	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;		//加算
+	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;			//ソースの値を100%使う
+	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;		//デストの値を  0%使う
 
-	//blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
-	//blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;			//ソースのアルファ値
-	//blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;	//1.0f-ソースのアルファ値
+	blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
+	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;			//ソースのアルファ値
+	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;	//1.0f-ソースのアルファ値
 
 	pipelineDesc.InputLayout.pInputElementDescs = inputLayout;
 	pipelineDesc.InputLayout.NumElements = _countof(inputLayout);
@@ -711,9 +710,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		D3D12_RECT scissorrect{};
 
 		scissorrect.left = 0;
-		scissorrect.right = scissorrect.left + 500;
+		scissorrect.right = scissorrect.left + window_width;
 		scissorrect.top = 0;
-		scissorrect.bottom = scissorrect.top + 300;
+		scissorrect.bottom = scissorrect.top + window_height;
 
 		commandList->RSSetScissorRects(1, &scissorrect);
 #pragma endregion シザー矩形の設定コマンド

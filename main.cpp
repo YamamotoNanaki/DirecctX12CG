@@ -26,6 +26,15 @@ struct ConstBufferDataMaterial {
 };
 #pragma endregion 定数バッファ構造体
 
+#pragma region 頂点データ構造体
+struct Vertex
+{
+	XMFLOAT3 pos;			//XYZ座標
+	//XMFLOAT3 normal;		//法線ベクトル
+	XMFLOAT2 uv;			//UV座標
+};
+#pragma endregion 頂点データ構造体
+
 //ウィンドウプロシージャ
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
@@ -338,7 +347,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//頂点
 	#pragma region 頂点データー
 
-	XMFLOAT3 vertices[] = {
+	/*XMFLOAT3 vertices[] = {
 		{ -0.5f, -0.5f, 0.0f },
 		{ -0.5f, +0.5f, 0.0f },
 		{ +0.5f, -0.5f, 0.0f },
@@ -351,68 +360,68 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		1,2,3,
 	};
 
-	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
+	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));*/
 
 	/*const float radius = 0.5f;
 	const float radius2 = 0.25f;
 	const int DIV = 10;*/
 
 	//頂点データ
-	//Vertex vertices[] = {
-	//	//    x       y      z      u    v
-	//	//前
-	//	{{-5, -5, -5},{0.0f, 1.0f}},	//左下
-	//	{{-5, +5, -5},{0.0f, 0.0f}},	//左上
-	//	{{+5, -5, -5},{1.0f, 1.0f}},	//右下
-	//	{{+5, +5, -5},{1.0f, 0.0f}},	//右上
-	//	//後
-	//	{{-5, -5, +5},{0.0f, 1.0f}},	//左下
-	//	{{-5, +5, +5},{0.0f, 0.0f}},	//左上
-	//	{{+5, -5, +5},{1.0f, 1.0f}},	//右下
-	//	{{+5, +5, +5},{1.0f, 0.0f}},	//右上
-	//	//左
-	//	{{-5, -5, -5},{0.0f, 1.0f}},	//左下
-	//	{{-5, -5, +5},{0.0f, 0.0f}},	//左上
-	//	{{-5, +5, -5},{1.0f, 1.0f}},	//右下
-	//	{{-5, +5, +5},{1.0f, 0.0f}},	//右上
-	//	//右
-	//	{{+5, -5, -5},{0.0f, 1.0f}},	//左下
-	//	{{+5, -5, +5},{0.0f, 0.0f}},	//左上
-	//	{{+5, +5, -5},{1.0f, 1.0f}},	//右下
-	//	{{+5, +5, +5},{1.0f, 0.0f}},	//右上
-	//	//下
-	//	{{-5, +5, -5},{0.0f, 1.0f}},	//左下
-	//	{{+5, +5, -5},{0.0f, 0.0f}},	//左上
-	//	{{-5, +5, +5},{1.0f, 1.0f}},	//右下
-	//	{{+5, +5, +5},{1.0f, 0.0f}},	//右上
-	//	//上
-	//	{{-5, -5, -5},{0.0f, 1.0f}},	//左下
-	//	{{+5, -5, -5},{0.0f, 0.0f}},	//左上
-	//	{{-5, -5, +5},{1.0f, 1.0f}},	//右下
-	//	{{+5, -5, +5},{1.0f, 0.0f}},	//右上
-	//};
+	Vertex vertices[] = {
+		//    x       y      z      u    v
+		//前
+		{{-0.5, -0.5, 0},{0.0f, 1.0f}},	//左下
+		{{-0.5, +0.5, 0},{0.0f, 0.0f}},	//左上
+		{{+0.5, -0.5, 0},{1.0f, 1.0f}},	//右下
+		{{+0.5, +0.5, 0},{1.0f, 0.0f}},	//右上
+		////後
+		//{{-5, -5, +5},{0.0f, 1.0f}},	//左下
+		//{{-5, +5, +5},{0.0f, 0.0f}},	//左上
+		//{{+5, -5, +5},{1.0f, 1.0f}},	//右下
+		//{{+5, +5, +5},{1.0f, 0.0f}},	//右上
+		////左
+		//{{-5, -5, -5},{0.0f, 1.0f}},	//左下
+		//{{-5, -5, +5},{0.0f, 0.0f}},	//左上
+		//{{-5, +5, -5},{1.0f, 1.0f}},	//右下
+		//{{-5, +5, +5},{1.0f, 0.0f}},	//右上
+		////右
+		//{{+5, -5, -5},{0.0f, 1.0f}},	//左下
+		//{{+5, -5, +5},{0.0f, 0.0f}},	//左上
+		//{{+5, +5, -5},{1.0f, 1.0f}},	//右下
+		//{{+5, +5, +5},{1.0f, 0.0f}},	//右上
+		////下
+		//{{-5, +5, -5},{0.0f, 1.0f}},	//左下
+		//{{+5, +5, -5},{0.0f, 0.0f}},	//左上
+		//{{-5, +5, +5},{1.0f, 1.0f}},	//右下
+		//{{+5, +5, +5},{1.0f, 0.0f}},	//右上
+		////上
+		//{{-5, -5, -5},{0.0f, 1.0f}},	//左下
+		//{{+5, -5, -5},{0.0f, 0.0f}},	//左上
+		//{{-5, -5, +5},{1.0f, 1.0f}},	//右下
+		//{{+5, -5, +5},{1.0f, 0.0f}},	//右上
+	};
 
 	//インデックスデータ
-	//unsigned short indices[] = {
-	//	//
-	//	0,1,2,
-	//	1,2,3,
-	//	//
-	//	4,5,6,
-	//	5,6,7,
-	//	//
-	//	8,9,10,
-	//	9,10,11,
-	//	//
-	//	12,13,14,
-	//	13,14,15,
-	//	//
-	//	16,17,18,
-	//	17,18,19,
-	//	//
-	//	20,21,22,
-	//	21,22,23
-	//};
+	unsigned short indices[] = {
+		//
+		0,1,2,
+		1,2,3,
+		////
+		//4,5,6,
+		//5,6,7,
+		////
+		//8,9,10,
+		//9,10,11,
+		////
+		//12,13,14,
+		//13,14,15,
+		////
+		//16,17,18,
+		//17,18,19,
+		////
+		//20,21,22,
+		//21,22,23
+	};
 
 	//XMFLOAT3 vertices[DIV + 1] = {
 	//	{0,0,0},
@@ -451,7 +460,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//indices[DIV * 3 - 2] = 0;
 
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
-	//UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * _countof(vertices));
+	UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * _countof(vertices));
 
 
 #pragma endregion 頂点データー
@@ -486,8 +495,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	#pragma region 頂点バッファへのデータ転送
 // GPU上のバッファに対応した仮想メモリを取得
-	//Vertex* vertMap = nullptr;
-	XMFLOAT3* vertMap = nullptr;
+	Vertex* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	assert(SUCCEEDED(result));
 
@@ -510,7 +518,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	vbView.SizeInBytes = sizeVB;
-	vbView.StrideInBytes = sizeof(XMFLOAT3);
+	vbView.StrideInBytes = sizeof(vertices[0]);
 
 #pragma endregion 頂点バッファへビューの作成
 
@@ -641,9 +649,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{// xyz座標
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
-		//{// uv座標
-		//	"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		//},
+		{// uv座標
+			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		},
 	};
 
 #pragma endregion 頂点レイアウト
@@ -739,8 +747,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	BYTE key[256], oldkey[256];
 	for (int i = 0; i < 256; i++)
 	{
-		oldkey[i] = key[i];
 		key[i] = 0;
+		oldkey[i] = key[i];
 	}
 	keyboard->Acquire();
 	result = keyboard->GetDeviceState(sizeof(key), key);

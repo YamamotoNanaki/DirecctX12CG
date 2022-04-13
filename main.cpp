@@ -342,9 +342,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{ -0.5f, -0.5f, 0.0f },
 		{ -0.5f, +0.5f, 0.0f },
 		{ +0.5f, -0.5f, 0.0f },
-		{ +0.5f, -0.5f, 0.0f },
-		{ -0.5f, +0.5f, 0.0f },
 		{ +0.5f, +0.5f, 0.0f },
+	};
+
+	uint16_t indices[] = 
+	{
+		0,1,2,
+		1,2,3,
 	};
 
 	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
@@ -511,6 +515,56 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion 頂点バッファへビューの作成
 
 	//-------------------------------
+
+	#pragma region インデックスバッファの生成
+
+// インデックスデータ全体のサイズ
+	UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
+	// インデックスバッファの設定
+	ID3D12Resource* indexBuff = nullptr;
+	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resDesc.Width = sizeIB;//インデックスバッファの生成
+	resDesc.Height = 1;
+	resDesc.DepthOrArraySize = 1;
+	resDesc.MipLevels = 1;
+	resDesc.SampleDesc.Count = 1;
+	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	result = device->CreateCommittedResource(
+		&heapProp,				//ヒープ設定
+		D3D12_HEAP_FLAG_NONE,
+		&resDesc,				//リソース設定
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&indexBuff));
+
+#pragma endregion インデックスバッファの生成
+
+	//----------------------------
+
+	#pragma region インデックスバッファへのデータ転送
+//GPU上のバッファに対応した仮想メモリを取得
+	uint16_t* indexMap = nullptr;
+	result = indexBuff->Map(0, nullptr, (void**)&indexMap);
+
+	//全インデックスに対して
+	for (int i = 0; i < _countof(indices); i++)
+	{
+		indexMap[i] = indices[i];	//インデックスをコピー
+	}
+
+	//つながりを解除
+	indexBuff->Unmap(0, nullptr);
+
+
+	D3D12_INDEX_BUFFER_VIEW ibView{};
+
+	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
+	ibView.Format = DXGI_FORMAT_R16_UINT;
+	ibView.SizeInBytes = sizeIB;
+
+#pragma endregion インデックスバッファへのデータ転送
+
+	//------------------------------
 
 	#pragma region 頂点シェーダーファイルの読み込みとコンパイル
 
@@ -824,7 +878,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion パイプラインステート
 
 	#pragma region プリミティブ形状
-		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 #pragma endregion プリミティブ形状
 
 	#pragma region 頂点バッファビューの設定コマンド
@@ -832,7 +886,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion 頂点バッファビューの設定コマンド
 
 	#pragma region インデックスバッファビューのセット
-		//commandList->IASetIndexBuffer(&ibView);
+		commandList->IASetIndexBuffer(&ibView);
 #pragma endregion インデックスバッファビューのセット
 
 	#pragma region 定数バッファビューの設定コマンド
@@ -842,8 +896,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion 定数バッファビューの設定コマンド
 
 	#pragma region 描画コマンド
-		//commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
-		commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
+		commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 #pragma endregion 描画コマンド
 
 #pragma endregion 描画コマンド

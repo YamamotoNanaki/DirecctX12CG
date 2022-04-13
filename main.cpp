@@ -342,6 +342,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{ -0.5f, -0.5f, 0.0f },
 		{ -0.5f, +0.5f, 0.0f },
 		{ +0.5f, -0.5f, 0.0f },
+		{ +0.5f, -0.5f, 0.0f },
+		{ -0.5f, +0.5f, 0.0f },
+		{ +0.5f, +0.5f, 0.0f },
 	};
 
 	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
@@ -821,7 +824,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion パイプラインステート
 
 	#pragma region プリミティブ形状
-		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 #pragma endregion プリミティブ形状
 
 	#pragma region 頂点バッファビューの設定コマンド

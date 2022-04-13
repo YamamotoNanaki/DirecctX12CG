@@ -533,7 +533,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	pipelineDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
 	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;  // カリングしない
-	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
+	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME; // ワイヤーフレーム
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 
 	//ブレンド設定
@@ -710,9 +710,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		D3D12_RECT scissorrect{};
 
 		scissorrect.left = 0;
-		scissorrect.right = scissorrect.left + window_width;
+		scissorrect.right = scissorrect.left + 500;
 		scissorrect.top = 0;
-		scissorrect.bottom = scissorrect.top + window_height;
+		scissorrect.bottom = scissorrect.top + 300;
 
 		commandList->RSSetScissorRects(1, &scissorrect);
 #pragma endregion シザー矩形の設定コマンド

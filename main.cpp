@@ -433,25 +433,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//-------------------------
 
+	#pragma region デスクリプタレンジの設定
+
+		D3D12_DESCRIPTOR_RANGE descRangeSRV{};														//テクスチャ用
+		descRangeSRV.NumDescriptors = 1;															//テクスチャ一つ
+		descRangeSRV.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;									//種別はテクスチャ
+		descRangeSRV.BaseShaderRegister = 0;														//0番スロットから
+		descRangeSRV.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+#pragma endregion デスクリプタレンジの設定
+
+	//----------------------------
+
 	#pragma region ルートパラメータの設定
 
-	D3D12_ROOT_PARAMETER rootParam = {};
-	rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParam.Descriptor.ShaderRegister = 0;
-	rootParam.Descriptor.RegisterSpace = 0;
-	rootParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-
-	//D3D12_ROOT_PARAMETER rootparams[2] = {};
-	////定数用
-	//rootparams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//種類
-	//rootparams[0].DescriptorTable.pDescriptorRanges = &descRangeCBV;				//デスクリプタレンジ
-	//rootparams[0].DescriptorTable.NumDescriptorRanges = 1;						//デスクリプタレンジ数
-	//rootparams[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
-	////テクスチャ用
-	//rootparams[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//種類
-	//rootparams[1].DescriptorTable.pDescriptorRanges = &descRangeSRV;				//デスクリプタレンジ
-	//rootparams[1].DescriptorTable.NumDescriptorRanges = 1;						//デスクリプタレンジ数
-	//rootparams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
+	D3D12_ROOT_PARAMETER rootParams[2] = {};
+	//定数用
+	rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//種類
+	rootParams[0].Descriptor.ShaderRegister = 0;								//デスクリプタレンジ
+	rootParams[0].Descriptor.RegisterSpace = 0;									//デスクリプタレンジ数
+	rootParams[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
+	//テクスチャ用
+	rootParams[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//種類
+	rootParams[1].DescriptorTable.pDescriptorRanges = &descRangeSRV;				//デスクリプタレンジ
+	rootParams[1].DescriptorTable.NumDescriptorRanges = 1;						//デスクリプタレンジ数
+	rootParams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
 
 #pragma endregion ルートパラメータの設定
 
@@ -821,16 +827,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//-----------------
 
+	#pragma region テクスチャサンプラーの設定
+
+	D3D12_STATIC_SAMPLER_DESC samplerDesc{};
+
+	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//横繰り返し
+	samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//縦繰り返し
+	samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//奥行繰り返し
+	samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;	//ボーダーの時は黒
+	samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;					//リニア補完
+	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;									//ミップマップ最大値
+	samplerDesc.MinLOD = 0.0f;												//ミップマップ最小値
+	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+	samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;			//ピクセルシェーダーからのみ可視
+
+
+#pragma endregion テクスチャサンプラーの設定
+
+	//---------------------
+
 	#pragma region ルートシグネチャの設定
 	ID3D12RootSignature* rootsignature;
 
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	rootSignatureDesc.pParameters = &rootParam;
-	rootSignatureDesc.NumParameters = 1;
-	////テクスチャ追加
-	//rootSignatureDesc.pStaticSamplers = &samplerDesc;
-	//rootSignatureDesc.NumStaticSamplers = 1;
+	rootSignatureDesc.pParameters = rootParams;
+	rootSignatureDesc.NumParameters = _countof(rootParams);
+	//テクスチャ追加
+	rootSignatureDesc.pStaticSamplers = &samplerDesc;
+	rootSignatureDesc.NumStaticSamplers = 1;
 
 	ID3DBlob* rootSigBlob = nullptr;
 	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
@@ -1012,6 +1037,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	#pragma region 定数バッファビューの設定コマンド
 
 		commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
+		commandList->SetDescriptorHeaps(1, &srvHeap);
+		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
+		commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 
 #pragma endregion 定数バッファビューの設定コマンド
 

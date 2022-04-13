@@ -18,7 +18,13 @@ using namespace std;
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
+#pragma region 定数バッファ構造体
 
+struct ConstBufferDataMaterial {
+	XMFLOAT4 color;	//色(RGBA)
+	XMMATRIX mat;	//3D変換行列
+};
+#pragma endregion 定数バッファ構造体
 
 //ウィンドウプロシージャ
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
@@ -252,8 +258,83 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma region 描画初期化
 
+	#pragma region 定数バッファの生成用の設定
+//ヒープ設定
+	D3D12_HEAP_PROPERTIES cbHeapProp{};
+	cbHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+	//リソース設定
+	D3D12_RESOURCE_DESC cbResourceDesc{};
+	cbResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	cbResourceDesc.Width = (sizeof(ConstBufferDataMaterial) + 0xff) & ~0xff;
+	cbResourceDesc.Height = 1;
+	cbResourceDesc.DepthOrArraySize = 1;
+	cbResourceDesc.MipLevels = 1;
+	cbResourceDesc.SampleDesc.Count = 1;
+	cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	//GPUリソースの生成
+	ID3D12Resource* constBuffMaterial = nullptr;
+	result = device->CreateCommittedResource(
+		&cbHeapProp,	//ヒープ設定
+		D3D12_HEAP_FLAG_NONE,
+		&cbResourceDesc,		//リソース設定
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBuffMaterial)
+	);
+	assert(SUCCEEDED(result));
+
+#pragma endregion 定数バッファの生成用の設定
 
 	//-------------------------
+
+	#pragma region 定数バッファにデータを転送する
+	ConstBufferDataMaterial* constMapMaterial = nullptr;
+	result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);	//マッピング
+	assert(SUCCEEDED(result));
+	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1);					//RGBAで半透明の赤
+	constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
+
+	//行列
+	constMapMaterial->mat = XMMatrixIdentity();	//単位行列
+	constMapMaterial->mat = XMMatrixOrthographicOffCenterLH(
+		0, window_width, window_height, 0, 0, 1);
+
+	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
+		XMConvertToRadians(60.0f),				//
+		(float)window_width / window_height,	//
+		0.1f, 1000.0f							//
+	);
+	//constMap->mat = matWorld * matView * matProjection;
+
+
+#pragma endregion 定数バッファにデータを転送する
+
+	//-------------------------
+
+	#pragma region ルートパラメータの設定
+
+	D3D12_ROOT_PARAMETER rootParam = {};
+	rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParam.Descriptor.ShaderRegister = 0;
+	rootParam.Descriptor.RegisterSpace = 0;
+	rootParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	//D3D12_ROOT_PARAMETER rootparams[2] = {};
+	////定数用
+	//rootparams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//種類
+	//rootparams[0].DescriptorTable.pDescriptorRanges = &descRangeCBV;				//デスクリプタレンジ
+	//rootparams[0].DescriptorTable.NumDescriptorRanges = 1;						//デスクリプタレンジ数
+	//rootparams[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
+	////テクスチャ用
+	//rootparams[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//種類
+	//rootparams[1].DescriptorTable.pDescriptorRanges = &descRangeSRV;				//デスクリプタレンジ
+	//rootparams[1].DescriptorTable.NumDescriptorRanges = 1;						//デスクリプタレンジ数
+	//rootparams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
+
+#pragma endregion ルートパラメータの設定
+
+	//-----------------------
 	//頂点
 	#pragma region 頂点データー
 
@@ -568,8 +649,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	//rootSignatureDesc.pParameters = rootparams;
-	//rootSignatureDesc.NumParameters = _countof(rootparams);
+	rootSignatureDesc.pParameters = &rootParam;
+	rootSignatureDesc.NumParameters = 1;
 	////テクスチャ追加
 	//rootSignatureDesc.pStaticSamplers = &samplerDesc;
 	//rootSignatureDesc.NumStaticSamplers = 1;
@@ -750,6 +831,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	#pragma region インデックスバッファビューのセット
 		//commandList->IASetIndexBuffer(&ibView);
 #pragma endregion インデックスバッファビューのセット
+
+	#pragma region 定数バッファビューの設定コマンド
+
+		commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
+
+#pragma endregion 定数バッファビューの設定コマンド
 
 	#pragma region 描画コマンド
 		//commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);

@@ -784,13 +784,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		if (key[DIK_SPACE])
 		{
-			clearColor[0] = 0.5f;
-			clearColor[2] = 0.1f;
+			clearColor[0] = 1.0f;
+			clearColor[1] = 0.5f;
+			clearColor[2] = 0.5f;
 		}
 		else
 		{
-			clearColor[2] = 0.5f;
 			clearColor[0] = 0.1f;
+			clearColor[1] = 0.25f;
+			clearColor[2] = 0.5f;
 		}
 
 

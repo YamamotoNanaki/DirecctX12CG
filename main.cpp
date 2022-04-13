@@ -7,6 +7,8 @@
 #include <d3dcompiler.h>
 #include <dinput.h>
 
+#define DIRECTINPUT_VERSION	0x0800		//DirectInputのバージョン指定
+
 using namespace DirectX;
 using namespace std;
 
@@ -15,6 +17,8 @@ using namespace std;
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
+
+
 
 //ウィンドウプロシージャ
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
@@ -219,6 +223,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	result = device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 #pragma endregion フェンスの生成
+
+	#pragma region DirectInput
+
+	IDirectInput8* directInput = nullptr;
+	result = DirectInput8Create(
+		w.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+	assert(SUCCEEDED(result));
+
+	//キーボードデバイスの生成
+	IDirectInputDevice8* keyboard = nullptr;
+	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
+	assert(SUCCEEDED(result));
+
+	//入力データ形式のセット
+	result = keyboard->SetDataFormat(&c_dfDIKeyboard);//標準形式
+	assert(SUCCEEDED(result));
+
+	//排他制御レベルのセット
+	result = keyboard->SetCooperativeLevel(
+		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	assert(SUCCEEDED(result));
+
+#pragma endregion DirectInput
 
 	// DirectX初期化処理 ここまで
 #pragma endregion DirectX初期化処理
@@ -568,7 +595,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma endregion 描画初期化
 
-	while (true)
+	//変数宣言
+	//-----------------------
+#pragma region DirectInput
+	BYTE key[256], oldkey[256];
+	for (int i = 0; i < 256; i++)
+	{
+		oldkey[i] = key[i];
+		key[i] = 0;
+	}
+	keyboard->Acquire();
+	result = keyboard->GetDeviceState(sizeof(key), key);
+#pragma endregion DirectInput
+
+	float clearColor[] = { 0.1f, 0.25f, 0.5f, 0.0f }; // 青っぽい色
+	//-----------------------
+
+
+
+	while (!key[DIK_ESCAPE])
 	{
 #pragma region メッセージ
 		// メッセージがある？
@@ -585,6 +630,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 
 #pragma endregion メッセージ
+
+#pragma region DirectInput
+
+		for (int i = 0; i < 256; i++)
+		{
+			oldkey[i] = key[i];
+			key[i] = 0;
+		}
+		keyboard->Acquire();
+		result = keyboard->GetDeviceState(sizeof(key), key);
+
+#pragma endregion DirectInput
+
+
+		if (key[DIK_SPACE])
+		{
+			clearColor[0] = 0.5f;
+			clearColor[2] = 0.1f;
+		}
+		else
+		{
+			clearColor[2] = 0.5f;
+			clearColor[0] = 0.1f;
+		}
+
 
 #pragma region DirectX毎フレームの処理 前
 
@@ -613,7 +683,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	#pragma region 画面クリア
 		// 3．画面クリア           R     G     B    A
-		float clearColor[] = { 0.1f, 0.25f, 0.5f, 0.0f }; // 青っぽい色
+		
 
 		commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 		/*cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);*/

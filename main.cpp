@@ -89,7 +89,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	IDXGISwapChain4* swapchain = nullptr;
 	ID3D12CommandAllocator* commandAllocator = nullptr;
 	ID3D12GraphicsCommandList* commandList = nullptr;
-	ID3D12CommandQueue* cmdQueue = nullptr;
+	ID3D12CommandQueue* commandQueue = nullptr;
 	ID3D12DescriptorHeap* rtvHeaps = nullptr;
 #pragma endregion DirectX初期化
 
@@ -164,7 +164,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// 標準設定でコマンドキューを生成
 	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
 
-	device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&cmdQueue));
+	device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
 	assert(SUCCEEDED(result));
 #pragma endregion コマンドキュー
 
@@ -181,7 +181,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	result = dxgiFactory->CreateSwapChainForHwnd(
-		cmdQueue, hwnd, &swapChainDesc, nullptr, nullptr, (IDXGISwapChain1**)&swapchain);
+		commandQueue, hwnd, &swapChainDesc, nullptr, nullptr, (IDXGISwapChain1**)&swapchain);
 #pragma endregion スワップチェーンの生成
 
 	#pragma region デスクリプタヒープの生成
@@ -244,10 +244,84 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma endregion メッセージ
 
-#pragma region DirectX毎フレームの処理
-#pragma endregion DirectX毎フレームの処理
+#pragma region DirectX毎フレームの処理 前
 
+	#pragma region リソースバリアの変更
+		//バックバッファの番号を取得（2つなので0番か1番）
+		UINT bbIndex = swapchain->GetCurrentBackBufferIndex();
 
+		// 1．リソースバリアで書き込み可能に変更
+		D3D12_RESOURCE_BARRIER barrierDesc{};
+		barrierDesc.Transition.pResource = backBuffers[bbIndex]; // バックバッファを指定
+		barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT; // 表示から
+		barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描画
+		commandList->ResourceBarrier(1, &barrierDesc);
+#pragma endregion リソースバリアの変更
+
+	#pragma region 描画先指定
+		// 2．描画先指定
+		// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+		rtvHandle.ptr += bbIndex * device->GetDescriptorHandleIncrementSize(rtvHeapDesc.Type);
+		//深度ステンシルビュー用デスクリプタヒープのハンドルを取得
+		//D3D12_CPU_DESCRIPTOR_HANDLE dsvH = dsvHeap->GetCPUDescriptorHandleForHeapStart();
+		commandList->OMSetRenderTargets(1, &rtvHandle, false, nullptr/*&dsvH*/);
+
+#pragma endregion 描画先指定
+
+	#pragma region 画面クリア
+		// 3．画面クリア           R     G     B    A
+		float clearColor[] = { 0.1f, 0.25f, 0.5f, 0.0f }; // 青っぽい色
+
+		commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+		/*cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);*/
+#pragma endregion 画面クリア
+
+#pragma endregion DirectX毎フレームの処理 前
+
+#pragma region 描画コマンド
+#pragma endregion 描画コマンド
+
+#pragma region DirectX毎フレームの処理 後
+// 5．リソースバリアを戻す
+	#pragma region リソースバリアの復帰コマンド
+		barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描画
+		barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;   // 表示に
+		commandList->ResourceBarrier(1, &barrierDesc);
+#pragma endregion リソースバリアの復帰コマンド
+
+	#pragma region ためておいた命令を実行する
+		// 命令のクローズ
+		result = commandList->Close();
+		assert(SUCCEEDED(result));
+		// コマンドリストの実行
+		ID3D12CommandList* commandLists[] = { commandList }; // コマンドリストの配列
+		commandQueue->ExecuteCommandLists(1, commandLists);
+
+		// バッファをフリップ（裏表の入替え）
+		result = swapchain->Present(1, 0);
+		assert(SUCCEEDED(result));
+#pragma endregion ためておいた命令を実行する
+
+	#pragma region 画面入れ替え
+		// コマンドリストの実行完了を待つ
+		commandQueue->Signal(fence, ++fenceVal);
+
+		if (fence->GetCompletedValue() != fenceVal)
+		{
+			HANDLE event = CreateEvent(nullptr, false, false, nullptr);
+			fence->SetEventOnCompletion(fenceVal, event);
+			WaitForSingleObject(event, INFINITE);
+			CloseHandle(event);
+		}
+
+		result = commandAllocator->Reset(); // キューをクリア
+		assert(SUCCEEDED(result));
+		result = commandList->Reset(commandAllocator, nullptr);  // 再びコマンドリストを貯める準備
+		assert(SUCCEEDED(result));
+#pragma endregion 画面入れ替え
+
+#pragma endregion DirectX毎フレームの処理 後
 	}
 
 	UnregisterClass(w.lpszClassName, w.hInstance);

@@ -7,11 +7,14 @@
 #include <d3dcompiler.h>
 #include <dinput.h>
 #include <DirectXTex.h>
+#include <wrl.h>
+#include "DxWindow.h"
 
 #define DIRECTINPUT_VERSION	0x0800		//DirectInputのバージョン指定
 
 using namespace DirectX;
 using namespace std;
+using namespace Microsoft::WRL;
 
 #pragma comment(lib,"d3d12.lib") 
 #pragma comment(lib,"dxgi.lib")
@@ -36,9 +39,6 @@ struct Vertex
 };
 #pragma endregion 頂点データ構造体
 
-//ウィンドウプロシージャ
-LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,
 	_In_ int nCmdShow) {
 
@@ -54,34 +54,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	const int window_width = 1280;  // 横幅
 	const int window_height = 720;  // 縦幅
 
-	WNDCLASSEX w{}; // ウィンドウクラスの設定
-	w.cbSize = sizeof(WNDCLASSEX);
-	w.lpfnWndProc = (WNDPROC)WindowProc; // ウィンドウプロシージャを設定
-	w.lpszClassName = L"DirectX12Game"; // ウィンドウクラス名
-	w.hInstance = GetModuleHandle(nullptr); // ウィンドウハンドル
-	w.hCursor = LoadCursor(NULL, IDC_ARROW); // カーソル指定
-
-	// ウィンドウクラスをOSに登録
-	RegisterClassEx(&w);
-	// ウィンドウサイズ{ X座標 Y座標 横幅 縦幅 }
-	RECT wrc = { 0, 0, window_width, window_height };
-	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false); // 自動でサイズ補正
-
-	// ウィンドウオブジェクトの生成
-	HWND hwnd = CreateWindow(w.lpszClassName, // クラス名
-		L"DirectXGame",         // タイトルバーの文字
-		WS_OVERLAPPEDWINDOW,        // 標準的なウィンドウスタイル
-		CW_USEDEFAULT,              // 表示X座標（OSに任せる）
-		CW_USEDEFAULT,              // 表示Y座標（OSに任せる）
-		wrc.right - wrc.left,       // ウィンドウ横幅
-		wrc.bottom - wrc.top,   // ウィンドウ縦幅
-		nullptr,                // 親ウィンドウハンドル
-		nullptr,                // メニューハンドル
-		w.hInstance,            // 呼び出しアプリケーションハンドル
-		nullptr);               // オプション
-
-	// ウィンドウ表示
-	ShowWindow(hwnd, SW_SHOW);
+	DxWindow* win = new DxWindow(window_width, window_height);
 
 #pragma endregion ウィンドウの生成（前処理）
 
@@ -104,22 +77,22 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region DirectX初期化
 	HRESULT result;
-	ID3D12Device* device = nullptr;
-	IDXGIFactory6* dxgiFactory = nullptr;
-	IDXGISwapChain4* swapchain = nullptr;
-	ID3D12CommandAllocator* commandAllocator = nullptr;
+	ComPtr < ID3D12Device> device = nullptr;
+	ComPtr<IDXGIFactory6> dxgiFactory = nullptr;
+	ComPtr < IDXGISwapChain4> swapchain = nullptr;
+	ComPtr < ID3D12CommandAllocator> commandAllocator = nullptr;
 	ID3D12GraphicsCommandList* commandList = nullptr;
-	ID3D12CommandQueue* commandQueue = nullptr;
-	ID3D12DescriptorHeap* rtvHeaps = nullptr;
+	ComPtr < ID3D12CommandQueue> commandQueue = nullptr;
+	ComPtr < ID3D12DescriptorHeap> rtvHeaps = nullptr;
 #pragma endregion DirectX初期化
 
 	#pragma region グラフィックスボードのアダプタを列挙
 	// DXGIファクトリーの生成
 	result = CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory));
 	// アダプターの列挙用
-	vector<IDXGIAdapter4*> adapters;
+	vector< ComPtr<IDXGIAdapter4>> adapters;
 	// ここに特定の名前を持アダプターオブジェクトを入れる
-	IDXGIAdapter4* tmpAdapter = nullptr;
+	ComPtr < IDXGIAdapter4> tmpAdapter = nullptr;
 	for (UINT i = 0; dxgiFactory->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,IID_PPV_ARGS(&tmpAdapter)) != DXGI_ERROR_NOT_FOUND; i++)
 	{
 		adapters.push_back(tmpAdapter); //動的配列に追加する
@@ -154,7 +127,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	for (size_t i = 0; i < _countof(levels); i++)
 	{
 		// 採用したアダプターでデバイスを生成
-		result = D3D12CreateDevice(tmpAdapter, levels[i], IID_PPV_ARGS(&device));
+		result = D3D12CreateDevice(tmpAdapter.Get(), levels[i], IID_PPV_ARGS(&device));
 		if (result == S_OK)
 		{
 			// デバイスを生成できた時点でループを抜ける
@@ -175,7 +148,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	// コマンドリストの生成
 	result = device->CreateCommandList(0,
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		commandAllocator, nullptr,
+		commandAllocator.Get(), nullptr,
 		IID_PPV_ARGS(&commandList));
 	assert(SUCCEEDED(result));
 #pragma endregion コマンドリスト
@@ -200,7 +173,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; //フリップ後は破壊
 	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-	result = dxgiFactory->CreateSwapChainForHwnd( commandQueue, hwnd, &swapChainDesc, nullptr, nullptr, (IDXGISwapChain1**)&swapchain);
+	ComPtr <IDXGISwapChain1> swapchain1;
+
+	result = dxgiFactory->CreateSwapChainForHwnd( commandQueue.Get(), win->GetHwnd(), &swapChainDesc, nullptr, nullptr, &swapchain1);
+
+	swapchain1.As(&swapchain);
 #pragma endregion スワップチェーンの生成
 
 	#pragma region デスクリプタヒープの生成
@@ -213,7 +190,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region レンダーターゲットビューの生成
 	// 裏表の2つ分について
-	vector<ID3D12Resource*> backBuffers(2);
+	vector< ComPtr<ID3D12Resource>> backBuffers(2);
 	backBuffers.resize(swapChainDesc.BufferCount);
 
 	for (size_t i = 0; i < backBuffers.size(); i++)
@@ -228,23 +205,27 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 		// レンダーターゲットビューの生成
-		device->CreateRenderTargetView(backBuffers[i], &rtvDesc, rtvHandle);
+		device->CreateRenderTargetView(backBuffers[i].Get(), &rtvDesc, rtvHandle);
 	}
 #pragma endregion レンダーターゲットビューの生成
 
 	#pragma region フェンスの生成
 	// フェンスの生成
-	ID3D12Fence* fence = nullptr;
+	ComPtr<ID3D12Fence> fence = nullptr;
 	UINT64 fenceVal = 0;
 
 	result = device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 #pragma endregion フェンスの生成
 
-	#pragma region DirectInput
+	// DirectX初期化処理 ここまで
+#pragma endregion DirectX初期化処理
+
+
+#pragma region DirectInput
 
 	IDirectInput8* directInput = nullptr;
 	result = DirectInput8Create(
-		w.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+		win->GetHinstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
 	assert(SUCCEEDED(result));
 
 	//キーボードデバイスの生成
@@ -258,13 +239,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	//排他制御レベルのセット
 	result = keyboard->SetCooperativeLevel(
-		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+		win->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(result));
 
 #pragma endregion DirectInput
 
-	// DirectX初期化処理 ここまで
-#pragma endregion DirectX初期化処理
 
 #pragma region 描画初期化
 
@@ -283,7 +262,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	//GPUリソースの生成
-	ID3D12Resource* constBuffMaterial = nullptr;
+	ComPtr<ID3D12Resource> constBuffMaterial = nullptr;
 	result = device->CreateCommittedResource(
 		&cbHeapProp,	//ヒープ設定
 		D3D12_HEAP_FLAG_NONE,
@@ -387,7 +366,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		texresDesc.MipLevels = (UINT16)metadata.mipLevels;
 		texresDesc.SampleDesc.Count = 1;
 
-		ID3D12Resource* texbuff = nullptr;
+		ComPtr<ID3D12Resource> texbuff = nullptr;
 		result = device->CreateCommittedResource(		//GPUリソースの生成
 			&texHeapProp,
 			D3D12_HEAP_FLAG_NONE,
@@ -608,7 +587,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	// 頂点バッファの生成
-	ID3D12Resource* vertBuff = nullptr;
+	ComPtr<ID3D12Resource> vertBuff = nullptr;
 	result = device->CreateCommittedResource(
 		&heapProp, // ヒープ設定
 		D3D12_HEAP_FLAG_NONE, &resDesc, // リソース設定
@@ -631,7 +610,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	//ヒープの２番目にシェーダーリソースビュー作成
 	device->CreateShaderResourceView(
-		texbuff,		//ビューと関連付けるバッファ
+		texbuff.Get(),		//ビューと関連付けるバッファ
 		&srvDesc,		//テクスチャ設定情報
 		srvHandle);
 
@@ -675,7 +654,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 // インデックスデータ全体のサイズ
 	UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
 	// インデックスバッファの設定
-	ID3D12Resource* indexBuff = nullptr;
+	ComPtr<ID3D12Resource> indexBuff = nullptr;
 	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 	resDesc.Width = sizeIB;//インデックスバッファの生成
 	resDesc.Height = 1;
@@ -722,9 +701,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region 頂点シェーダーファイルの読み込みとコンパイル
 
-	ID3DBlob* vsBlob = nullptr; // 頂点シェーダオブジェクト
-	ID3DBlob* psBlob = nullptr; // ピクセルシェーダオブジェクト
-	ID3DBlob* errorBlob = nullptr; // エラーオブジェクト
+	ComPtr<ID3DBlob> vsBlob = nullptr; // 頂点シェーダオブジェクト
+	ComPtr<ID3DBlob> psBlob = nullptr; // ピクセルシェーダオブジェクト
+	ComPtr<ID3DBlob> errorBlob = nullptr; // エラーオブジェクト
 
 	// 頂点シェーダの読み込みとコンパイル
 	result = D3DCompileFromFile( L"BasicVS.hlsl",  // シェーダファイル名
@@ -875,7 +854,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//---------------------
 
 	#pragma region ルートシグネチャの設定
-	ID3D12RootSignature* rootsignature;
+	ComPtr<ID3D12RootSignature> rootsignature;
 
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -893,13 +872,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	rootSigBlob->Release();
 
 	// パイプラインにルートシグネチャをセット
-	pipelineDesc.pRootSignature = rootsignature;
+	pipelineDesc.pRootSignature = rootsignature.Get();
 #pragma endregion ルートシグネチャの設定
 
 	//----------------------
 
 	#pragma region パイプラインステートの生成
-	ID3D12PipelineState* pipelinestate = nullptr;
+	ComPtr<ID3D12PipelineState> pipelinestate = nullptr;
 	result = device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelinestate));
 	assert(SUCCEEDED(result));
 #pragma endregion パイプラインステートの生成
@@ -975,7 +954,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 		// 1．リソースバリアで書き込み可能に変更
 		D3D12_RESOURCE_BARRIER barrierDesc{};
-		barrierDesc.Transition.pResource = backBuffers[bbIndex]; // バックバッファを指定
+		barrierDesc.Transition.pResource = backBuffers[bbIndex].Get(); // バックバッファを指定
 		barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT; // 表示から
 		barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描画
 		commandList->ResourceBarrier(1, &barrierDesc);
@@ -1029,8 +1008,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion シザー矩形の設定コマンド
 
 	#pragma region パイプラインステート
-		commandList->SetPipelineState(pipelinestate);
-		commandList->SetGraphicsRootSignature(rootsignature);
+		commandList->SetPipelineState(pipelinestate.Get());
+		commandList->SetGraphicsRootSignature(rootsignature.Get());
 
 		////デスクリプタヒープを設定
 		//ID3D12DescriptorHeap* ppHeaps[] = { basicDescHeap };
@@ -1101,7 +1080,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region 画面入れ替え
 		// コマンドリストの実行完了を待つ
-		commandQueue->Signal(fence, ++fenceVal);
+		commandQueue->Signal(fence.Get(), ++fenceVal);
 
 		if (fence->GetCompletedValue() != fenceVal)
 		{
@@ -1113,27 +1092,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 		result = commandAllocator->Reset(); // キューをクリア
 		assert(SUCCEEDED(result));
-		result = commandList->Reset(commandAllocator, nullptr);  // 再びコマンドリストを貯める準備
+		result = commandList->Reset(commandAllocator.Get(), nullptr);  // 再びコマンドリストを貯める準備
 		assert(SUCCEEDED(result));
 #pragma endregion 画面入れ替え
 
 #pragma endregion DirectX毎フレームの処理 後
 	}
 
-	UnregisterClass(w.lpszClassName, w.hInstance);
+	delete win;
 
 	return 0;
-}
-
-//ウィンドウプロシージャ
-LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-	// メッセージで分岐
-	switch (msg)
-	{
-	case WM_DESTROY: //ウィンドーが破壊された
-		PostQuitMessage(0); // OSに対して、アプリの終了を伝える
-		return 0;
-	}
-	return DefWindowProc(hwnd, msg, wparam, lparam); // 標準の処理を行う
 }

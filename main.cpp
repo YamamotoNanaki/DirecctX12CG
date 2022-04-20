@@ -11,7 +11,6 @@
 #include "Dx12.h"
 #include "Key.h"
 
-
 using namespace DirectX;
 using namespace std;
 using namespace Microsoft::WRL;

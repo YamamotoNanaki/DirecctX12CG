@@ -5,13 +5,11 @@
 #include <string>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
-#include <dinput.h>
 #include <DirectXTex.h>
 #include <wrl.h>
 #include "DxWindow.h"
 #include "Dx12.h"
-
-#define DIRECTINPUT_VERSION	0x0800		//DirectInputのバージョン指定
+#include "Key.h"
 
 using namespace DirectX;
 using namespace std;
@@ -84,29 +82,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	Dx12* dx12 = new Dx12(result, win->GetHwnd(), window_width, window_height);
 
-
-#pragma region DirectInput
-
-	IDirectInput8* directInput = nullptr;
-	result = DirectInput8Create(
-		win->GetHinstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
-	assert(SUCCEEDED(result));
-
-	//キーボードデバイスの生成
-	IDirectInputDevice8* keyboard = nullptr;
-	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
-	assert(SUCCEEDED(result));
-
-	//入力データ形式のセット
-	result = keyboard->SetDataFormat(&c_dfDIKeyboard);//標準形式
-	assert(SUCCEEDED(result));
-
-	//排他制御レベルのセット
-	result = keyboard->SetCooperativeLevel(
-		win->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
-	assert(SUCCEEDED(result));
-
-#pragma endregion DirectInput
+	Key* key = new Key(result, win->GetHinstance(), win->GetHwnd());
 
 
 #pragma region 描画初期化
@@ -357,10 +333,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	Vertex vertices[] = {
 		//    x       y      z      u    v
 		//前
-		{{-5, -5, 0},{0.0f, 1.0f}},	//左下
-		{{-5, +5, 0},{0.0f, 0.0f}},	//左上
-		{{+5, -5, 0},{1.0f, 1.0f}},	//右下
-		{{+5, +5, 0},{1.0f, 0.0f}},	//右上
+		//{{-5, -5, 0},{0.0f, 1.0f}},	//左下
+		//{{-5, +5, 0},{0.0f, 0.0f}},	//左上
+		//{{+5, -5, 0},{1.0f, 1.0f}},	//右下
+		//{{+5, +5, 0},{1.0f, 0.0f}},	//右上
+		{{100, 100, 0},{0.0f, 1.0f}},	//左下
+		{{100, 200, 0},{0.0f, 0.0f}},	//左上
+		{{200, 100, 0},{1.0f, 1.0f}},	//右下
+		{{200, 200, 0},{1.0f, 0.0f}},	//右上
 		////後
 		//{{-5, -5, +5},{0.0f, 1.0f}},	//左下
 		//{{-5, +5, +5},{0.0f, 0.0f}},	//左上
@@ -769,23 +749,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	//変数宣言
 	//-----------------------
-#pragma region DirectInput
-	BYTE key[256], oldkey[256];
-	for (int i = 0; i < 256; i++)
-	{
-		key[i] = 0;
-		oldkey[i] = key[i];
-	}
-	keyboard->Acquire();
-	result = keyboard->GetDeviceState(sizeof(key), key);
-#pragma endregion DirectInput
 
 	float clearColor[] = { 0.1f, 0.25f, 0.5f, 0.0f }; // 青っぽい色
 	//-----------------------
 
 
 
-	while (!key[DIK_ESCAPE])
+	while (!key->Triggere(ESC))
 	{
 #pragma region メッセージ
 		// メッセージがある？
@@ -805,18 +775,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma region DirectInput
 
-		for (int i = 0; i < 256; i++)
-		{
-			oldkey[i] = key[i];
-			key[i] = 0;
-		}
-		keyboard->Acquire();
-		result = keyboard->GetDeviceState(sizeof(key), key);
+		key->Update(result);
 
 #pragma endregion DirectInput
 
 
-		if (key[DIK_SPACE])
+		if (key->Down(SPACE))
 		{
 			clearColor[0] = 0.5f;
 			clearColor[2] = 0.1f;

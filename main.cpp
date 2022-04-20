@@ -25,9 +25,14 @@ using namespace Microsoft::WRL;
 
 #pragma region 定数バッファ構造体
 
-struct ConstBufferDataMaterial {
+struct ConstBufferDataMaterial
+{
 	XMFLOAT4 color;	//色(RGBA)
-	XMMATRIX mat;	//3D変換行列
+};
+
+struct ConstBufferDataTransform
+{
+	XMMATRIX mat;
 };
 #pragma endregion 定数バッファ構造体
 
@@ -113,7 +118,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//リソース設定
 	D3D12_RESOURCE_DESC cbResourceDesc{};
 	cbResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	cbResourceDesc.Width = (sizeof(ConstBufferDataMaterial) + 0xff) & ~0xff;
+	cbResourceDesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff;
 	cbResourceDesc.Height = 1;
 	cbResourceDesc.DepthOrArraySize = 1;
 	cbResourceDesc.MipLevels = 1;
@@ -122,6 +127,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	//GPUリソースの生成
 	ComPtr<ID3D12Resource> constBuffMaterial = nullptr;
+	ComPtr<ID3D12Resource> constBuffTransform = nullptr;
 	result = dx12->device->CreateCommittedResource(
 		&cbHeapProp,	//ヒープ設定
 		D3D12_HEAP_FLAG_NONE,
@@ -131,6 +137,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		IID_PPV_ARGS(&constBuffMaterial)
 	);
 	assert(SUCCEEDED(result));
+	result = dx12->device->CreateCommittedResource(
+		&cbHeapProp,	//ヒープ設定
+		D3D12_HEAP_FLAG_NONE,
+		&cbResourceDesc,		//リソース設定
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBuffTransform)
+	);
+	assert(SUCCEEDED(result));
 
 #pragma endregion 定数バッファの生成用の設定
 
@@ -138,21 +153,24 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region 定数バッファにデータを転送する
 	ConstBufferDataMaterial* constMapMaterial = nullptr;
+	ConstBufferDataTransform* constMapTransform = nullptr;
 	result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);	//マッピング
+	assert(SUCCEEDED(result));
+	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);	//マッピング
 	assert(SUCCEEDED(result));
 	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1);					//RGBAで半透明の赤
 	constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
 
 	//行列
-	constMapMaterial->mat = XMMatrixIdentity();	//単位行列
-	constMapMaterial->mat = XMMatrixOrthographicOffCenterLH(
+	constMapTransform->mat = XMMatrixIdentity();	//単位行列
+	constMapTransform->mat = XMMatrixOrthographicOffCenterLH(
 		0, window_width, window_height, 0, 0, 1);
 
-	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
-		XMConvertToRadians(60.0f),				//
-		(float)window_width / window_height,	//
-		0.1f, 1000.0f							//
-	);
+	//XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
+	//	XMConvertToRadians(60.0f),				//
+	//	(float)window_width / window_height,	//
+	//	0.1f, 1000.0f							//
+	//);
 	//constMap->mat = matWorld * matView * matProjection;
 
 
@@ -293,7 +311,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region ルートパラメータの設定
 
-	D3D12_ROOT_PARAMETER rootParams[2] = {};
+	D3D12_ROOT_PARAMETER rootParams[3] = {};
 	//定数用
 	rootParams[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//種類
 	rootParams[0].Descriptor.ShaderRegister = 0;								//デスクリプタレンジ
@@ -304,6 +322,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	rootParams[1].DescriptorTable.pDescriptorRanges = &descRangeSRV;				//デスクリプタレンジ
 	rootParams[1].DescriptorTable.NumDescriptorRanges = 1;						//デスクリプタレンジ数
 	rootParams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
+	//定数バッファ2
+	rootParams[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//種類
+	rootParams[2].Descriptor.ShaderRegister = 1;								//デスクリプタレンジ
+	rootParams[2].Descriptor.RegisterSpace = 0;									//デスクリプタレンジ数
+	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
 
 #pragma endregion ルートパラメータの設定
 
@@ -334,10 +357,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	Vertex vertices[] = {
 		//    x       y      z      u    v
 		//前
-		{{-0.5, -0.5, 0},{0.0f, 1.0f}},	//左下
-		{{-0.5, +0.5, 0},{0.0f, 0.0f}},	//左上
-		{{+0.5, -0.5, 0},{1.0f, 1.0f}},	//右下
-		{{+0.5, +0.5, 0},{1.0f, 0.0f}},	//右上
+		{{-5, -5, 0},{0.0f, 1.0f}},	//左下
+		{{-5, +5, 0},{0.0f, 0.0f}},	//左上
+		{{+5, -5, 0},{1.0f, 1.0f}},	//右下
+		{{+5, +5, 0},{1.0f, 0.0f}},	//右上
 		////後
 		//{{-5, -5, +5},{0.0f, 1.0f}},	//左下
 		//{{-5, +5, +5},{0.0f, 0.0f}},	//左上
@@ -906,13 +929,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		dx12->commandList->SetDescriptorHeaps(1, &srvHeap);
 		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
 		dx12->commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+		dx12->commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
 
 #pragma endregion 定数バッファビューの設定コマンド
 
 	#pragma region 描画コマンド
 		dx12->commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
-#pragma endregion 描画コマンド
-
 #pragma endregion 描画コマンド
 
 #pragma region DirectX毎フレームの処理 後

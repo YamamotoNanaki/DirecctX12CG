@@ -6,6 +6,7 @@
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
 #include <dinput.h>
+#include <DirectXTex.h>
 
 #define DIRECTINPUT_VERSION	0x0800		//DirectInputのバージョン指定
 
@@ -38,8 +39,8 @@ struct Vertex
 //ウィンドウプロシージャ
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
-{
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,
+	_In_ int nCmdShow) {
 
 	//--- ウインドウの生成処理 -----------------------------------------------------//
 
@@ -323,19 +324,40 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	#pragma region 画像イメージデータの作成
 
-	const size_t textureWidth = 256;
-	const size_t textureHeight = 256;
-	const size_t imageDataCount = textureWidth * textureHeight;
+	//WICテクスチャのロード
+	TexMetadata metadata{};
+	ScratchImage scratchImg{};
 
-	XMFLOAT4* imageData = new XMFLOAT4[imageDataCount];
+	result = LoadFromWICFile(
+		L"Resources/texture.png",			//Data\Resources\texture.pngを指定
+		WIC_FLAGS_NONE, &metadata, scratchImg);
 
-		for (int i = 0; i < imageDataCount; i++)
-		{
-			imageData[i].x = 1.0f;
-			imageData[i].y = 0.0f;
-			imageData[i].z = 0.0f;
-			imageData[i].w = 1.0f;
-		}
+	ScratchImage mipChain{};
+	result = GenerateMipMaps(
+		scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(), TEX_FILTER_DEFAULT, 0, mipChain);
+	if (SUCCEEDED(result))
+	{
+		scratchImg = move(mipChain);
+		metadata = scratchImg.GetMetadata();
+	}
+
+	metadata.format = MakeSRGB(metadata.format);
+
+	//const Image* img = scratchImg.GetImage(0, 0, 0);	//生データ抽出
+
+	//const size_t textureWidth = 256;
+	//const size_t textureHeight = 256;
+	//const size_t imageDataCount = textureWidth * textureHeight;
+
+	//XMFLOAT4* imageData = new XMFLOAT4[imageDataCount];
+
+	//	for (int i = 0; i < imageDataCount; i++)
+	//	{
+	//		imageData[i].x = 1.0f;
+	//		imageData[i].y = 0.0f;
+	//		imageData[i].z = 0.0f;
+	//		imageData[i].w = 1.0f;
+	//	}
 #pragma endregion 画像イメージデータの作成
 
 	#pragma region テクスチャバッファの生成
@@ -345,24 +367,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		texHeapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 		texHeapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
 
-		D3D12_RESOURCE_DESC texresDesc{};		//テクスチャ設定
-		texresDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	//2dテクスチャ用
-		texresDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;			//RGBAフォーマット
-		texresDesc.Width = textureWidth;			//幅
-		texresDesc.Height = textureHeight;			//高さ
-		texresDesc.DepthOrArraySize = 1;
-		texresDesc.MipLevels = 1;
-		texresDesc.SampleDesc.Count = 1;
+		//D3D12_RESOURCE_DESC texresDesc{};		//テクスチャ設定
+		//texresDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	//2dテクスチャ用
+		//texresDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;			//RGBAフォーマット
+		//texresDesc.Width = textureWidth;			//幅
+		//texresDesc.Height = textureHeight;			//高さ
+		//texresDesc.DepthOrArraySize = 1;
+		//texresDesc.MipLevels = 1;
+		//texresDesc.SampleDesc.Count = 1;
 
 		//画像読み込み
-		//D3D12_RESOURCE_DESC texresDesc{};		//テクスチャ設定
+		D3D12_RESOURCE_DESC texresDesc{};		//テクスチャ設定
 		//texresDesc.Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(metadata.dimension);
-		//texresDesc.Format = metadata.format;
-		//texresDesc.Width = metadata.width;			//幅
-		//texresDesc.Height = (UINT)metadata.height;	//高さ
-		//texresDesc.DepthOrArraySize = (UINT16)metadata.arraySize;
-		//texresDesc.MipLevels = (UINT16)metadata.mipLevels;
-		//texresDesc.SampleDesc.Count = 1;
+		texresDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		texresDesc.Format = metadata.format;
+		texresDesc.Width = metadata.width;			//幅
+		texresDesc.Height = (UINT)metadata.height;	//高さ
+		texresDesc.DepthOrArraySize = (UINT16)metadata.arraySize;
+		texresDesc.MipLevels = (UINT16)metadata.mipLevels;
+		texresDesc.SampleDesc.Count = 1;
 
 		ID3D12Resource* texbuff = nullptr;
 		result = device->CreateCommittedResource(		//GPUリソースの生成
@@ -376,20 +399,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion テクスチャバッファの生成
 
 	#pragma region テクスチャバッファへのデータ転送
-
-		//テクスチャバッファにデータ転送
-		result = texbuff->WriteToSubresource(
-			0,
-			nullptr,				//全領域へコピー
-			imageData,			//元データアドレス
-			sizeof(XMFLOAT4) * textureWidth,
-			sizeof(XMFLOAT4) * imageDataCount
-			//(UINT)img->rowPitch,	//1ラインサイズ
-			//(UINT)img->slicePitch	//1枚サイズ
-		);
+		
+		for (size_t i = 0; i < metadata.mipLevels; i++)
+		{
+			const Image* img = scratchImg.GetImage(i, 0, 0);
+			//テクスチャバッファにデータ転送
+			result = texbuff->WriteToSubresource(
+				(UINT)i,
+				nullptr,				//全領域へコピー
+				img->pixels,			//元データアドレス
+				//sizeof(XMFLOAT4) * textureWidth,
+				//sizeof(XMFLOAT4) * imageDataCount
+				(UINT)img->rowPitch,	//1ラインサイズ
+				(UINT)img->slicePitch	//1枚サイズ
+			);
+			assert(SUCCEEDED(result));
+		}
 
 		//元データ解放（忘れずに解放）
-		delete[] imageData;
+		//delete[] imageData;
 
 #pragma endregion テクスチャバッファへのデータ転送
 
@@ -410,26 +438,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = srvHeap->GetCPUDescriptorHandleForHeapStart();
 #pragma endregion デスクリプタヒープ生成
-
-	//------------------------
-
-	#pragma region シェーダーリソースビュー
-
-		//シェーダリソースビュー設定
-		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};			//設定構造体
-		srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;	//RGBA
-		//srvDesc.Format = metadata.format;					//画像読み込み
-		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;		//2dテクスチャ
-		srvDesc.Texture2D.MipLevels = 1;
-
-		//ヒープの２番目にシェーダーリソースビュー作成
-		device->CreateShaderResourceView(
-			texbuff,		//ビューと関連付けるバッファ
-			&srvDesc,		//テクスチャ設定情報
-			srvHandle);
-
-#pragma endregion シェーダーリソースビュー
 
 	//-------------------------
 
@@ -608,6 +616,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	assert(SUCCEEDED(result));
 
 #pragma endregion 頂点バッファの確保
+
+	//------------------------
+
+	#pragma region シェーダーリソースビュー
+
+	//シェーダリソースビュー設定
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};			//設定構造体
+	//srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;	//RGBA
+	srvDesc.Format = resDesc.Format;					//画像読み込み
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;		//2dテクスチャ
+	srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
+
+	//ヒープの２番目にシェーダーリソースビュー作成
+	device->CreateShaderResourceView(
+		texbuff,		//ビューと関連付けるバッファ
+		&srvDesc,		//テクスチャ設定情報
+		srvHandle);
+
+#pragma endregion シェーダーリソースビュー
 
 	//---------------------------
 

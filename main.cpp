@@ -822,6 +822,50 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	pipelineDesc.NumRenderTargets = 1; // 描画対象は1つ
 	pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 0～255指定のRGBA
 	pipelineDesc.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc1{};
+
+	pipelineDesc1.VS.pShaderBytecode = vsBlob->GetBufferPointer();
+	pipelineDesc1.VS.BytecodeLength = vsBlob->GetBufferSize();
+	pipelineDesc1.PS.pShaderBytecode = psBlob->GetBufferPointer();
+	pipelineDesc1.PS.BytecodeLength = psBlob->GetBufferSize();
+
+		#pragma region デプスステンシルステートの設定
+
+	////デプスステンシルステートの設定
+	//pipelineDesc.DepthStencilState.DepthEnable = true;		//深度テストを行う
+	//pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	//書き込み許可
+	//pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	//pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;		//深度値フォーマット
+
+		#pragma endregion デプスステンシルステートの設定
+
+	pipelineDesc1.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
+	pipelineDesc1.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;  // カリングしない
+	pipelineDesc1.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME; // ポリゴン内塗りつぶし
+	pipelineDesc1.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
+
+	//ブレンド設定
+	//pipelineDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;  // RBGA全てのチャンネルを描画
+	D3D12_RENDER_TARGET_BLEND_DESC& blenddesc1 = pipelineDesc1.BlendState.RenderTarget[0];
+	blenddesc1.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	blenddesc1.BlendEnable = true;						//ブレンドを有効にする
+	blenddesc1.BlendOpAlpha = D3D12_BLEND_OP_ADD;		//加算
+	blenddesc1.SrcBlendAlpha = D3D12_BLEND_ONE;			//ソースの値を100%使う
+	blenddesc1.DestBlendAlpha = D3D12_BLEND_ZERO;		//デストの値を  0%使う
+
+	blenddesc1.BlendOp = D3D12_BLEND_OP_ADD;				//加算
+	blenddesc1.SrcBlend = D3D12_BLEND_SRC_ALPHA;			//ソースのアルファ値
+	blenddesc1.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;	//1.0f-ソースのアルファ値
+
+	pipelineDesc1.InputLayout.pInputElementDescs = inputLayout;
+	pipelineDesc1.InputLayout.NumElements = _countof(inputLayout);
+
+	pipelineDesc1.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+	pipelineDesc1.NumRenderTargets = 1; // 描画対象は1つ
+	pipelineDesc1.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 0～255指定のRGBA
+	pipelineDesc1.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 
 #pragma endregion グラフィックスパイプライン設定
 
@@ -866,6 +910,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	// パイプラインにルートシグネチャをセット
 	pipelineDesc.pRootSignature = rootsignature;
+	pipelineDesc1.pRootSignature = rootsignature;
 #pragma endregion ルートシグネチャの設定
 
 	//----------------------
@@ -873,6 +918,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	#pragma region パイプラインステートの生成
 	ID3D12PipelineState* pipelinestate = nullptr;
 	result = device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelinestate));
+	ID3D12PipelineState* pipelinestate1 = nullptr;
+	result = device->CreateGraphicsPipelineState(&pipelineDesc1, IID_PPV_ARGS(&pipelinestate1));
 	assert(SUCCEEDED(result));
 #pragma endregion パイプラインステートの生成
 
@@ -892,9 +939,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion DirectInput
 
 	float clearColor[] = { 0.1f, 0.25f, 0.5f, 0.0f }; // 青っぽい色
+	bool flag1 = false;
+	bool flag2 = false;
 	//-----------------------
-
-
 
 	while (!key[DIK_ESCAPE])
 	{
@@ -938,6 +985,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			clearColor[0] = 0.1f;
 		}
 
+		if (key[DIK_2] && !oldkey[DIK_2]) 
+		{
+			flag2 = !flag2;
+		}
 
 #pragma region DirectX毎フレームの処理 前
 
@@ -979,15 +1030,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	#pragma region ビューポート設定コマンド
 		D3D12_VIEWPORT viewport{};
 
-		viewport.Width = window_width;
-		viewport.Height = window_height;
+		viewport.Width = 400;
+		viewport.Height = 500;
 		viewport.TopLeftX = 0;
 		viewport.TopLeftY = 0;
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 
 		commandList->RSSetViewports(1, &viewport);
-#pragma endregion ビューポート設定コマンド5
+		D3D12_VIEWPORT viewport1{};
+
+		viewport1.Width = window_width-500;
+		viewport1.Height = 300;
+		viewport1.TopLeftX = 400;
+		viewport1.TopLeftY = 0;
+		viewport1.MinDepth = 0.0f;
+		viewport1.MaxDepth = 1.0f;
+
+		D3D12_VIEWPORT viewport2{};
+
+		viewport2.Width = 400;
+		viewport2.Height = window_height-500;
+		viewport2.TopLeftX = 0;
+		viewport2.TopLeftY = 500;
+		viewport2.MinDepth = 0.0f;
+		viewport2.MaxDepth = 1.0f;
+
+		D3D12_VIEWPORT viewport3{};
+
+		viewport3.Width = window_width-400;
+		viewport3.Height = window_height-500;
+		viewport3.TopLeftX = 400;
+		viewport3.TopLeftY = 300;
+		viewport3.MinDepth = 0.0f;
+		viewport3.MaxDepth = 1.0f;
+
+#pragma endregion ビューポート設定コマンド
 
 	#pragma region シザー矩形の設定コマンド
 		D3D12_RECT scissorrect{};
@@ -1001,7 +1079,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion シザー矩形の設定コマンド
 
 	#pragma region パイプラインステート
-		commandList->SetPipelineState(pipelinestate);
+		if (flag2 == false)
+		{
+			commandList->SetPipelineState(pipelinestate);
+		}
+		else
+		{
+			commandList->SetPipelineState(pipelinestate1);
+		}
 		commandList->SetGraphicsRootSignature(rootsignature);
 
 		////デスクリプタヒープを設定
@@ -1023,7 +1108,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion パイプラインステート
 
 	#pragma region プリミティブ形状
-		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		if (key[DIK_1] && !oldkey[DIK_1])flag1 = !flag1;
+
+		if (flag1 == false)
+		{
+			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		}
+		else
+		{
+			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		}
+
+
 #pragma endregion プリミティブ形状
 
 	#pragma region 頂点バッファビューの設定コマンド
@@ -1044,7 +1140,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion 定数バッファビューの設定コマンド
 
 	#pragma region 描画コマンド
-		commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
+		commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
+		commandList->RSSetViewports(1, &viewport1);
+		commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
+		commandList->RSSetViewports(1, &viewport2);
+		commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
+		commandList->RSSetViewports(1, &viewport3);
+		commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
 #pragma endregion 描画コマンド
 
 #pragma endregion 描画コマンド

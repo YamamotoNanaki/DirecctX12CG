@@ -134,16 +134,32 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1);					//RGBAで半透明の赤
 	constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
 
+#pragma endregion 定数バッファにデータを転送する
+
+	//----------------------
+
+	#pragma region ビュー行列
+
+	XMMATRIX matView;
+	XMFLOAT3 eye(0, 0, -100);
+	XMFLOAT3 target(0, 0, 0);
+	XMFLOAT3 up(0, 1, 0);
+	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+
+#pragma endregion ビュー行列
+
+	//------------------------
+
+	#pragma region ワールド行列
+
 	//行列
 	constMapTransform->mat = XMMatrixIdentity();	//単位行列
 	constMapTransform->mat = XMMatrixOrthographicOffCenterLH(0, window_width, window_height, 0, 0, 1);
 
 	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
 		XMConvertToRadians(45.0f), (float)window_width / window_height, 0.1f, 1000.0f);
-	constMapTransform->mat = /*matWorld * matView **/ matProjection;
-
-
-#pragma endregion 定数バッファにデータを転送する
+	constMapTransform->mat = /*matWorld * */ matView * matProjection;
+#pragma endregion ワールド行列
 
 	//-------------------------
 
@@ -306,10 +322,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	Vertex vertices[] = {
 		//    x       y      z      u    v
 		//前
-		{{-50, -50, +50},{0.0f, 1.0f}},	//左下
-		{{-50, +50, +50},{0.0f, 0.0f}},	//左上
-		{{+50, -50, +50},{1.0f, 1.0f}},	//右下
-		{{+50, +50, +50},{1.0f, 0.0f}},	//右上
+		{{-50, -50, +0},{0.0f, 1.0f}},	//左下
+		{{-50, +50, +0},{0.0f, 0.0f}},	//左上
+		{{+50, -50, +0},{1.0f, 1.0f}},	//右下
+		{{+50, +50, +0},{1.0f, 0.0f}},	//右上
 		////後
 		//{{-5, -5, +5},{0.0f, 1.0f}},	//左下
 		//{{-5, +5, +5},{0.0f, 0.0f}},	//左上
@@ -683,7 +699,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//変数宣言
 	//-----------------------
 
-	float clearColor[] = { 0.1f, 0.25f, 0.5f, 0.0f }; // 青っぽい色
+	float angle = 0.0f;
 	//-----------------------
 
 
@@ -713,16 +729,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion DirectInput
 
 
-		if (key->Down(SPACE))
+		if (key->Down(kD) || key->Down(kA))
 		{
-			clearColor[0] = 0.5f;
-			clearColor[2] = 0.1f;
+			if (key->Down(kD))angle += XMConvertToRadians(1.0f);
+			if (key->Down(kA))angle -= XMConvertToRadians(1.0f);
+
+			eye.x = -100 * sinf(angle);
+			eye.z = -100 * cosf(angle);
+
+			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 		}
-		else
-		{
-			clearColor[2] = 0.5f;
-			clearColor[0] = 0.1f;
-		}
+
+		constMapTransform->mat = /*matWorld **/ matView * matProjection;
 
 
 #pragma region DirectX毎フレームの処理 前
@@ -752,7 +770,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region 画面クリア
 		// 3．画面クリア           R     G     B    A
-		
+		float clearColor[4] = {0.1f ,0.25f ,0.5f ,1.0f};
 
 		dx12->commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 		/*cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);*/

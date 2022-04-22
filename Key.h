@@ -1,5 +1,6 @@
 #pragma once
 #include <dinput.h>
+#include "DxWindow.h"
 
 #pragma region マクロ
 #define k0		DIK_0
@@ -43,7 +44,7 @@ typedef unsigned short KeyCode;
 class Key
 {
 private:
-	KeyCode key[256], oldkey[256];
+	char key[256], oldkey[256];
 	IDirectInput8* directInput = nullptr;
 	IDirectInputDevice8* keyboard = nullptr;
 public:
@@ -54,7 +55,7 @@ public:
 	/// <param name="result"></param>
 	/// <param name="w"></param>
 	/// <param name="hwnd"></param>
-	Key(HRESULT& result, HINSTANCE hInstance, HWND hwnd);
+	Key(HRESULT& result, HINSTANCE& hInstance, HWND& hwnd);
 	/// <summary>
 	/// キーボード情報のアップデート
 	/// </summary>

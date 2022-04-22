@@ -35,13 +35,3 @@ DxWindow::~DxWindow()
 {
 	UnregisterClass(w.lpszClassName, w.hInstance);
 }
-
-HWND DxWindow::GetHwnd() const
-{
-	return hwnd;
-}
-
-HINSTANCE DxWindow::GetHinstance() const
-{
-	return w.hInstance;
-}

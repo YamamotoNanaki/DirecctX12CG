@@ -48,9 +48,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	//--- ウインドウの生成処理 -----------------------------------------------------//
 
-// コンソールヘの文字出力
-//OutputDebugStringA("Hello,DirectX!!\n");
-
 // ウィンドウの生成（前処理）
 #pragma region ウィンドウの生成（前処理）
 
@@ -80,9 +77,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	HRESULT result;
 
-	Dx12* dx12 = new Dx12(result, win->GetHwnd(), window_width, window_height);
+	Dx12* dx12 = new Dx12(result, win->hwnd, window_width, window_height);
 
-	Key* key = new Key(result, win->GetHinstance(), win->GetHwnd());
+	Key* key = new Key(result, win->w.hInstance, win->hwnd);
 
 
 #pragma region 描画初期化
@@ -139,15 +136,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	//行列
 	constMapTransform->mat = XMMatrixIdentity();	//単位行列
-	constMapTransform->mat = XMMatrixOrthographicOffCenterLH(
-		0, window_width, window_height, 0, 0, 1);
+	constMapTransform->mat = XMMatrixOrthographicOffCenterLH(0, window_width, window_height, 0, 0, 1);
 
-	//XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
-	//	XMConvertToRadians(60.0f),				//
-	//	(float)window_width / window_height,	//
-	//	0.1f, 1000.0f							//
-	//);
-	//constMap->mat = matWorld * matView * matProjection;
+	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
+		XMConvertToRadians(45.0f), (float)window_width / window_height, 0.1f, 1000.0f);
+	constMapTransform->mat = /*matWorld * matView **/ matProjection;
 
 
 #pragma endregion 定数バッファにデータを転送する
@@ -309,38 +302,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//-----------------------
 	//頂点
 	#pragma region 頂点データー
-
-	/*XMFLOAT3 vertices[] = {
-		{ -0.5f, -0.5f, 0.0f },
-		{ -0.5f, +0.5f, 0.0f },
-		{ +0.5f, -0.5f, 0.0f },
-		{ +0.5f, +0.5f, 0.0f },
-	};
-
-	uint16_t indices[] = 
-	{
-		0,1,2,
-		1,2,3,
-	};
-
-	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));*/
-
-	/*const float radius = 0.5f;
-	const float radius2 = 0.25f;
-	const int DIV = 10;*/
-
 	//頂点データ
 	Vertex vertices[] = {
 		//    x       y      z      u    v
 		//前
-		//{{-5, -5, 0},{0.0f, 1.0f}},	//左下
-		//{{-5, +5, 0},{0.0f, 0.0f}},	//左上
-		//{{+5, -5, 0},{1.0f, 1.0f}},	//右下
-		//{{+5, +5, 0},{1.0f, 0.0f}},	//右上
-		{{100, 100, 0},{0.0f, 1.0f}},	//左下
-		{{100, 200, 0},{0.0f, 0.0f}},	//左上
-		{{200, 100, 0},{1.0f, 1.0f}},	//右下
-		{{200, 200, 0},{1.0f, 0.0f}},	//右上
+		{{-50, -50, +50},{0.0f, 1.0f}},	//左下
+		{{-50, +50, +50},{0.0f, 0.0f}},	//左上
+		{{+50, -50, +50},{1.0f, 1.0f}},	//右下
+		{{+50, +50, +50},{1.0f, 0.0f}},	//右上
 		////後
 		//{{-5, -5, +5},{0.0f, 1.0f}},	//左下
 		//{{-5, +5, +5},{0.0f, 0.0f}},	//左上
@@ -372,7 +341,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	unsigned short indices[] = {
 		//
 		0,1,2,
-		1,2,3,
+		2,1,3,
 		////
 		//4,5,6,
 		//5,6,7,
@@ -389,42 +358,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		//20,21,22,
 		//21,22,23
 	};
-
-	//XMFLOAT3 vertices[DIV + 1] = {
-	//	{0,0,0},
-	//};
-
-	////星
-	//for (int i = 0; i < DIV; i++)
-	//{
-	//	if (i % 2 == 0)
-	//	{
-	//		vertices[i].x = radius * sinf(2 * XM_PI / DIV * i);
-	//		vertices[i].y = radius * cosf(2 * XM_PI / DIV * i);
-	//		vertices[i].z = 0;
-	//	}
-	//	else
-	//	{
-	//		vertices[i].x = radius2 * sinf(2 * XM_PI / DIV * i);
-	//		vertices[i].y = radius2 * cosf(2 * XM_PI / DIV * i);
-	//		vertices[i].z = 0;
-	//	}
-	//}
-	//vertices[DIV] = { 0,0,0 };
-	//
-	//unsigned short indices[DIV * 3] =
-	//{
-	//	0,0,0
-	//};
-
-	//インデックスデータ
-	//for (int i = 0; i < DIV; i++)
-	//{
-	//	indices[i * 3] = i;
-	//	indices[i * 3 + 1] = i + 1;
-	//	indices[i * 3 + 2] = DIV;
-	//}
-	//indices[DIV * 3 - 2] = 0;
 
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
 	UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * _countof(vertices));
@@ -755,7 +688,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 
 
-	while (!key->Triggere(ESC))
+	while (!key->Down(ESC))
 	{
 #pragma region メッセージ
 		// メッセージがある？
@@ -826,8 +759,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion 画面クリア
 
 #pragma endregion DirectX毎フレームの処理 前
-
-#pragma region 描画コマンド
 
 	#pragma region ビューポート設定コマンド
 		D3D12_VIEWPORT viewport{};
@@ -944,6 +875,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion DirectX毎フレームの処理 後
 	}
 
+	delete key;
 	delete win;
 
 	return 0;

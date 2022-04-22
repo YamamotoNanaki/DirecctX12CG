@@ -3,7 +3,7 @@
 
 #define DIRECTINPUT_VERSION	0x0800		//DirectInputのバージョン指定
 
-Key::Key(HRESULT& result, HINSTANCE hInstance, HWND hwnd)
+Key::Key(HRESULT& result, HINSTANCE& hInstance, HWND& hwnd)
 {
 	result = DirectInput8Create(
 		hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
@@ -34,7 +34,6 @@ void Key::Update(HRESULT& result)
 	for (int i = 0; i < 256; i++)
 	{
 		oldkey[i] = key[i];
-		key[i] = 0;
 	}
 	keyboard->Acquire();
 	result = keyboard->GetDeviceState(sizeof(key), key);

@@ -147,6 +147,7 @@
     <ClCompile Include="DxWindow.cpp" />
     <ClCompile Include="Key.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicPS.hlsl">
@@ -169,6 +170,8 @@
     <ClInclude Include="Dx12.h" />
     <ClInclude Include="DxWindow.h" />
     <ClInclude Include="Key.h" />
+    <ClInclude Include="Rand.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

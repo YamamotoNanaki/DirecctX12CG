@@ -3,15 +3,13 @@
 
 class DxWindow
 {
-private:
+public:
 	WNDCLASSEX w{}; // ウィンドウクラスの設定
 	HWND hwnd;
 
 public:
 	DxWindow(int window_width, int window_height);
 	~DxWindow();
-	HWND GetHwnd()const;
-	HINSTANCE GetHinstance()const;
 	
 	//ウィンドウプロシージャ
 	static LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

@@ -80,4 +80,12 @@ public:
 	/// <param name="keyCode">判定を取りたいキーのマクロ</param>
 	/// <returns></returns>
 	bool Release(KeyCode keyCode);
+
+	enum Type
+	{
+		OR,
+		AND,
+	};
+
+	bool Judge(KeyCode a[], int max,int Type);
 };

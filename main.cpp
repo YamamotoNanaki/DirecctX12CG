@@ -134,6 +134,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1);					//RGBAで半透明の赤
 	constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
 
+	//行列
+	constMapTransform->mat = XMMatrixIdentity();	//単位行列
+	constMapTransform->mat = XMMatrixOrthographicOffCenterLH(0, window_width, window_height, 0, 0, 1);
+
 #pragma endregion 定数バッファにデータを転送する
 
 	//----------------------
@@ -148,17 +152,49 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma endregion ビュー行列
 
-	//------------------------
-
-	#pragma region ワールド行列
-
-	//行列
-	constMapTransform->mat = XMMatrixIdentity();	//単位行列
-	constMapTransform->mat = XMMatrixOrthographicOffCenterLH(0, window_width, window_height, 0, 0, 1);
+	#pragma region 射影行列
 
 	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
 		XMConvertToRadians(45.0f), (float)window_width / window_height, 0.1f, 1000.0f);
-	constMapTransform->mat = /*matWorld * */ matView * matProjection;
+
+#pragma endregion 射影行列
+
+	#pragma region ワールド行列
+
+	XMMATRIX matWorld;
+	matWorld = XMMatrixIdentity();
+		#pragma region スケーリング
+
+	XMMATRIX matScale;		//スケーリング行列
+	matScale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	matWorld *= matScale;	//ワールド行列にスケーリングを反映
+
+		#pragma endregion スケーリング
+
+		#pragma region 回転
+
+	XMMATRIX matRot;		//回転行列
+	matRot = XMMatrixIdentity();
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(0));	//Z軸まわりに45度回転
+	matRot *= XMMatrixRotationX(XMConvertToRadians(0));	//X軸まわりに45度回転
+	matRot *= XMMatrixRotationY(XMConvertToRadians(0));	//Y軸まわりに45度回転
+	matWorld *= matRot;		//ワールド行列に回転を反映
+
+		#pragma endregion 回転
+
+		#pragma region 平行移動
+
+	XMMATRIX matTrans;	//平行移動行列
+	matTrans = XMMatrixTranslation(0, 0, 0);	//(50,0,0)平行移動
+	matWorld *= matTrans;	//ワールド行列に平行移動を反映
+
+	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
+	XMFLOAT3 rotation = { 0.0f,0.0f,0.0f };
+	XMFLOAT3 position = { 0.0f,0.0f,0.0f };		//座標を変数として持つ
+
+		#pragma endregion 平行移動
+
+	constMapTransform->mat = matWorld * matView * matProjection;
 #pragma endregion ワールド行列
 
 	//-------------------------
@@ -740,7 +776,40 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 		}
 
-		constMapTransform->mat = /*matWorld **/ matView * matProjection;
+		KeyCode code[4] = { RIGHT,LEFT,UP,DOWN };
+		if (key->Judge(code, 4, key->OR))
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				//右
+				if (key->Down(RIGHT))
+				{
+					position.x += 1;
+				}
+				//左
+				if (key->Down(LEFT))
+				{
+					position.x -= 1;
+				}
+				//上
+				if (key->Down(UP))
+				{
+					position.z += 1;
+				}
+				//下
+				if (key->Down(DOWN))
+				{
+					position.z -= 1;
+				}
+			}
+
+			matTrans = XMMatrixTranslation(position.x, position.y, position.z);	//平行移動行列を再計算
+			matWorld = XMMatrixIdentity();		//ワールド行列は毎フレーム
+			matWorld *= matTrans;				//ワールド行列に平行移動を反映
+
+		}
+
+		constMapTransform->mat = matWorld * matView * matProjection;
 
 
 #pragma region DirectX毎フレームの処理 前

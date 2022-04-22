@@ -53,3 +53,21 @@ bool Key::Release(KeyCode keyCode)
 {
 	return !key[keyCode] && oldkey[keyCode];
 }
+
+bool Key::Judge(KeyCode a[],int max, int Type)
+{
+	if (Type != AND && Type != OR)return false;
+	for (int i = 0; i < max; i++)
+	{
+		if (Down(a[i]))
+		{
+			if (Type == OR)return true;
+		}
+		else
+		{
+			if (Type == AND)return false;
+		}
+	}
+	if (Type == OR)return false;
+	return true;
+}

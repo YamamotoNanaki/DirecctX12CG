@@ -2,43 +2,6 @@
 #include <dinput.h>
 #include "DxWindow.h"
 
-#pragma region マクロ
-#define k0		DIK_0
-#define k1		DIK_1
-#define k2		DIK_2
-#define k3		DIK_3
-#define k4		DIK_4
-#define k5		DIK_5
-#define k6		DIK_6
-#define k7		DIK_7
-#define k8		DIK_8
-#define k9		DIK_9
-#define kQ		DIK_Q
-#define kW		DIK_W
-#define kE		DIK_E
-#define kR		DIK_R
-#define kA		DIK_A
-#define kS		DIK_S
-#define kD		DIK_D
-#define kF		DIK_F
-#define kZ		DIK_Z
-#define kX		DIK_X
-#define kC		DIK_C
-#define kV		DIK_V
-#define SPACE	DIK_SPACE
-#define ENTER	DIK_RETURN
-#define ESC		DIK_ESCAPE
-#define LSHIFT	DIK_LSHIFT
-#define LCTRL	DIK_LCONTROL
-#define TAB		DIK_TAB
-#define UP		DIK_UP
-#define DOWN	DIK_DOWN
-#define LEFT	DIK_LEFT
-#define RIGHT	DIK_RIGHT
-#define BACK	DIK_BACKSPACE
-#define LALT	DIK_LALT
-#pragma endregion マクロ
-
 typedef unsigned short KeyCode;
 
 class Key
@@ -48,6 +11,48 @@ private:
 	IDirectInput8* directInput = nullptr;
 	IDirectInputDevice8* keyboard = nullptr;
 public:
+
+	enum KEYCODE
+	{
+		key0 = DIK_0,
+		key1 = DIK_1,
+		key2 = DIK_2,
+		key3 = DIK_3,
+		key4 = DIK_4,
+		key5 = DIK_5,
+		key6 = DIK_6,
+		key7 = DIK_7,
+		key8 = DIK_8,
+		key9 = DIK_9,
+		Q = DIK_Q,
+		W = DIK_W,
+		E = DIK_E,
+		R = DIK_R,
+		A = DIK_A,
+		S = DIK_S,
+		D = DIK_D,
+		F = DIK_F,
+		Z = DIK_Z,
+		X = DIK_X,
+		C = DIK_C,
+		V = DIK_V,
+		SPACE = DIK_SPACE,
+		ENTER = DIK_RETURN,
+		ESC = DIK_ESCAPE,
+		LSHIFT = DIK_LSHIFT,
+		LCTRL = DIK_LCONTROL,
+		TAB = DIK_TAB,
+		UP = DIK_UP,
+		DOWN = DIK_DOWN,
+		LEFT = DIK_LEFT,
+		RIGHT = DIK_RIGHT,
+		BACK = DIK_BACKSPACE,
+		LALT = DIK_LALT
+	};
+
+	const KeyCode Arrow[4] = { LEFT,RIGHT,UP,DOWN };
+	const KeyCode WASD[4] = { W,A,S,D };
+
 	/// <summary>
 	/// インストラクタ
 	/// キーボード入力の初期化
@@ -87,5 +92,5 @@ public:
 		AND,
 	};
 
-	bool Judge(KeyCode a[], int max,int Type);
+	bool Judge(const KeyCode a[], int max, int Type);
 };

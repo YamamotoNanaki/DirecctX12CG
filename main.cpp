@@ -740,7 +740,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 
 
-	while (!key->Down(ESC))
+	while (!key->Down(key->ESC))
 	{
 #pragma region メッセージ
 		// メッセージがある？
@@ -765,49 +765,55 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion DirectInput
 
 
-		if (key->Down(kD) || key->Down(kA))
+		/*if (key->Down(key->D) || key->Down(key->A))
 		{
-			if (key->Down(kD))angle += XMConvertToRadians(1.0f);
-			if (key->Down(kA))angle -= XMConvertToRadians(1.0f);
+			if (key->Down(key->D))angle += XMConvertToRadians(1.0f);
+			if (key->Down(key->A))angle -= XMConvertToRadians(1.0f);
 
 			eye.x = -100 * sinf(angle);
 			eye.z = -100 * cosf(angle);
+		}*/
 
-			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-		}
+		eye.z -= 1;
 
-		KeyCode code[4] = { RIGHT,LEFT,UP,DOWN };
-		if (key->Judge(code, 4, key->OR))
+		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+
+		if (key->Judge(key->Arrow, 4, key->OR))
 		{
 			for (int i = 0; i < 4; i++)
 			{
 				//右
-				if (key->Down(RIGHT))
+				if (key->Down(key->RIGHT))
 				{
 					position.x += 1;
 				}
 				//左
-				if (key->Down(LEFT))
+				if (key->Down(key->LEFT))
 				{
 					position.x -= 1;
 				}
 				//上
-				if (key->Down(UP))
+				if (key->Down(key->UP))
 				{
 					position.z += 1;
 				}
 				//下
-				if (key->Down(DOWN))
+				if (key->Down(key->DOWN))
 				{
 					position.z -= 1;
 				}
 			}
 
-			matTrans = XMMatrixTranslation(position.x, position.y, position.z);	//平行移動行列を再計算
-			matWorld = XMMatrixIdentity();		//ワールド行列は毎フレーム
-			matWorld *= matTrans;				//ワールド行列に平行移動を反映
 
 		}
+
+		matTrans = XMMatrixTranslation(position.x, position.y, position.z);	//平行移動行列を再計算
+		matRot *= XMMatrixRotationZ(XMConvertToRadians(0.5f));
+
+		matWorld = XMMatrixIdentity();		//ワールド行列は毎フレームリセット
+
+		matWorld *= matTrans;				//ワールド行列に平行移動を反映
+		matWorld *= matRot;
 
 		constMapTransform->mat = matWorld * matView * matProjection;
 

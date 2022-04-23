@@ -84,6 +84,63 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma region 描画初期化
 
+	#pragma region 深度バッファのリソース設定
+
+	//リソース設定
+	D3D12_RESOURCE_DESC depthResDesc{};
+	depthResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	depthResDesc.Width = window_width;			//レンダーターゲットに合わせる
+	depthResDesc.Height = window_height;		//レンダーターゲットに合わせる
+	depthResDesc.DepthOrArraySize = 1;
+	depthResDesc.Format = DXGI_FORMAT_D32_FLOAT;	//深度値フォーマット
+	depthResDesc.SampleDesc.Count = 1;
+	depthResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;	//デプスステンシル
+
+	//深度地用ヒーププロパティ
+	D3D12_HEAP_PROPERTIES depthHeapProp{};
+	depthHeapProp.Type = D3D12_HEAP_TYPE_DEFAULT;
+	//深度地のクリアを設定
+	D3D12_CLEAR_VALUE depthClearValue{};
+	depthClearValue.DepthStencil.Depth = 1.0f;			//深度値1(最大値)でクリア
+	depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;		//深度値フォーマット
+
+#pragma endregion 深度バッファのリソース設定
+
+	//------------------------
+
+	#pragma region 深度バッファの生成
+
+//リソース設定
+	ComPtr < ID3D12Resource> depthBuffer = nullptr;
+	result = dx12->device->CreateCommittedResource(
+		&depthHeapProp, D3D12_HEAP_FLAG_NONE, &depthResDesc,
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,					//深度値書き込みに使用
+		&depthClearValue, IID_PPV_ARGS(&depthBuffer));
+
+#pragma endregion 深度バッファの生成
+
+	//---------------------------
+
+	#pragma region デスクリプタヒープの生成(深度)
+
+//深度ビュー用デスクリプタヒープ作成
+	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
+	dsvHeapDesc.NumDescriptors = 1;						//深度ビューは1つ
+	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;	//デプスステンシルビュー
+	ComPtr<ID3D12DescriptorHeap> dsvHeap = nullptr;
+	result = dx12->device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap));
+
+	//深度ビュー作成
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dx12->device->CreateDepthStencilView(
+		depthBuffer.Get(), &dsvDesc, dsvHeap->GetCPUDescriptorHandleForHeapStart());
+
+#pragma endregion デスクリプタヒープの生成(深度)
+
+	//---------------------------
+
 	#pragma region 定数バッファの生成用の設定
 //ヒープ設定
 	D3D12_HEAP_PROPERTIES cbHeapProp{};
@@ -358,35 +415,35 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	Vertex vertices[] = {
 		//    x       y      z      u    v
 		//前
-		{{-50, -50, +0},{0.0f, 1.0f}},	//左下
-		{{-50, +50, +0},{0.0f, 0.0f}},	//左上
-		{{+50, -50, +0},{1.0f, 1.0f}},	//右下
-		{{+50, +50, +0},{1.0f, 0.0f}},	//右上
-		////後
-		//{{-5, -5, +5},{0.0f, 1.0f}},	//左下
-		//{{-5, +5, +5},{0.0f, 0.0f}},	//左上
-		//{{+5, -5, +5},{1.0f, 1.0f}},	//右下
-		//{{+5, +5, +5},{1.0f, 0.0f}},	//右上
-		////左
-		//{{-5, -5, -5},{0.0f, 1.0f}},	//左下
-		//{{-5, -5, +5},{0.0f, 0.0f}},	//左上
-		//{{-5, +5, -5},{1.0f, 1.0f}},	//右下
-		//{{-5, +5, +5},{1.0f, 0.0f}},	//右上
-		////右
-		//{{+5, -5, -5},{0.0f, 1.0f}},	//左下
-		//{{+5, -5, +5},{0.0f, 0.0f}},	//左上
-		//{{+5, +5, -5},{1.0f, 1.0f}},	//右下
-		//{{+5, +5, +5},{1.0f, 0.0f}},	//右上
-		////下
-		//{{-5, +5, -5},{0.0f, 1.0f}},	//左下
-		//{{+5, +5, -5},{0.0f, 0.0f}},	//左上
-		//{{-5, +5, +5},{1.0f, 1.0f}},	//右下
-		//{{+5, +5, +5},{1.0f, 0.0f}},	//右上
-		////上
-		//{{-5, -5, -5},{0.0f, 1.0f}},	//左下
-		//{{+5, -5, -5},{0.0f, 0.0f}},	//左上
-		//{{-5, -5, +5},{1.0f, 1.0f}},	//右下
-		//{{+5, -5, +5},{1.0f, 0.0f}},	//右上
+		{{-5, -5, -5},{0.0f, 1.0f}},	//左下
+		{{-5, +5, -5},{0.0f, 0.0f}},	//左上
+		{{+5, -5, -5},{1.0f, 1.0f}},	//右下
+		{{+5, +5, -5},{1.0f, 0.0f}},	//右上
+		//後
+		{{-5, -5, +5},{0.0f, 1.0f}},	//左下
+		{{-5, +5, +5},{0.0f, 0.0f}},	//左上
+		{{+5, -5, +5},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{1.0f, 0.0f}},	//右上
+		//左
+		{{-5, -5, -5},{0.0f, 1.0f}},	//左下
+		{{-5, -5, +5},{0.0f, 0.0f}},	//左上
+		{{-5, +5, -5},{1.0f, 1.0f}},	//右下
+		{{-5, +5, +5},{1.0f, 0.0f}},	//右上
+		//右
+		{{+5, -5, -5},{0.0f, 1.0f}},	//左下
+		{{+5, -5, +5},{0.0f, 0.0f}},	//左上
+		{{+5, +5, -5},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{1.0f, 0.0f}},	//右上
+		//下
+		{{-5, +5, -5},{0.0f, 1.0f}},	//左下
+		{{+5, +5, -5},{0.0f, 0.0f}},	//左上
+		{{-5, +5, +5},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{1.0f, 0.0f}},	//右上
+		//上
+		{{-5, -5, -5},{0.0f, 1.0f}},	//左下
+		{{+5, -5, -5},{0.0f, 0.0f}},	//左上
+		{{-5, -5, +5},{1.0f, 1.0f}},	//右下
+		{{+5, -5, +5},{1.0f, 0.0f}},	//右上
 	};
 
 	//インデックスデータ
@@ -394,21 +451,21 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		//
 		0,1,2,
 		2,1,3,
-		////
-		//4,5,6,
-		//5,6,7,
-		////
-		//8,9,10,
-		//9,10,11,
-		////
-		//12,13,14,
-		//13,14,15,
-		////
-		//16,17,18,
-		//17,18,19,
-		////
-		//20,21,22,
-		//21,22,23
+		//
+		4,5,6,
+		6,5,7,
+		//
+		8,9,10,
+		10,9,11,
+		//
+		12,13,14,
+		14,13,15,
+		//
+		16,17,18,
+		18,17,19,
+		//
+		20,21,22,
+		22,21,23
 	};
 
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
@@ -641,11 +698,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 		#pragma region デプスステンシルステートの設定
 
-	////デプスステンシルステートの設定
-	//pipelineDesc.DepthStencilState.DepthEnable = true;		//深度テストを行う
-	//pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	//書き込み許可
-	//pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-	//pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;		//深度値フォーマット
+	//デプスステンシルステートの設定
+	pipelineDesc.DepthStencilState.DepthEnable = true;		//深度テストを行う
+	pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	//書き込み許可
+	pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;		//深度値フォーマット
 
 		#pragma endregion デプスステンシルステートの設定
 
@@ -740,7 +797,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 
 
-	while (!key->Down(ESC))
+	while (!key->Down(key->ESC))
 	{
 #pragma region メッセージ
 		// メッセージがある？
@@ -765,49 +822,49 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion DirectInput
 
 
-		if (key->Down(kD) || key->Down(kA))
+		if (key->Down(key->D) || key->Down(key->A))
 		{
-			if (key->Down(kD))angle += XMConvertToRadians(1.0f);
-			if (key->Down(kA))angle -= XMConvertToRadians(1.0f);
+			if (key->Down(key->D))angle += XMConvertToRadians(1.0f);
+			if (key->Down(key->A))angle -= XMConvertToRadians(1.0f);
 
 			eye.x = -100 * sinf(angle);
 			eye.z = -100 * cosf(angle);
 
-			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 		}
+		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
-		KeyCode code[4] = { RIGHT,LEFT,UP,DOWN };
-		if (key->Judge(code, 4, key->OR))
+		if (key->Judge(key->Arrow, 4, key->OR))
 		{
 			for (int i = 0; i < 4; i++)
 			{
 				//右
-				if (key->Down(RIGHT))
+				if (key->Down(key->RIGHT))
 				{
 					position.x += 1;
 				}
 				//左
-				if (key->Down(LEFT))
+				if (key->Down(key->LEFT))
 				{
 					position.x -= 1;
 				}
 				//上
-				if (key->Down(UP))
+				if (key->Down(key->UP))
 				{
 					position.z += 1;
 				}
 				//下
-				if (key->Down(DOWN))
+				if (key->Down(key->DOWN))
 				{
 					position.z -= 1;
 				}
 			}
+		}
 
 			matTrans = XMMatrixTranslation(position.x, position.y, position.z);	//平行移動行列を再計算
-			matWorld = XMMatrixIdentity();		//ワールド行列は毎フレーム
-			matWorld *= matTrans;				//ワールド行列に平行移動を反映
 
-		}
+			matWorld = XMMatrixIdentity();		//ワールド行列は毎フレーム
+
+			matWorld *= matTrans;				//ワールド行列に平行移動を反映
 
 		constMapTransform->mat = matWorld * matView * matProjection;
 
@@ -826,23 +883,23 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		dx12->commandList->ResourceBarrier(1, &barrierDesc);
 #pragma endregion リソースバリアの変更
 
-	#pragma region 描画先指定
+	#pragma region レンダーターゲットビュー
 		// 2．描画先指定
 		// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = dx12->rtvHeaps->GetCPUDescriptorHandleForHeapStart();
 		rtvHandle.ptr += bbIndex * dx12->device->GetDescriptorHandleIncrementSize(dx12->rtvHeapDesc.Type);
 		//深度ステンシルビュー用デスクリプタヒープのハンドルを取得
-		//D3D12_CPU_DESCRIPTOR_HANDLE dsvH = dsvHeap->GetCPUDescriptorHandleForHeapStart();
-		dx12->commandList->OMSetRenderTargets(1, &rtvHandle, false, nullptr/*&dsvH*/);
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvH = dsvHeap->GetCPUDescriptorHandleForHeapStart();
+		dx12->commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvH);
 
-#pragma endregion 描画先指定
+#pragma endregion レンダーターゲットビュー
 
 	#pragma region 画面クリア
 		// 3．画面クリア           R     G     B    A
 		float clearColor[4] = {0.1f ,0.25f ,0.5f ,1.0f};
 
 		dx12->commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-		/*cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);*/
+		dx12->commandList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 #pragma endregion 画面クリア
 
 #pragma endregion DirectX毎フレームの処理 前
@@ -963,6 +1020,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	}
 
 	delete key;
+	delete dx12;
 	delete win;
 
 	return 0;

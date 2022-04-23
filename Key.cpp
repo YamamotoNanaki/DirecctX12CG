@@ -56,6 +56,7 @@ bool Key::Release(KeyCode keyCode)
 
 bool Key::Judge(const KeyCode a[], int Type)
 {
+	if (a == nullptr)return false;
 	if (Type != AND && Type != OR)return false;
 	for (int i = 0; i < sizeof(a) / sizeof(a[0]); i++)
 	{

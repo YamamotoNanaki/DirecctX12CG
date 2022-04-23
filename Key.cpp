@@ -54,10 +54,10 @@ bool Key::Release(KeyCode keyCode)
 	return !key[keyCode] && oldkey[keyCode];
 }
 
-bool Key::Judge(const KeyCode a[],int max, int Type)
+bool Key::Judge(const KeyCode a[], int Type)
 {
 	if (Type != AND && Type != OR)return false;
-	for (int i = 0; i < max; i++)
+	for (int i = 0; i < sizeof(a) / sizeof(a[0]); i++)
 	{
 		if (Down(a[i]))
 		{

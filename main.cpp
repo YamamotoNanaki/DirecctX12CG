@@ -38,7 +38,7 @@ struct ConstBufferDataTransform
 struct Vertex
 {
 	XMFLOAT3 pos;			//XYZ座標
-	//XMFLOAT3 normal;		//法線ベクトル
+	XMFLOAT3 normal;		//法線ベクトル
 	XMFLOAT2 uv;			//UV座標
 };
 #pragma endregion 頂点データ構造体
@@ -413,37 +413,37 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	#pragma region 頂点データー
 	//頂点データ
 	Vertex vertices[] = {
-		//    x       y      z      u    v
+		// x   y   z        u    v
 		//前
-		{{-5, -5, -5},{0.0f, 1.0f}},	//左下
-		{{-5, +5, -5},{0.0f, 0.0f}},	//左上
-		{{+5, -5, -5},{1.0f, 1.0f}},	//右下
-		{{+5, +5, -5},{1.0f, 0.0f}},	//右上
-		//後
-		{{-5, -5, +5},{0.0f, 1.0f}},	//左下
-		{{-5, +5, +5},{0.0f, 0.0f}},	//左上
-		{{+5, -5, +5},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{1.0f, 0.0f}},	//右上
-		//左
-		{{-5, -5, -5},{0.0f, 1.0f}},	//左下
-		{{-5, -5, +5},{0.0f, 0.0f}},	//左上
-		{{-5, +5, -5},{1.0f, 1.0f}},	//右下
-		{{-5, +5, +5},{1.0f, 0.0f}},	//右上
-		//右
-		{{+5, -5, -5},{0.0f, 1.0f}},	//左下
-		{{+5, -5, +5},{0.0f, 0.0f}},	//左上
-		{{+5, +5, -5},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{1.0f, 0.0f}},	//右上
-		//下
-		{{-5, +5, -5},{0.0f, 1.0f}},	//左下
-		{{+5, +5, -5},{0.0f, 0.0f}},	//左上
-		{{-5, +5, +5},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{1.0f, 0.0f}},	//右上
-		//上
-		{{-5, -5, -5},{0.0f, 1.0f}},	//左下
-		{{+5, -5, -5},{0.0f, 0.0f}},	//左上
-		{{-5, -5, +5},{1.0f, 1.0f}},	//右下
-		{{+5, -5, +5},{1.0f, 0.0f}},	//右上
+		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
+		{{-5, +5, -5},{},{0.0f, 0.0f}},	//左上
+		{{+5, -5, -5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, -5},{},{1.0f, 0.0f}},	//右上
+		//後			
+		{{+5, -5, +5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		{{-5, -5, +5},{},{0.0f, 1.0f}},	//左下
+		{{-5, +5, +5},{},{0.0f, 0.0f}},	//左上
+		//左			
+		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
+		{{-5, -5, +5},{},{0.0f, 0.0f}},	//左上
+		{{-5, +5, -5},{},{1.0f, 1.0f}},	//右下
+		{{-5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		//右			
+		{{+5, +5, -5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		{{+5, -5, -5},{},{0.0f, 1.0f}},	//左下
+		{{+5, -5, +5},{},{0.0f, 0.0f}},	//左上
+		//下			
+		{{-5, +5, +5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		{{-5, +5, -5},{},{0.0f, 1.0f}},	//左下
+		{{+5, +5, -5},{},{0.0f, 0.0f}},	//左上
+		//上			
+		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
+		{{+5, -5, -5},{},{0.0f, 0.0f}},	//左上
+		{{-5, -5, +5},{},{1.0f, 1.0f}},	//右下
+		{{+5, -5, +5},{},{1.0f, 0.0f}},	//右上
 	};
 
 	//インデックスデータ
@@ -678,6 +678,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		{// xyz座標
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
+		{
+			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		},
 		{// uv座標
 			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
@@ -707,7 +710,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		#pragma endregion デプスステンシルステートの設定
 
 	pipelineDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
-	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;  // カリングしない
+	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;  // 背面をカリング
 	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 
@@ -833,7 +836,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		}
 		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
-		if (key->Judge(key->Arrow, 4, key->OR))
+		if (key->Judge(key->Arrow, key->OR))
 		{
 			for (int i = 0; i < 4; i++)
 			{

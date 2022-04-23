@@ -92,5 +92,5 @@ public:
 		AND,
 	};
 
-	bool Judge(const KeyCode a[], int max, int Type);
+	bool Judge(const KeyCode a[], int Type);
 };

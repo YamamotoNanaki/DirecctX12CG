@@ -271,7 +271,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(), TEX_FILTER_DEFAULT, 0, mipChain);
 	if (SUCCEEDED(result))
 	{
-		scratchImg = move(mipChain);
+		scratchImg = std::move(mipChain);
 		metadata = scratchImg.GetMetadata();
 	}
 
@@ -413,33 +413,33 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	#pragma region 頂点データー
 	//頂点データ
 	Vertex vertices[] = {
-		// x   y   z        u    v
+		//    x       y      z      u    v
 		//前
 		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
 		{{-5, +5, -5},{},{0.0f, 0.0f}},	//左上
 		{{+5, -5, -5},{},{1.0f, 1.0f}},	//右下
 		{{+5, +5, -5},{},{1.0f, 0.0f}},	//右上
-		//後			
-		{{+5, -5, +5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		//後
 		{{-5, -5, +5},{},{0.0f, 1.0f}},	//左下
 		{{-5, +5, +5},{},{0.0f, 0.0f}},	//左上
-		//左			
+		{{+5, -5, +5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		//左
 		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
 		{{-5, -5, +5},{},{0.0f, 0.0f}},	//左上
 		{{-5, +5, -5},{},{1.0f, 1.0f}},	//右下
 		{{-5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		//右			
-		{{+5, +5, -5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		//右
 		{{+5, -5, -5},{},{0.0f, 1.0f}},	//左下
 		{{+5, -5, +5},{},{0.0f, 0.0f}},	//左上
-		//下			
-		{{-5, +5, +5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, -5},{},{1.0f, 1.0f}},	//右下
 		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		//下
 		{{-5, +5, -5},{},{0.0f, 1.0f}},	//左下
 		{{+5, +5, -5},{},{0.0f, 0.0f}},	//左上
-		//上			
+		{{-5, +5, +5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		//上
 		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
 		{{+5, -5, -5},{},{0.0f, 0.0f}},	//左上
 		{{-5, -5, +5},{},{1.0f, 1.0f}},	//右下
@@ -510,7 +510,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	srvDesc.Format = resDesc.Format;					//画像読み込み
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;		//2dテクスチャ
-	srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
+	srvDesc.Texture2D.MipLevels = texresDesc.MipLevels;
 
 	//ヒープの２番目にシェーダーリソースビュー作成
 	dx12->device->CreateShaderResourceView(
@@ -614,7 +614,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "vs_5_0", // エントリーポイント名、シェーダーモデル指定
 		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0, vsBlob.GetAddressOf(), errorBlob.GetAddressOf());
+		0, &vsBlob, &errorBlob);
 
 
 #pragma endregion 頂点シェーダーファイルの読み込みとコンパイル
@@ -625,10 +625,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	if (FAILED(result)) {
 		// errorBlobからエラー内容をstring型にコピー
 		string error;
-		error.resize(errorBlob.Get()->GetBufferSize());
+		error.resize(errorBlob->GetBufferSize());
 
-		copy_n((char*)errorBlob.Get()->GetBufferPointer(),
-			errorBlob.Get()->GetBufferSize(),
+		copy_n((char*)errorBlob->GetBufferPointer(),
+			errorBlob->GetBufferSize(),
 			error.begin());
 		error += "\n";
 		// エラー内容を出力ウィンドウに表示
@@ -646,7 +646,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "ps_5_0", // エントリーポイント名、シェーダーモデル指定
 		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0, psBlob.GetAddressOf(), errorBlob.GetAddressOf());
+		0, &psBlob, &errorBlob);
 
 
 #pragma endregion ピクセルシェーダーの読み込みとコンパイル
@@ -657,10 +657,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	if (FAILED(result)) {
 		// errorBlobからエラー内容をstring型にコピー
 		string error;
-		error.resize(errorBlob.Get()->GetBufferSize());
+		error.resize(errorBlob->GetBufferSize());
 
-		copy_n((char*)errorBlob.Get()->GetBufferPointer(),
-			errorBlob.Get()->GetBufferSize(),
+		copy_n((char*)errorBlob->GetBufferPointer(),
+			errorBlob->GetBufferSize(),
 			error.begin());
 		error += "\n";
 		// エラー内容を出力ウィンドウに表示
@@ -678,8 +678,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		{// xyz座標
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
-		{// 法線ベクトル
-			"", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+		{// xyz座標
+			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
 		{// uv座標
 			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
@@ -710,7 +710,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		#pragma endregion デプスステンシルステートの設定
 
 	pipelineDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
-	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;  // 背面をカリング
+	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;  // カリング
 	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 
@@ -771,7 +771,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	rootSignatureDesc.pStaticSamplers = &samplerDesc;
 	rootSignatureDesc.NumStaticSamplers = 1;
 
-	ID3DBlob* rootSigBlob = nullptr;
+	ComPtr<ID3DBlob> rootSigBlob = nullptr;
 	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	assert(SUCCEEDED(result));
 	result = dx12->device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));

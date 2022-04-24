@@ -366,7 +366,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 		srvHeapDesc.NumDescriptors = kMaxSRVCount;
 
-		ID3D12DescriptorHeap* srvHeap = nullptr;
+		ComPtr<ID3D12DescriptorHeap> srvHeap = nullptr;
 		result = dx12->device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&srvHeap));
 		assert(SUCCEEDED(result));
 
@@ -614,7 +614,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "vs_5_0", // エントリーポイント名、シェーダーモデル指定
 		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0, &vsBlob, &errorBlob);
+		0, vsBlob.GetAddressOf(), errorBlob.GetAddressOf());
 
 
 #pragma endregion 頂点シェーダーファイルの読み込みとコンパイル
@@ -625,10 +625,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	if (FAILED(result)) {
 		// errorBlobからエラー内容をstring型にコピー
 		string error;
-		error.resize(errorBlob->GetBufferSize());
+		error.resize(errorBlob.Get()->GetBufferSize());
 
-		copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
+		copy_n((char*)errorBlob.Get()->GetBufferPointer(),
+			errorBlob.Get()->GetBufferSize(),
 			error.begin());
 		error += "\n";
 		// エラー内容を出力ウィンドウに表示
@@ -646,7 +646,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "ps_5_0", // エントリーポイント名、シェーダーモデル指定
 		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0, &psBlob, &errorBlob);
+		0, psBlob.GetAddressOf(), errorBlob.GetAddressOf());
 
 
 #pragma endregion ピクセルシェーダーの読み込みとコンパイル
@@ -657,10 +657,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	if (FAILED(result)) {
 		// errorBlobからエラー内容をstring型にコピー
 		string error;
-		error.resize(errorBlob->GetBufferSize());
+		error.resize(errorBlob.Get()->GetBufferSize());
 
-		copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
+		copy_n((char*)errorBlob.Get()->GetBufferPointer(),
+			errorBlob.Get()->GetBufferSize(),
 			error.begin());
 		error += "\n";
 		// エラー内容を出力ウィンドウに表示
@@ -679,7 +679,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
 		{// 法線ベクトル
-			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+			"", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
 		{// uv座標
 			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
@@ -918,7 +918,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		viewport.MaxDepth = 1.0f;
 
 		dx12->commandList->RSSetViewports(1, &viewport);
-#pragma endregion ビューポート設定コマンド5
+#pragma endregion ビューポート設定コマンド
 
 	#pragma region シザー矩形の設定コマンド
 		D3D12_RECT scissorrect{};
@@ -968,7 +968,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	#pragma region 定数バッファビューの設定コマンド
 
 		dx12->commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
-		dx12->commandList->SetDescriptorHeaps(1, &srvHeap);
+		dx12->commandList->SetDescriptorHeaps(1, srvHeap.GetAddressOf());
 		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
 		dx12->commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 		dx12->commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());

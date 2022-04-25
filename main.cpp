@@ -476,6 +476,36 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	//---------------------------
 
+	#pragma region 法線ベクトルの計算
+
+	for (int i = 0; i < _countof(indices) / 3; i++)
+	{
+		//
+		//
+		unsigned short index0 = indices[i * 3 + 0];
+		unsigned short index1 = indices[i * 3 + 1];
+		unsigned short index2 = indices[i * 3 + 2];
+		//
+		XMVECTOR p0 = XMLoadFloat3(&vertices[index0].pos);
+		XMVECTOR p1 = XMLoadFloat3(&vertices[index1].pos);
+		XMVECTOR p2 = XMLoadFloat3(&vertices[index2].pos);
+		//
+		XMVECTOR v1 = XMVectorSubtract(p1, p0);
+		XMVECTOR v2 = XMVectorSubtract(p2, p0);
+		//
+		XMVECTOR normal = XMVector3Cross(v1, v2);
+		//
+		normal = XMVector3Normalize(normal);
+		//
+		XMStoreFloat3(&vertices[index0].normal, normal);
+		XMStoreFloat3(&vertices[index1].normal, normal);
+		XMStoreFloat3(&vertices[index2].normal, normal);
+	}
+
+#pragma endregion 法線ベクトルの計算
+
+	//---------------------------
+
 	#pragma region 頂点バッファの確保
 	// 頂点バッファの設定
 	D3D12_HEAP_PROPERTIES heapProp{};   // ヒープ設定
@@ -795,7 +825,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//変数宣言
 	//-----------------------
 
-	float angle = 0.0f;
+	float angleY = 0.0f;
+	float angleX = 0.0f;
 	//-----------------------
 
 
@@ -825,16 +856,19 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion DirectInput
 
 
-		if (key->Down(key->D) || key->Down(key->A))
+		if (key->Judge(key->WASD, key->OR))
 		{
-			if (key->Down(key->D))angle += XMConvertToRadians(1.0f);
-			if (key->Down(key->A))angle -= XMConvertToRadians(1.0f);
+			if (key->Down(key->D))angleY += XMConvertToRadians(1.0f);
+			if (key->Down(key->A))angleY -= XMConvertToRadians(1.0f);
+			if (key->Down(key->S))angleX += XMConvertToRadians(1.0f);
+			if (key->Down(key->W))angleX -= XMConvertToRadians(1.0f);
 
-			eye.x = -100 * sinf(angle);
-			eye.z = -100 * cosf(angle);
+			eye.x = -100 * sinf(angleY);
+			eye.y = -100 * sinf(angleX);
+			eye.z = -100 * cosf(angleY + angleX);
 
-		}
 		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+		}
 
 		if (key->Judge(key->Arrow, key->OR))
 		{
@@ -1021,7 +1055,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma endregion DirectX毎フレームの処理 後
 	}
-
 
 	return 0;
 }

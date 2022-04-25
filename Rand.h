@@ -17,4 +17,17 @@ public:
 	{
 		return min + rand() % (max - min);
 	}
+	static float GetRandf(float min = 0, float max = 100, int digit = 3)
+	{
+		if (digit < 0)return 0;
+
+		int a = 1;
+
+		for (int i = 0; i < digit; i++)
+		{
+			a *= 10;
+		}
+
+		return min + rand() % (a * (int)(max - min)) / a;
+	}
 };

@@ -58,8 +58,8 @@ bool Key::Judge(const KeyCode a[], int Type)
 {
 	if (a == nullptr)return false;
 	if (Type != AND && Type != OR)return false;
-	unsigned long long b = sizeof(a);
-	unsigned long long c = sizeof(a[0]);
+	int b = sizeof(a);
+	int c = sizeof(a[0]);
 	for (int i = 0; i < b / c; i++)
 	{
 		if (Down(a[i]))

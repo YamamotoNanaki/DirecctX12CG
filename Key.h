@@ -53,13 +53,6 @@ public:
 	const KeyCode Arrow[4] = { LEFT,RIGHT,UP,DOWN };
 	const KeyCode WASD[4] = { W,A,S,D };
 
-	enum Type
-	{
-		OR,
-		AND,
-	};
-
-public:
 	/// <summary>
 	/// インストラクタ
 	/// キーボード入力の初期化
@@ -92,11 +85,12 @@ public:
 	/// <param name="keyCode">判定を取りたいキーのマクロ</param>
 	/// <returns></returns>
 	bool Release(KeyCode keyCode);
-	/// <summary>
-	/// 複数のキーを一括で判定
-	/// </summary>
-	/// <param name="a">判定したいキーの配列</param>
-	/// <param name="Type">ANDまたはOR</param>
-	/// <returns></returns>
+
+	enum Type
+	{
+		OR,
+		AND,
+	};
+
 	bool Judge(const KeyCode a[], int Type);
 };

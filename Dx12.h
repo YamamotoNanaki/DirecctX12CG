@@ -30,11 +30,12 @@ public:
 	UINT64 fenceVal = 0;
 
 private:
+	ComPtr < IDXGIAdapter4> tmpAdapter = nullptr;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 
 private:
 	void Adapter(HRESULT& result);
-	void CreateDevice(HRESULT& result, IDXGIAdapter4* adapter);
+	void CreateDevice(HRESULT& result);
 	void CmdList(HRESULT& result);
 	void CmdQueue(HRESULT& result);
 	void SwapChain(HRESULT& result, HWND hwnd, int window_width, int window_height);

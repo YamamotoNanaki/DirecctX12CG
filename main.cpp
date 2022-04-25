@@ -271,7 +271,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(), TEX_FILTER_DEFAULT, 0, mipChain);
 	if (SUCCEEDED(result))
 	{
-		scratchImg = std::move(mipChain);
+		scratchImg = move(mipChain);
 		metadata = scratchImg.GetMetadata();
 	}
 
@@ -366,7 +366,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 		srvHeapDesc.NumDescriptors = kMaxSRVCount;
 
-		ComPtr<ID3D12DescriptorHeap> srvHeap = nullptr;
+		ID3D12DescriptorHeap* srvHeap = nullptr;
 		result = dx12->device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&srvHeap));
 		assert(SUCCEEDED(result));
 
@@ -413,33 +413,33 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	#pragma region 頂点データー
 	//頂点データ
 	Vertex vertices[] = {
-		//    x       y      z      u    v
+		// x   y   z        u    v
 		//前
 		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
 		{{-5, +5, -5},{},{0.0f, 0.0f}},	//左上
 		{{+5, -5, -5},{},{1.0f, 1.0f}},	//右下
 		{{+5, +5, -5},{},{1.0f, 0.0f}},	//右上
-		//後
-		{{-5, -5, +5},{},{0.0f, 1.0f}},	//左下
-		{{-5, +5, +5},{},{0.0f, 0.0f}},	//左上
+		//後			
 		{{+5, -5, +5},{},{1.0f, 1.0f}},	//右下
 		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		//左
+		{{-5, -5, +5},{},{0.0f, 1.0f}},	//左下
+		{{-5, +5, +5},{},{0.0f, 0.0f}},	//左上
+		//左			
 		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
 		{{-5, -5, +5},{},{0.0f, 0.0f}},	//左上
 		{{-5, +5, -5},{},{1.0f, 1.0f}},	//右下
 		{{-5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		//右
-		{{+5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, -5, +5},{},{0.0f, 0.0f}},	//左上
+		//右			
 		{{+5, +5, -5},{},{1.0f, 1.0f}},	//右下
 		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		//下
-		{{-5, +5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, +5, -5},{},{0.0f, 0.0f}},	//左上
+		{{+5, -5, -5},{},{0.0f, 1.0f}},	//左下
+		{{+5, -5, +5},{},{0.0f, 0.0f}},	//左上
+		//下			
 		{{-5, +5, +5},{},{1.0f, 1.0f}},	//右下
 		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		//上
+		{{-5, +5, -5},{},{0.0f, 1.0f}},	//左下
+		{{+5, +5, -5},{},{0.0f, 0.0f}},	//左上
+		//上			
 		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
 		{{+5, -5, -5},{},{0.0f, 0.0f}},	//左上
 		{{-5, -5, +5},{},{1.0f, 1.0f}},	//右下
@@ -510,7 +510,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	srvDesc.Format = resDesc.Format;					//画像読み込み
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;		//2dテクスチャ
-	srvDesc.Texture2D.MipLevels = texresDesc.MipLevels;
+	srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
 
 	//ヒープの２番目にシェーダーリソースビュー作成
 	dx12->device->CreateShaderResourceView(
@@ -710,7 +710,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		#pragma endregion デプスステンシルステートの設定
 
 	pipelineDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
-	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;  // カリング
+	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;  // 背面をカリング
 	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 
@@ -771,7 +771,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	rootSignatureDesc.pStaticSamplers = &samplerDesc;
 	rootSignatureDesc.NumStaticSamplers = 1;
 
-	ComPtr<ID3DBlob> rootSigBlob = nullptr;
+	ID3DBlob* rootSigBlob = nullptr;
 	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	assert(SUCCEEDED(result));
 	result = dx12->device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
@@ -918,7 +918,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		viewport.MaxDepth = 1.0f;
 
 		dx12->commandList->RSSetViewports(1, &viewport);
-#pragma endregion ビューポート設定コマンド
+#pragma endregion ビューポート設定コマンド5
 
 	#pragma region シザー矩形の設定コマンド
 		D3D12_RECT scissorrect{};
@@ -968,7 +968,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	#pragma region 定数バッファビューの設定コマンド
 
 		dx12->commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
-		dx12->commandList->SetDescriptorHeaps(1, srvHeap.GetAddressOf());
+		dx12->commandList->SetDescriptorHeaps(1, &srvHeap);
 		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
 		dx12->commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 		dx12->commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
@@ -1022,9 +1022,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion DirectX毎フレームの処理 後
 	}
 
-	delete key;
-	delete dx12;
-	delete win;
 
 	return 0;
 }

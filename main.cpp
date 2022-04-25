@@ -176,6 +176,26 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		IID_PPV_ARGS(&constBuffTransform)
 	);
 	assert(SUCCEEDED(result));
+	ComPtr<ID3D12Resource> constBuffMaterial1 = nullptr;
+	ComPtr<ID3D12Resource> constBuffTransform1 = nullptr;
+	result = dx12->device->CreateCommittedResource(
+		&cbHeapProp,	//ヒープ設定
+		D3D12_HEAP_FLAG_NONE,
+		&cbResourceDesc,		//リソース設定
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBuffMaterial1)
+	);
+	assert(SUCCEEDED(result));
+	result = dx12->device->CreateCommittedResource(
+		&cbHeapProp,	//ヒープ設定
+		D3D12_HEAP_FLAG_NONE,
+		&cbResourceDesc,		//リソース設定
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&constBuffTransform1)
+	);
+	assert(SUCCEEDED(result));
 
 #pragma endregion 定数バッファの生成用の設定
 
@@ -194,6 +214,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//行列
 	constMapTransform->mat = XMMatrixIdentity();	//単位行列
 	constMapTransform->mat = XMMatrixOrthographicOffCenterLH(0, window_width, window_height, 0, 0, 1);
+	ConstBufferDataMaterial* constMapMaterial1 = nullptr;
+	ConstBufferDataTransform* constMapTransform1 = nullptr;
+	result = constBuffMaterial1->Map(0, nullptr, (void**)&constMapMaterial1);	//マッピング
+	assert(SUCCEEDED(result));
+	result = constBuffTransform1->Map(0, nullptr, (void**)&constMapTransform1);	//マッピング
+	assert(SUCCEEDED(result));
+	constMapMaterial1->color = XMFLOAT4(1, 1, 1, 1);					//RGBAで半透明の赤
+	constBuffMaterial1->Unmap(0, nullptr);							//マッピング解除
+
+	//行列
+	constMapTransform1->mat = XMMatrixIdentity();	//単位行列
+	constMapTransform1->mat = XMMatrixOrthographicOffCenterLH(0, window_width, window_height, 0, 0, 1);
 
 #pragma endregion 定数バッファにデータを転送する
 
@@ -220,11 +252,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	XMMATRIX matWorld;
 	matWorld = XMMatrixIdentity();
+	XMMATRIX matWorld1;
+	matWorld1 = XMMatrixIdentity();
 		#pragma region スケーリング
 
 	XMMATRIX matScale;		//スケーリング行列
 	matScale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 	matWorld *= matScale;	//ワールド行列にスケーリングを反映
+	XMMATRIX matScale1;		//スケーリング行列
+	matScale1 = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	matWorld1 *= matScale1;	//ワールド行列にスケーリングを反映
 
 		#pragma endregion スケーリング
 
@@ -236,6 +273,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	matRot *= XMMatrixRotationX(XMConvertToRadians(0));	//X軸まわりに45度回転
 	matRot *= XMMatrixRotationY(XMConvertToRadians(0));	//Y軸まわりに45度回転
 	matWorld *= matRot;		//ワールド行列に回転を反映
+	XMMATRIX matRot1;		//回転行列
+	matRot1 = XMMatrixIdentity();
+	matRot1 *= XMMatrixRotationZ(XMConvertToRadians(0));	//Z軸まわりに45度回転
+	matRot1 *= XMMatrixRotationX(XMConvertToRadians(0));	//X軸まわりに45度回転
+	matRot1 *= XMMatrixRotationY(XMConvertToRadians(XM_PI / 4.0f));	//Y軸まわりに45度回転
+	matWorld1 *= matRot1;		//ワールド行列に回転を反映
 
 		#pragma endregion 回転
 
@@ -244,6 +287,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	XMMATRIX matTrans;	//平行移動行列
 	matTrans = XMMatrixTranslation(0, 0, 0);	//(50,0,0)平行移動
 	matWorld *= matTrans;	//ワールド行列に平行移動を反映
+	XMMATRIX matTrans1;	//平行移動行列
+	matTrans1 = XMMatrixTranslation(-20, 0, 0);	//(50,0,0)平行移動
+	matWorld1 *= matTrans1;	//ワールド行列に平行移動を反映
 
 	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
 	XMFLOAT3 rotation = { 0.0f,0.0f,0.0f };
@@ -252,6 +298,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		#pragma endregion 平行移動
 
 	constMapTransform->mat = matWorld * matView * matProjection;
+	constMapTransform1->mat = matWorld1 * matView * matProjection;
 #pragma endregion ワールド行列
 
 	//-------------------------
@@ -1010,7 +1057,21 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion 定数バッファビューの設定コマンド
 
 	#pragma region 描画コマンド
-		dx12->commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
+		dx12->commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);	
+#pragma endregion 描画コマンド
+
+	#pragma region 定数バッファビューの設定コマンド
+
+		dx12->commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial1->GetGPUVirtualAddress());
+		dx12->commandList->SetDescriptorHeaps(1, &srvHeap);
+		srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
+		dx12->commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+		dx12->commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform1->GetGPUVirtualAddress());
+
+#pragma endregion 定数バッファビューの設定コマンド
+
+	#pragma region 描画コマンド
+		dx12->commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);	
 #pragma endregion 描画コマンド
 
 #pragma region DirectX毎フレームの処理 後

@@ -2,9 +2,10 @@
 
 void Dx12::Adapter(HRESULT& result)
 {
+	IDXGIAdapter4* tmpAdapter = nullptr;
 	// DXGIファクトリーの生成
 	result = CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory));
-	// アダプターの列挙用
+	// アダプターの列挙用m
 	vector< ComPtr<IDXGIAdapter4>> adapters;
 	// ここに特定の名前を持アダプターオブジェクトを入れる
 	for (UINT i = 0; dxgiFactory->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&tmpAdapter)) != DXGI_ERROR_NOT_FOUND; i++)
@@ -20,13 +21,14 @@ void Dx12::Adapter(HRESULT& result)
 		// ソフトウェアデバイスを回避
 		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE))
 		{
-			tmpAdapter = adapters[i]; //採用
+			tmpAdapter = adapters[i].Get(); //採用
 			break;
 		}
 	}
+	CreateDevice(result, tmpAdapter);
 }
 
-void Dx12::CreateDevice(HRESULT& result)
+void Dx12::CreateDevice(HRESULT& result,IDXGIAdapter4 *tmpAdapter)
 {
 	// 対応レベルの配列
 	D3D_FEATURE_LEVEL levels[] =
@@ -42,7 +44,7 @@ void Dx12::CreateDevice(HRESULT& result)
 	for (size_t i = 0; i < _countof(levels); i++)
 	{
 		// 採用したアダプターでデバイスを生成
-		result = D3D12CreateDevice(tmpAdapter.Get(), levels[i], IID_PPV_ARGS(&device));
+		result = D3D12CreateDevice(tmpAdapter, levels[i], IID_PPV_ARGS(&device));
 		if (result == S_OK)
 		{
 			// デバイスを生成できた時点でループを抜ける
@@ -131,7 +133,6 @@ void Dx12::Fence(HRESULT& result)
 Dx12::Dx12(HRESULT& result, HWND hwnd, int window_width, int window_height)
 {
 	Adapter(result);
-	CreateDevice(result);
 	CmdList(result);
 	CmdQueue(result);
 	SwapChain(result, hwnd, window_width, window_height);

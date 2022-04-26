@@ -6,10 +6,13 @@ class DxWindow
 public:
 	WNDCLASSEX w{}; // ウィンドウクラスの設定
 	HWND hwnd;
+private:
+	MSG msg{}; // メッセージ
 
 public:
 	DxWindow(int window_width, int window_height);
 	~DxWindow();
+	bool Message();
 	
 	//ウィンドウプロシージャ
 	static LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

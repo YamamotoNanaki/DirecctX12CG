@@ -58,7 +58,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	//------------------------------------------------------------------------------//
 
-	MSG msg{}; // メッセージ
 
 #pragma region デバッグ
 #ifdef _DEBUG
@@ -811,18 +810,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	while (!key->Down(key->ESC))
 	{
 #pragma region メッセージ
-		// メッセージがある？
-		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg); // キー入力メッセージの処理
-			DispatchMessage(&msg);  //プロシージャにメッセージを送る
-		}
-
-		//Xボタンで終了メッセージが来たらゲームループを抜ける
-		if (msg.message == WM_QUIT)
-		{
-			break;
-		}
+		
+		if (win->Message())break;
 
 #pragma endregion メッセージ
 

@@ -35,3 +35,20 @@ DxWindow::~DxWindow()
 {
 	UnregisterClass(w.lpszClassName, w.hInstance);
 }
+
+bool DxWindow::Message()
+{
+	// メッセージがある？
+	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	{
+		TranslateMessage(&msg); // キー入力メッセージの処理
+		DispatchMessage(&msg);  //プロシージャにメッセージを送る
+	}
+
+	//Xボタンで終了メッセージが来たらゲームループを抜ける
+	if (msg.message == WM_QUIT)
+	{
+		return true;
+	}
+	return false;
+}

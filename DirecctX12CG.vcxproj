@@ -147,6 +147,7 @@
     <ClCompile Include="DxWindow.cpp" />
     <ClCompile Include="Key.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +173,7 @@
     <ClInclude Include="Dx12.h" />
     <ClInclude Include="DxWindow.h" />
     <ClInclude Include="Key.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Rand.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>

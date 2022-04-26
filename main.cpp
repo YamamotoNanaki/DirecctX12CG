@@ -70,13 +70,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #endif
 #pragma endregion デバッグ
 
-
 	HRESULT result;
-
 	Dx12* dx12 = new Dx12(result, win->hwnd, window_width, window_height);
-
 	Key* key = new Key(result, win->w.hInstance, win->hwnd);
-
 
 #pragma region 描画初期化
 
@@ -804,7 +800,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 
 		dx12->DrawBefore();
-
 
 	#pragma region ビューポート設定コマンド
 		D3D12_VIEWPORT viewport{};

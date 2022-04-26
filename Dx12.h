@@ -32,13 +32,24 @@ public:
 	UINT64 fenceVal = 0;
 
 private:
+	//初期化
 	ComPtr < IDXGIAdapter4> tmpAdapter = nullptr;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	//バックバッファの番号を取得（2つなので0番か1番）
+	//深度バッファ
+	D3D12_RESOURCE_DESC depthResDesc{};
+	D3D12_HEAP_PROPERTIES depthHeapProp{};
+	D3D12_CLEAR_VALUE depthClearValue{};
+	ComPtr < ID3D12Resource> depthBuffer = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+	ComPtr<ID3D12DescriptorHeap> dsvHeap = nullptr;
+
+	//描画前処理
 	UINT bbIndex;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvH;
 	D3D12_RESOURCE_BARRIER barrierDesc{};
+
 	// 3．画面クリア           R     G     B    A
 	float clearColor[4] = { 0.1f ,0.25f ,0.5f ,1.0f };
 
@@ -51,9 +62,13 @@ private:
 	void Heap(HRESULT& result);
 	void TargetView(HRESULT& result);
 	void Fence(HRESULT& result);
+	void DepthDesc(HRESULT result, int window_width, int window_height);
+	void DepthHeap(HRESULT result);
+
 	void ResourceBarrierSet();
-	void RenderTarget(ID3D12DescriptorHeap* dsvHeap);
+	void RenderTarget();
 	void Clear();
+
 	void ResourceBarrierReturn();
 	void ExecutCommand(HRESULT& result);
 	void BufferSwap();
@@ -61,7 +76,7 @@ private:
 
 public:
 	Dx12(HRESULT& result, HWND hwnd,int window_width, int window_height);
-	void DrawBefore(ID3D12DescriptorHeap* dsvHeap);
+	void DrawBefore();
 	void DrawAfter(HRESULT& result);
 
 public:

@@ -154,7 +154,7 @@ void Dx12::ExecutCommand(HRESULT& result)
 	commandQueue->Signal(fence.Get(), ++fenceVal);
 }
 
-void Dx12::RenderTarget(ID3D12DescriptorHeap* dsvHeap)
+void Dx12::RenderTarget()
 {
 	// 2．描画先指定
 	// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
@@ -189,6 +189,8 @@ Dx12::Dx12(HRESULT& result, HWND hwnd, int window_width, int window_height)
 	Heap(result);
 	TargetView(result);
 	Fence(result);
+	DepthDesc(result, window_width, window_height);
+	DepthHeap(result);
 }
 
 void Dx12::BufferSwap()
@@ -202,6 +204,29 @@ void Dx12::BufferSwap()
 	}
 }
 
+void Dx12::DepthDesc(HRESULT result,int window_width, int window_height)
+{
+	//リソース設定
+	depthResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	depthResDesc.Width = window_width;			//レンダーターゲットに合わせる
+	depthResDesc.Height = window_height;		//レンダーターゲットに合わせる
+	depthResDesc.DepthOrArraySize = 1;
+	depthResDesc.Format = DXGI_FORMAT_D32_FLOAT;	//深度値フォーマット
+	depthResDesc.SampleDesc.Count = 1;
+	depthResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;	//デプスステンシル
+
+	//深度地用ヒーププロパティ
+	depthHeapProp.Type = D3D12_HEAP_TYPE_DEFAULT;
+	//深度地のクリアを設定
+	depthClearValue.DepthStencil.Depth = 1.0f;			//深度値1(最大値)でクリア
+	depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;		//深度値フォーマット
+
+	result = device->CreateCommittedResource(
+		&depthHeapProp, D3D12_HEAP_FLAG_NONE, &depthResDesc,
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,					//深度値書き込みに使用
+		&depthClearValue, IID_PPV_ARGS(&depthBuffer));
+}
+
 void Dx12::CommandReset(HRESULT& result)
 {
 	result = commandAllocator->Reset(); // キューをクリア
@@ -210,10 +235,10 @@ void Dx12::CommandReset(HRESULT& result)
 	assert(SUCCEEDED(result));
 }
 
-void Dx12::DrawBefore(ID3D12DescriptorHeap* dsvHeap)
+void Dx12::DrawBefore()
 {
 	ResourceBarrierSet();
-	RenderTarget(dsvHeap);
+	RenderTarget();
 	Clear();
 }
 
@@ -231,6 +256,20 @@ void Dx12::SetClearColor(XMFLOAT4 color)
 	clearColor[1] = color.y;
 	clearColor[2] = color.z;
 	clearColor[3] = color.w;
+}
+
+void Dx12::DepthHeap(HRESULT result)
+{
+	//深度ビュー用デスクリプタヒープ作成
+	dsvHeapDesc.NumDescriptors = 1;						//深度ビューは1つ
+	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;	//デプスステンシルビュー
+	result = device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap));
+
+	//深度ビュー作成
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	device->CreateDepthStencilView(
+		depthBuffer.Get(), &dsvDesc, dsvHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 void Dx12::SetClearColor(float R, float G, float B)

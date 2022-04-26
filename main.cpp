@@ -80,38 +80,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma region 描画初期化
 
-	#pragma region 深度バッファのリソース設定
-
-	//リソース設定
-	D3D12_RESOURCE_DESC depthResDesc{};
-	depthResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	depthResDesc.Width = window_width;			//レンダーターゲットに合わせる
-	depthResDesc.Height = window_height;		//レンダーターゲットに合わせる
-	depthResDesc.DepthOrArraySize = 1;
-	depthResDesc.Format = DXGI_FORMAT_D32_FLOAT;	//深度値フォーマット
-	depthResDesc.SampleDesc.Count = 1;
-	depthResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;	//デプスステンシル
-
-	//深度地用ヒーププロパティ
-	D3D12_HEAP_PROPERTIES depthHeapProp{};
-	depthHeapProp.Type = D3D12_HEAP_TYPE_DEFAULT;
-	//深度地のクリアを設定
-	D3D12_CLEAR_VALUE depthClearValue{};
-	depthClearValue.DepthStencil.Depth = 1.0f;			//深度値1(最大値)でクリア
-	depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;		//深度値フォーマット
-
-#pragma endregion 深度バッファのリソース設定
-
 	//------------------------
 
 	#pragma region 深度バッファの生成
 
 //リソース設定
-	ComPtr < ID3D12Resource> depthBuffer = nullptr;
-	result = dx12->device->CreateCommittedResource(
-		&depthHeapProp, D3D12_HEAP_FLAG_NONE, &depthResDesc,
-		D3D12_RESOURCE_STATE_DEPTH_WRITE,					//深度値書き込みに使用
-		&depthClearValue, IID_PPV_ARGS(&depthBuffer));
 
 #pragma endregion 深度バッファの生成
 
@@ -119,19 +92,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region デスクリプタヒープの生成(深度)
 
-//深度ビュー用デスクリプタヒープ作成
-	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
-	dsvHeapDesc.NumDescriptors = 1;						//深度ビューは1つ
-	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;	//デプスステンシルビュー
-	ComPtr<ID3D12DescriptorHeap> dsvHeap = nullptr;
-	result = dx12->device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap));
-
-	//深度ビュー作成
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	dx12->device->CreateDepthStencilView(
-		depthBuffer.Get(), &dsvDesc, dsvHeap->GetCPUDescriptorHandleForHeapStart());
 
 #pragma endregion デスクリプタヒープの生成(深度)
 
@@ -790,17 +750,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	while (!key->Down(key->ESC))
 	{
-#pragma region メッセージ
-		
+		//メッセージ
 		if (win->Message())break;
-
-#pragma endregion メッセージ
-
-#pragma region DirectInput
-
+		//キーアップデート
 		key->Update(result);
-
-#pragma endregion DirectInput
 
 
 		if (key->Judge(key->WASD, key->OR))
@@ -850,7 +803,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		}
 
 
-		dx12->DrawBefore(dsvHeap.Get());
+		dx12->DrawBefore();
 
 
 	#pragma region ビューポート設定コマンド

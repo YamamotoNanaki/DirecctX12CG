@@ -128,6 +128,57 @@ void Dx12::Fence(HRESULT& result)
 	result = device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 }
 
+void Dx12::ResourceBarrierSet()
+{
+	bbIndex = swapchain->GetCurrentBackBufferIndex();
+	// 1．リソースバリアで書き込み可能に変更
+	barrierDesc.Transition.pResource = backBuffers[bbIndex].Get(); // バックバッファを指定
+	barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT; // 表示から
+	barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描画
+	commandList->ResourceBarrier(1, &barrierDesc);
+}
+
+void Dx12::ExecutCommand(HRESULT& result)
+{
+	// 命令のクローズ
+	result = commandList->Close();
+	assert(SUCCEEDED(result));
+	// コマンドリストの実行
+	ID3D12CommandList* commandLists[] = { commandList.Get() }; // コマンドリストの配列
+	commandQueue->ExecuteCommandLists(1, commandLists);
+
+	// バッファをフリップ（裏表の入替え）
+	result = swapchain->Present(1, 0);
+	assert(SUCCEEDED(result));
+	// コマンドリストの実行完了を待つ
+	commandQueue->Signal(fence.Get(), ++fenceVal);
+}
+
+void Dx12::RenderTarget(ID3D12DescriptorHeap* dsvHeap)
+{
+	// 2．描画先指定
+	// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
+	rtvHandle = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+	rtvHandle.ptr += bbIndex * device->GetDescriptorHandleIncrementSize(rtvHeapDesc.Type);
+	//深度ステンシルビュー用デスクリプタヒープのハンドルを取得
+	dsvH = dsvHeap->GetCPUDescriptorHandleForHeapStart();
+	commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvH);
+}
+
+void Dx12::Clear()
+{
+	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	commandList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+}
+
+void Dx12::ResourceBarrierReturn()
+{
+	// 5．リソースバリアを戻す
+	barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描画
+	barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;   // 表示に
+	commandList->ResourceBarrier(1, &barrierDesc);
+}
+
 Dx12::Dx12(HRESULT& result, HWND hwnd, int window_width, int window_height)
 {
 	Adapter(result);
@@ -138,4 +189,54 @@ Dx12::Dx12(HRESULT& result, HWND hwnd, int window_width, int window_height)
 	Heap(result);
 	TargetView(result);
 	Fence(result);
+}
+
+void Dx12::BufferSwap()
+{
+	if (fence->GetCompletedValue() != fenceVal)
+	{
+		HANDLE event = CreateEvent(nullptr, false, false, nullptr);
+		fence->SetEventOnCompletion(fenceVal, event);
+		WaitForSingleObject(event, INFINITE);
+		CloseHandle(event);
+	}
+}
+
+void Dx12::CommandReset(HRESULT& result)
+{
+	result = commandAllocator->Reset(); // キューをクリア
+	assert(SUCCEEDED(result));
+	result = commandList->Reset(commandAllocator.Get(), nullptr);  // 再びコマンドリストを貯める準備
+	assert(SUCCEEDED(result));
+}
+
+void Dx12::DrawBefore(ID3D12DescriptorHeap* dsvHeap)
+{
+	ResourceBarrierSet();
+	RenderTarget(dsvHeap);
+	Clear();
+}
+
+void Dx12::DrawAfter(HRESULT& result)
+{
+	ResourceBarrierReturn();
+	ExecutCommand(result);
+	BufferSwap();
+	CommandReset(result);
+}
+
+void Dx12::SetClearColor(XMFLOAT4 color)
+{
+	clearColor[0] = color.x;
+	clearColor[1] = color.y;
+	clearColor[2] = color.z;
+	clearColor[3] = color.w;
+}
+
+void Dx12::SetClearColor(float R, float G, float B)
+{
+	clearColor[0] = R;
+	clearColor[1] = G;
+	clearColor[2] = B;
+	clearColor[3] = 1;
 }

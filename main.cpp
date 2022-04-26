@@ -211,25 +211,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma endregion 射影行列
 
-	#pragma region ワールド行列
-
-		#pragma region スケーリング
-
-
-		#pragma endregion スケーリング
-
-		#pragma region 回転
-
-
-		#pragma endregion 回転
-
-		#pragma region 平行移動
-
-
-		#pragma endregion 平行移動
-
-#pragma endregion ワールド行列
-
 	//-------------------------
 
 	#pragma region 画像イメージデータの作成
@@ -869,41 +850,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		}
 
 
+		dx12->DrawBefore(dsvHeap.Get());
 
-#pragma region DirectX毎フレームの処理 前
-
-	#pragma region リソースバリアの変更
-		//バックバッファの番号を取得（2つなので0番か1番）
-		UINT bbIndex = dx12->swapchain->GetCurrentBackBufferIndex();
-
-		// 1．リソースバリアで書き込み可能に変更
-		D3D12_RESOURCE_BARRIER barrierDesc{};
-		barrierDesc.Transition.pResource = dx12->backBuffers[bbIndex].Get(); // バックバッファを指定
-		barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT; // 表示から
-		barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描画
-		dx12->commandList->ResourceBarrier(1, &barrierDesc);
-#pragma endregion リソースバリアの変更
-
-	#pragma region レンダーターゲットビュー
-		// 2．描画先指定
-		// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = dx12->rtvHeaps->GetCPUDescriptorHandleForHeapStart();
-		rtvHandle.ptr += bbIndex * dx12->device->GetDescriptorHandleIncrementSize(dx12->rtvHeapDesc.Type);
-		//深度ステンシルビュー用デスクリプタヒープのハンドルを取得
-		D3D12_CPU_DESCRIPTOR_HANDLE dsvH = dsvHeap->GetCPUDescriptorHandleForHeapStart();
-		dx12->commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvH);
-
-#pragma endregion レンダーターゲットビュー
-
-	#pragma region 画面クリア
-		// 3．画面クリア           R     G     B    A
-		float clearColor[4] = {0.1f ,0.25f ,0.5f ,1.0f};
-
-		dx12->commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-		dx12->commandList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-#pragma endregion 画面クリア
-
-#pragma endregion DirectX毎フレームの処理 前
 
 	#pragma region ビューポート設定コマンド
 		D3D12_VIEWPORT viewport{};
@@ -979,47 +927,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		}
 #pragma endregion 描画コマンド
 
-#pragma region DirectX毎フレームの処理 後
-
-	#pragma region リソースバリアの復帰コマンド
-// 5．リソースバリアを戻す
-		barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描画
-		barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;   // 表示に
-		dx12->commandList->ResourceBarrier(1, &barrierDesc);
-#pragma endregion リソースバリアの復帰コマンド
-
-	#pragma region ためておいた命令を実行する
-		// 命令のクローズ
-		result = dx12->commandList->Close();
-		assert(SUCCEEDED(result));
-		// コマンドリストの実行
-		ID3D12CommandList* commandLists[] = { dx12->commandList.Get()}; // コマンドリストの配列
-		dx12->commandQueue->ExecuteCommandLists(1, commandLists);
-
-		// バッファをフリップ（裏表の入替え）
-		result = dx12->swapchain->Present(1, 0);
-		assert(SUCCEEDED(result));
-#pragma endregion ためておいた命令を実行する
-
-	#pragma region 画面入れ替え
-		// コマンドリストの実行完了を待つ
-		dx12->commandQueue->Signal(dx12->fence.Get(), ++dx12->fenceVal);
-
-		if (dx12->fence->GetCompletedValue() != dx12->fenceVal)
-		{
-			HANDLE event = CreateEvent(nullptr, false, false, nullptr);
-			dx12->fence->SetEventOnCompletion(dx12->fenceVal, event);
-			WaitForSingleObject(event, INFINITE);
-			CloseHandle(event);
-		}
-
-		result = dx12->commandAllocator->Reset(); // キューをクリア
-		assert(SUCCEEDED(result));
-		result = dx12->commandList->Reset(dx12->commandAllocator.Get(), nullptr);  // 再びコマンドリストを貯める準備
-		assert(SUCCEEDED(result));
-#pragma endregion 画面入れ替え
-
-#pragma endregion DirectX毎フレームの処理 後
+		dx12->DrawAfter(result);
 	}
 
 	return 0;

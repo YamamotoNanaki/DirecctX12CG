@@ -20,7 +20,11 @@ private:
 	D3D12_RESOURCE_DESC texresDesc{};
 	ComPtr<ID3D12Resource> texbuff = nullptr;
 
+private:
+	HRESULT TexLoad(const wchar_t* szFile);
+	HRESULT LoadBuffer(ID3D12Device* device);
+	void LoadTransfer(HRESULT result);
+
 public:
-	void LoadTexture(const wchar_t* szFile, HRESULT result, ID3D12Device* device);
-	void 
+	HRESULT LoadTexture(const wchar_t* szFile, ID3D12Device* device);
 };

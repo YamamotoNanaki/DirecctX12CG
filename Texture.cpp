@@ -3,9 +3,9 @@
 
 using namespace DirectX;
 
-void Texture::LoadTexture(const wchar_t* szFile, HRESULT result,ID3D12Device* device)
+HRESULT Texture::TexLoad(const wchar_t* szFile)
 {
-	result = LoadFromWICFile(
+	HRESULT result = LoadFromWICFile(
 		L"Resources/texture.png",			//Data\Resources\texture.pngを指定
 		WIC_FLAGS_NONE, &metadata, scratchImg);
 
@@ -19,7 +19,11 @@ void Texture::LoadTexture(const wchar_t* szFile, HRESULT result,ID3D12Device* de
 	}
 
 	metadata.format = MakeSRGB(metadata.format);
+	return result;
+}
 
+HRESULT Texture::LoadBuffer(ID3D12Device* device)
+{
 	texHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;
 	texHeapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 	texHeapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
@@ -32,13 +36,26 @@ void Texture::LoadTexture(const wchar_t* szFile, HRESULT result,ID3D12Device* de
 	texresDesc.MipLevels = (UINT16)metadata.mipLevels;
 	texresDesc.SampleDesc.Count = 1;
 
-	result = device->CreateCommittedResource(		//GPUリソースの生成
+	HRESULT result = device->CreateCommittedResource(		//GPUリソースの生成
 		&texHeapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&texresDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,		//テクスチャ用指定
 		nullptr,
 		IID_PPV_ARGS(&texbuff));
+
+	return result;
+}
+
+void Texture::LoadTransfer(HRESULT result)
+{
+}
+
+HRESULT Texture::LoadTexture(const wchar_t* szFile,ID3D12Device* device)
+{
+	HRESULT result = TexLoad(szFile);
+
+	
 
 	for (size_t i = 0; i < metadata.mipLevels; i++)
 	{
@@ -53,4 +70,6 @@ void Texture::LoadTexture(const wchar_t* szFile, HRESULT result,ID3D12Device* de
 		);
 		assert(SUCCEEDED(result));
 	}
+
+	
 }

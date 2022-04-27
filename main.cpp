@@ -414,6 +414,23 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
 	UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * _countof(vertices));
 
+	Vertex vertices1[] = {
+		//    x       y      z      u    v
+		//前
+		{{0, 0, +0},{0.0f, 1.0f}},	//左下
+		{{0, window_height, +0},{0.0f, 0.0f}},	//左上
+		{{+window_width, 0, +0},{1.0f, 1.0f}},	//右下
+		{{+window_width, +window_height, +0},{1.0f, 0.0f}},	//右上
+	};
+
+	unsigned short indices1[] = {
+		//
+		0,1,2,
+		2,1,3,
+	};
+
+	UINT sizeVB1 = static_cast<UINT>(sizeof(vertices1[0]) * _countof(vertices1));
+
 
 #pragma endregion 頂点データー
 
@@ -435,6 +452,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	// 頂点バッファの生成
 	ComPtr<ID3D12Resource> vertBuff = nullptr;
+	result = dx12->device->CreateCommittedResource(
+		&heapProp, // ヒープ設定
+		D3D12_HEAP_FLAG_NONE, &resDesc, // リソース設定
+		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
+	assert(SUCCEEDED(result));
+	resDesc.Width = sizeVB1; // 頂点データ全体のサイズ
+	ComPtr<ID3D12Resource> vertBuff1 = nullptr;
 	result = dx12->device->CreateCommittedResource(
 		&heapProp, // ヒープ設定
 		D3D12_HEAP_FLAG_NONE, &resDesc, // リソース設定
@@ -491,6 +515,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	vbView.SizeInBytes = sizeVB;
 	vbView.StrideInBytes = sizeof(vertices[0]);
+	D3D12_VERTEX_BUFFER_VIEW vbView1{};
+
+	vbView1.BufferLocation = vertBuff->GetGPUVirtualAddress();
+	vbView1.SizeInBytes = sizeVB1;
+	vbView1.StrideInBytes = sizeof(vertices1[0]);
 
 #pragma endregion 頂点バッファへビューの作成
 
@@ -778,29 +807,29 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
-		if (key->Judge(key->Arrow, 4, key->OR))
+		if (key->Judge(key->WASD, 4, key->OR))
 		{
 			for (int i = 0; i < 4; i++)
 			{
 				//右
-				if (key->Down(key->RIGHT))
+				if (key->Down(key->D))
 				{
 					position.x += 1;
 				}
 				//左
-				if (key->Down(key->LEFT))
+				if (key->Down(key->A))
 				{
 					position.x -= 1;
 				}
 				//上
-				if (key->Down(key->UP))
+				if (key->Down(key->W))
 				{
-					position.z += 1;
+					position.y += 1;
 				}
 				//下
-				if (key->Down(key->DOWN))
+				if (key->Down(key->S))
 				{
-					position.z -= 1;
+					position.y -= 1;
 				}
 			}
 
@@ -922,6 +951,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion 定数バッファビューの設定コマンド
 
 	#pragma region 描画コマンド
+		dx12->commandList->DrawIndexedInstanced(_countof(indices1), 1, 0, 0, 0);
 		dx12->commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 #pragma endregion 描画コマンド
 

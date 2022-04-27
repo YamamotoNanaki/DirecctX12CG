@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-class DxWindow
+class Window
 {
 public:
 	WNDCLASSEX w{}; // ウィンドウクラスの設定
@@ -10,8 +10,8 @@ private:
 	MSG msg{}; // メッセージ
 
 public:
-	DxWindow(int window_width, int window_height);
-	~DxWindow();
+	Window(int window_width, int window_height);
+	~Window();
 	bool Message();
 	
 	//ウィンドウプロシージャ

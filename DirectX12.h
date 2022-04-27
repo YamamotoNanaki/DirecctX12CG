@@ -1,21 +1,20 @@
 #pragma once
 #include <d3d12.h>
 #include <dxgi1_6.h>
-#include <cassert>
 #include <vector>
-#include <string>
 #include <wrl.h>
 #include <DirectXMath.h>
 
 #pragma comment(lib,"d3d12.lib") 
 #pragma comment(lib,"dxgi.lib")
 
-	using namespace Microsoft::WRL;
-	using namespace std;
-	using namespace DirectX;
 
-class Dx12
+class DirectX12
 {
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	using XMFLOAT4 = DirectX::XMFLOAT4;
+	template<class T> using vector = std::vector<T>;
+
 public:
 	ComPtr < ID3D12Device> device = nullptr;
 	ComPtr < IDXGIFactory6> dxgiFactory = nullptr;
@@ -75,7 +74,7 @@ private:
 	void CommandReset(HRESULT& result);
 
 public:
-	Dx12(HRESULT& result, HWND hwnd,int window_width, int window_height);
+	DirectX12(HRESULT& result, HWND hwnd,int window_width, int window_height);
 	void DrawBefore();
 	void DrawAfter(HRESULT& result);
 

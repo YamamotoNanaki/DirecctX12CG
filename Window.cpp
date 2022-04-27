@@ -1,6 +1,6 @@
-#include "DxWindow.h"
+#include "Window.h"
 
-DxWindow::DxWindow(int window_width,int window_height)
+Window::Window(int window_width,int window_height)
 {
 	w.cbSize = sizeof(WNDCLASSEX);
 	w.lpfnWndProc = (WNDPROC)WindowProc; // ウィンドウプロシージャを設定
@@ -31,12 +31,12 @@ DxWindow::DxWindow(int window_width,int window_height)
 	ShowWindow(hwnd, SW_SHOW);
 }
 
-DxWindow::~DxWindow()
+Window::~Window()
 {
 	UnregisterClass(w.lpszClassName, w.hInstance);
 }
 
-bool DxWindow::Message()
+bool Window::Message()
 {
 	// メッセージがある？
 	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))

@@ -16,24 +16,63 @@
     <Filter Include="シェーダーファイル">
       <UniqueIdentifier>{189c5166-326b-404a-b27a-a20e26dd4d4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Initialize">
+      <UniqueIdentifier>{8a8938aa-2ad2-4c66-bcb3-8b9b278272c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Input">
+      <UniqueIdentifier>{c10c8266-12fe-42d6-b69e-bc2b7a7f449b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D">
+      <UniqueIdentifier>{bc0e52b3-f2be-4d67-bb8c-688599659087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Other">
+      <UniqueIdentifier>{fc1745ef-42d6-4f03-85ea-41eacf78f00f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\Matrix">
+      <UniqueIdentifier>{2f925e35-28ed-4e90-935a-23a98adbaae8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Initialize">
+      <UniqueIdentifier>{b27b0c63-a02d-4da6-9808-757fd3726209}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Input">
+      <UniqueIdentifier>{18e33cc4-7188-423c-92f3-ecaabf6f4e93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D">
+      <UniqueIdentifier>{c18177b7-dbb4-4de6-b968-b08f803e8e41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Other">
+      <UniqueIdentifier>{c3b71481-bdd1-4867-8d93-07aaefa26514}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Matrix">
+      <UniqueIdentifier>{d29d4762-96a6-48d2-a5bf-ab2d94b2f2e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DxWindow.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Projection.cpp">
+      <Filter>ソース ファイル\3D\Matrix</Filter>
     </ClCompile>
-    <ClCompile Include="Dx12.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="DirectX12.cpp">
+      <Filter>ソース ファイル\Initialize</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>ソース ファイル\Initialize</Filter>
     </ClCompile>
     <ClCompile Include="Key.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Input</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>ソース ファイル\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="View.cpp">
+      <Filter>ソース ファイル\3D\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -46,22 +85,31 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DxWindow.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Projection.h">
+      <Filter>ヘッダー ファイル\3D\Matrix</Filter>
     </ClInclude>
-    <ClInclude Include="Dx12.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Window.h">
+      <Filter>ヘッダー ファイル\Initialize</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX12.h">
+      <Filter>ヘッダー ファイル\Initialize</Filter>
     </ClInclude>
     <ClInclude Include="Key.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Rand.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\Input</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Rand.h">
+      <Filter>ヘッダー ファイル\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>ヘッダー ファイル\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="View.h">
+      <Filter>ヘッダー ファイル\3D\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

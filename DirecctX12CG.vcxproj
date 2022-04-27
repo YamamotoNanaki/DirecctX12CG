@@ -143,8 +143,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Dx12.cpp" />
-    <ClCompile Include="DxWindow.cpp" />
+    <ClCompile Include="DirectX12.cpp" />
+    <ClCompile Include="Projection.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="View.cpp" />
+    <ClCompile Include="Window.cpp" />
     <ClCompile Include="Key.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -170,8 +173,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Dx12.h" />
-    <ClInclude Include="DxWindow.h" />
+    <ClInclude Include="DirectX12.h" />
+    <ClInclude Include="Projection.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="View.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="Key.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Rand.h" />

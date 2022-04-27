@@ -1,6 +1,10 @@
-#include "Dx12.h"
+#include "DirectX12.h"
 
-void Dx12::Adapter(HRESULT& result)
+using namespace Microsoft::WRL;
+using namespace std;
+using namespace DirectX;
+
+void DirectX12::Adapter(HRESULT& result)
 {
 	// DXGIファクトリーの生成
 	result = CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory));
@@ -26,7 +30,7 @@ void Dx12::Adapter(HRESULT& result)
 	}
 }
 
-void Dx12::CreateDevice(HRESULT& result)
+void DirectX12::CreateDevice(HRESULT& result)
 {
 	// 対応レベルの配列
 	D3D_FEATURE_LEVEL levels[] =
@@ -52,7 +56,7 @@ void Dx12::CreateDevice(HRESULT& result)
 	}
 }
 
-void Dx12::CmdList(HRESULT& result)
+void DirectX12::CmdList(HRESULT& result)
 {
 	// コマンドアロケータを生成
 	result = device->CreateCommandAllocator(
@@ -68,7 +72,7 @@ void Dx12::CmdList(HRESULT& result)
 	assert(SUCCEEDED(result));
 }
 
-void Dx12::CmdQueue(HRESULT& result)
+void DirectX12::CmdQueue(HRESULT& result)
 {
 	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
 
@@ -76,7 +80,7 @@ void Dx12::CmdQueue(HRESULT& result)
 	assert(SUCCEEDED(result));
 }
 
-void Dx12::SwapChain(HRESULT& result, HWND hwnd, int window_width, int window_height)
+void DirectX12::SwapChain(HRESULT& result, HWND hwnd, int window_width, int window_height)
 {
 	// 各種設定をしてスワップチェーンを生成
 	swapChainDesc.Width = window_width;
@@ -95,7 +99,7 @@ void Dx12::SwapChain(HRESULT& result, HWND hwnd, int window_width, int window_he
 	swapchain1.As(&swapchain);
 }
 
-void Dx12::Heap(HRESULT& result)
+void DirectX12::Heap(HRESULT& result)
 {
 	// 各種設定をしてデスクリプタヒープを生成
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; // レンダーターゲットビュー
@@ -103,7 +107,7 @@ void Dx12::Heap(HRESULT& result)
 	device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&rtvHeaps));
 }
 
-void Dx12::TargetView(HRESULT& result)
+void DirectX12::TargetView(HRESULT& result)
 {
 	backBuffers.resize(swapChainDesc.BufferCount);
 
@@ -123,12 +127,12 @@ void Dx12::TargetView(HRESULT& result)
 	}
 }
 
-void Dx12::Fence(HRESULT& result)
+void DirectX12::Fence(HRESULT& result)
 {
 	result = device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 }
 
-void Dx12::ResourceBarrierSet()
+void DirectX12::ResourceBarrierSet()
 {
 	bbIndex = swapchain->GetCurrentBackBufferIndex();
 	// 1．リソースバリアで書き込み可能に変更
@@ -138,7 +142,7 @@ void Dx12::ResourceBarrierSet()
 	commandList->ResourceBarrier(1, &barrierDesc);
 }
 
-void Dx12::ExecutCommand(HRESULT& result)
+void DirectX12::ExecutCommand(HRESULT& result)
 {
 	// 命令のクローズ
 	result = commandList->Close();
@@ -154,7 +158,7 @@ void Dx12::ExecutCommand(HRESULT& result)
 	commandQueue->Signal(fence.Get(), ++fenceVal);
 }
 
-void Dx12::RenderTarget()
+void DirectX12::RenderTarget()
 {
 	// 2．描画先指定
 	// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
@@ -165,13 +169,13 @@ void Dx12::RenderTarget()
 	commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvH);
 }
 
-void Dx12::Clear()
+void DirectX12::Clear()
 {
 	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	commandList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
-void Dx12::ResourceBarrierReturn()
+void DirectX12::ResourceBarrierReturn()
 {
 	// 5．リソースバリアを戻す
 	barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描画
@@ -179,7 +183,7 @@ void Dx12::ResourceBarrierReturn()
 	commandList->ResourceBarrier(1, &barrierDesc);
 }
 
-Dx12::Dx12(HRESULT& result, HWND hwnd, int window_width, int window_height)
+DirectX12::DirectX12(HRESULT& result, HWND hwnd, int window_width, int window_height)
 {
 	Adapter(result);
 	CreateDevice(result);
@@ -193,7 +197,7 @@ Dx12::Dx12(HRESULT& result, HWND hwnd, int window_width, int window_height)
 	DepthHeap(result);
 }
 
-void Dx12::BufferSwap()
+void DirectX12::BufferSwap()
 {
 	if (fence->GetCompletedValue() != fenceVal)
 	{
@@ -204,7 +208,7 @@ void Dx12::BufferSwap()
 	}
 }
 
-void Dx12::DepthDesc(HRESULT result,int window_width, int window_height)
+void DirectX12::DepthDesc(HRESULT result,int window_width, int window_height)
 {
 	//リソース設定
 	depthResDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -227,7 +231,7 @@ void Dx12::DepthDesc(HRESULT result,int window_width, int window_height)
 		&depthClearValue, IID_PPV_ARGS(&depthBuffer));
 }
 
-void Dx12::CommandReset(HRESULT& result)
+void DirectX12::CommandReset(HRESULT& result)
 {
 	result = commandAllocator->Reset(); // キューをクリア
 	assert(SUCCEEDED(result));
@@ -235,14 +239,14 @@ void Dx12::CommandReset(HRESULT& result)
 	assert(SUCCEEDED(result));
 }
 
-void Dx12::DrawBefore()
+void DirectX12::DrawBefore()
 {
 	ResourceBarrierSet();
 	RenderTarget();
 	Clear();
 }
 
-void Dx12::DrawAfter(HRESULT& result)
+void DirectX12::DrawAfter(HRESULT& result)
 {
 	ResourceBarrierReturn();
 	ExecutCommand(result);
@@ -250,7 +254,7 @@ void Dx12::DrawAfter(HRESULT& result)
 	CommandReset(result);
 }
 
-void Dx12::SetClearColor(XMFLOAT4 color)
+void DirectX12::SetClearColor(XMFLOAT4 color)
 {
 	clearColor[0] = color.x;
 	clearColor[1] = color.y;
@@ -258,7 +262,7 @@ void Dx12::SetClearColor(XMFLOAT4 color)
 	clearColor[3] = color.w;
 }
 
-void Dx12::DepthHeap(HRESULT result)
+void DirectX12::DepthHeap(HRESULT result)
 {
 	//深度ビュー用デスクリプタヒープ作成
 	dsvHeapDesc.NumDescriptors = 1;						//深度ビューは1つ
@@ -272,7 +276,7 @@ void Dx12::DepthHeap(HRESULT result)
 		depthBuffer.Get(), &dsvDesc, dsvHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
-void Dx12::SetClearColor(float R, float G, float B)
+void DirectX12::SetClearColor(float R, float G, float B)
 {
 	clearColor[0] = R;
 	clearColor[1] = G;

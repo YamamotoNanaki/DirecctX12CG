@@ -7,10 +7,12 @@
 #include <d3dcompiler.h>
 #include <DirectXTex.h>
 #include <wrl.h>
-#include "DxWindow.h"
-#include "Dx12.h"
+#include "Window.h"
+#include "DirectX12.h"
 #include "Key.h"
 #include "Object.h"
+#include "Projection.h"
+#include "View.h"
 
 using namespace DirectX;
 using namespace std;
@@ -19,7 +21,6 @@ using namespace Microsoft::WRL;
 #pragma comment(lib,"d3d12.lib") 
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"d3dcompiler.lib")
-#pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
 #pragma region 定数バッファ構造体
@@ -49,10 +50,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma region ウィンドウの生成（前処理）
 
 	// ウィンドウサイズ
-	const int window_width = 1280;  // 横幅
-	const int window_height = 720;  // 縦幅
+	const int winWidth = 1280;  // 横幅
+	const int winHeight = 720;  // 縦幅
 
-	DxWindow* win = new DxWindow(window_width, window_height);
+	Window* win = new Window(winWidth, winHeight);
 
 #pragma endregion ウィンドウの生成（前処理）
 
@@ -71,27 +72,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion デバッグ
 
 	HRESULT result;
-	Dx12* dx12 = new Dx12(result, win->hwnd, window_width, window_height);
+	DirectX12* dx12 = new DirectX12(result, win->hwnd, winWidth, winHeight);
 	Key* key = new Key(result, win->w.hInstance, win->hwnd);
 
 #pragma region 描画初期化
-
-	//------------------------
-
-	#pragma region 深度バッファの生成
-
-//リソース設定
-
-#pragma endregion 深度バッファの生成
-
-	//---------------------------
-
-	#pragma region デスクリプタヒープの生成(深度)
-
-
-#pragma endregion デスクリプタヒープの生成(深度)
-
-	//---------------------------
 
 	#pragma region 定数バッファの生成用の設定
 //ヒープ設定
@@ -120,7 +104,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	const size_t kObjectConst = 50;
 
-	Object3d object3ds[kObjectConst];
+	Object object3ds[kObjectConst];
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
 		object3ds[i].Initialize(result,dx12->device.Get());
@@ -152,18 +136,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region ビュー行列
 
-	XMMATRIX matView;
-	XMFLOAT3 eye(0, 0, -100);
-	XMFLOAT3 target(0, 0, 0);
-	XMFLOAT3 up(0, 1, 0);
-	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+	View matView;
 
 #pragma endregion ビュー行列
 
 	#pragma region 射影行列
 
-	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
-		XMConvertToRadians(45.0f), (float)window_width / window_height, 0.1f, 1000.0f);
+	Projection matPro(45.0f, winWidth, winHeight);
 
 #pragma endregion 射影行列
 
@@ -184,7 +163,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(), TEX_FILTER_DEFAULT, 0, mipChain);
 	if (SUCCEEDED(result))
 	{
-		scratchImg = move(mipChain);
+		scratchImg = std::move(mipChain);
 		metadata = scratchImg.GetMetadata();
 	}
 
@@ -759,11 +738,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			if (key->Down(key->S))angleX += XMConvertToRadians(1.0f);
 			if (key->Down(key->W))angleX -= XMConvertToRadians(1.0f);
 
-			eye.x = -100 * sinf(angleY);
-			eye.y = -100 * sinf(angleX);
-			eye.z = -100 * cosf(angleY + angleX);
+			matView.eye.x = -100 * sinf(angleY);
+			matView.eye.y = -100 * sinf(angleX);
+			matView.eye.z = -100 * cosf(angleY + angleX);
 
-		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+			matView.Update();
 		}
 
 		if (key->Judge(key->Arrow, key->OR))
@@ -795,7 +774,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 		for (int i = 0; i < _countof(object3ds); i++)
 		{
-			object3ds[i].Update(matView, matProjection);
+			object3ds[i].Update(matView.Get(), matPro.Get());
 		}
 
 
@@ -804,8 +783,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	#pragma region ビューポート設定コマンド
 		D3D12_VIEWPORT viewport{};
 
-		viewport.Width = window_width;
-		viewport.Height = window_height;
+		viewport.Width = winWidth;
+		viewport.Height = winHeight;
 		viewport.TopLeftX = 0;
 		viewport.TopLeftY = 0;
 		viewport.MinDepth = 0.0f;
@@ -818,9 +797,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		D3D12_RECT scissorrect{};
 
 		scissorrect.left = 0;
-		scissorrect.right = scissorrect.left + window_width;
+		scissorrect.right = scissorrect.left + winWidth;
 		scissorrect.top = 0;
-		scissorrect.bottom = scissorrect.top + window_height;
+		scissorrect.bottom = scissorrect.top + winHeight;
 
 		dx12->commandList->RSSetScissorRects(1, &scissorrect);
 #pragma endregion シザー矩形の設定コマンド

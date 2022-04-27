@@ -1,6 +1,8 @@
 #pragma once
 #include <dinput.h>
-#include "DxWindow.h"
+#include "Window.h"
+
+#pragma comment(lib,"dinput8.lib")
 
 typedef unsigned short KeyCode;
 

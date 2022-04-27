@@ -1,6 +1,8 @@
 #include "Object.h"
 
-void Object3d::Initialize(HRESULT& result, ID3D12Device* device)
+using namespace DirectX;
+
+void Object::Initialize(HRESULT& result, ID3D12Device* device)
 {
 	//定数バッファのヒープ設定
 	D3D12_HEAP_PROPERTIES heapProp{};
@@ -24,7 +26,7 @@ void Object3d::Initialize(HRESULT& result, ID3D12Device* device)
 	assert(SUCCEEDED(result));
 }
 
-void Object3d::Update(XMMATRIX& matView, XMMATRIX& matProjection)
+void Object::Update(XMMATRIX matView, XMMATRIX matProjection)
 {
 	XMMATRIX matScale, matRot, matTrams;
 
@@ -50,7 +52,7 @@ void Object3d::Update(XMMATRIX& matView, XMMATRIX& matProjection)
 	constMapTransform->mat = matWorld * matView * matProjection;
 }
 
-void Object3d::Draw(ID3D12GraphicsCommandList* commandList, D3D12_VERTEX_BUFFER_VIEW& vbView, D3D12_INDEX_BUFFER_VIEW& ibView, UINT indices)
+void Object::Draw(ID3D12GraphicsCommandList* commandList, D3D12_VERTEX_BUFFER_VIEW& vbView, D3D12_INDEX_BUFFER_VIEW& ibView, UINT indices)
 {
 	//頂点バッファの設定
 	commandList->IASetVertexBuffers(0, 1, &vbView);

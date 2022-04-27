@@ -49,14 +49,6 @@ HRESULT Texture::LoadBuffer(ID3D12Device* device)
 
 void Texture::LoadTransfer(HRESULT result)
 {
-}
-
-HRESULT Texture::LoadTexture(const wchar_t* szFile,ID3D12Device* device)
-{
-	HRESULT result = TexLoad(szFile);
-
-	
-
 	for (size_t i = 0; i < metadata.mipLevels; i++)
 	{
 		const Image* img = scratchImg.GetImage(i, 0, 0);
@@ -70,6 +62,39 @@ HRESULT Texture::LoadTexture(const wchar_t* szFile,ID3D12Device* device)
 		);
 		assert(SUCCEEDED(result));
 	}
+}
 
-	
+HRESULT Texture::Heap(ID3D12Device* device)
+{
+	const size_t kMaxSRVCount = 2056;
+
+	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	srvHeapDesc.NumDescriptors = kMaxSRVCount;
+
+	HRESULT result = device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&srvHeap));
+	assert(SUCCEEDED(result));
+
+	srvHandle = srvHeap->GetCPUDescriptorHandleForHeapStart();
+	return result;
+}
+
+void Texture::Range()
+{
+	descRangeSRV.NumDescriptors = 1;															//テクスチャ一つ
+	descRangeSRV.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;									//種別はテクスチャ
+	descRangeSRV.BaseShaderRegister = 0;														//0番スロットから
+	descRangeSRV.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+}
+
+HRESULT Texture::LoadTexture(const wchar_t* szFile,ID3D12Device* device)
+{
+	HRESULT result = TexLoad(szFile);
+	result = LoadBuffer(device);
+	LoadTransfer(result);
+	result = Heap(device);
+	Range();
+
+	return result;
 }

@@ -40,7 +40,7 @@ void Object3d::Update(XMMATRIX& matView, XMMATRIX& matProjection)
 	matWorld *= matScale;
 	matWorld *= matRot;
 	matWorld *= matTrams;
-	//親オブイジェクトがあれば
+	//親オブジェクトがあれば
 	if (parent != nullptr)
 	{
 		matWorld *= parent->matWorld;

@@ -473,10 +473,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region グラフィックスパイプライン設定
 
-	GPipeline gPipeline(*vsBlob.Get(), *psBlob.Get(), inputLayout);
+	GPipeline gPipeline(inputLayout,_countof(inputLayout));
 
-		#pragma region デプスステンシルステートの設定
-
+	for (int i = 0; i < _countof(gPipeline.pipelineDesc); i++)
+	{
+		gPipeline.pipelineDesc[i].VS.pShaderBytecode = vsBlob->GetBufferPointer();
+		gPipeline.pipelineDesc[i].VS.BytecodeLength = vsBlob->GetBufferSize();
+		gPipeline.pipelineDesc[i].PS.pShaderBytecode = psBlob->GetBufferPointer();
+		gPipeline.pipelineDesc[i].PS.BytecodeLength = psBlob->GetBufferSize();
+	}
 
 #pragma endregion グラフィックスパイプライン設定
 

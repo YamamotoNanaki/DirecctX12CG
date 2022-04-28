@@ -1,11 +1,11 @@
 #include "Blend.h"
 
-Blend::Blend(D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipelineDesc)
+Blend::Blend(D3D12_GRAPHICS_PIPELINE_STATE_DESC* pipelineDesc, int PipelineCount)
 {
 	int max = _countof(blenddesc);
-	if (_countof(blenddesc) < sizeof(pipelineDesc) / sizeof(pipelineDesc[0]))
+	if (max < PipelineCount)
 	{
-		max = sizeof(pipelineDesc) / sizeof(pipelineDesc[0]);
+		max = PipelineCount;
 	}
 	for (int i = 0; i < max; i++)
 	{

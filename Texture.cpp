@@ -88,7 +88,8 @@ void Texture::Range()
 	descRangeSRV.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 }
 
-HRESULT Texture::LoadTexture(const wchar_t* szFile,ID3D12Device* device)
+
+HRESULT Texture::LoadTexture(const wchar_t* szFile, ID3D12Device* device)
 {
 	HRESULT result = TexLoad(szFile);
 	result = LoadBuffer(device);

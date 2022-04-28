@@ -14,6 +14,8 @@
 #include "Projection.h"
 #include "View.h"
 #include "Texture.h"
+#include "RootParam.h"
+#include "GPipeline.h"
 
 using namespace DirectX;
 using namespace std;
@@ -147,165 +149,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma endregion 射影行列
 
-	//-------------------------
-
 	Texture tex;
+
 	tex.LoadTexture(L"Resources/texture.png", dx12->device.Get());
-
-//	#pragma region 画像イメージデータの作成
-//
-//	//WICテクスチャのロード
-//	TexMetadata metadata{};
-//	ScratchImage scratchImg{};
-//
-//	result = LoadFromWICFile(
-//		L"Resources/texture.png",			//Data\Resources\texture.pngを指定
-//		WIC_FLAGS_NONE, &metadata, scratchImg);
-//
-//	ScratchImage mipChain{};
-//	result = GenerateMipMaps(
-//		scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(), TEX_FILTER_DEFAULT, 0, mipChain);
-//	if (SUCCEEDED(result))
-//	{
-//		scratchImg = std::move(mipChain);
-//		metadata = scratchImg.GetMetadata();
-//	}
-//
-//	metadata.format = MakeSRGB(metadata.format);
-//
-//	//const Image* img = scratchImg.GetImage(0, 0, 0);	//生データ抽出
-//
-//	//const size_t textureWidth = 256;
-//	//const size_t textureHeight = 256;
-//	//const size_t imageDataCount = textureWidth * textureHeight;
-//
-//	//XMFLOAT4* imageData = new XMFLOAT4[imageDataCount];
-//
-//	//	for (int i = 0; i < imageDataCount; i++)
-//	//	{
-//	//		imageData[i].x = 1.0f;
-//	//		imageData[i].y = 0.0f;
-//	//		imageData[i].z = 0.0f;
-//	//		imageData[i].w = 1.0f;
-//	//	}
-//#pragma endregion 画像イメージデータの作成
-//
-//	#pragma region テクスチャバッファの生成
-//
-//		D3D12_HEAP_PROPERTIES texHeapProp{};	//テクスチャヒープ設定
-//		texHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;
-//		texHeapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-//		texHeapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-//
-//		//D3D12_RESOURCE_DESC texresDesc{};		//テクスチャ設定
-//		//texresDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	//2dテクスチャ用
-//		//texresDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;			//RGBAフォーマット
-//		//texresDesc.Width = textureWidth;			//幅
-//		//texresDesc.Height = textureHeight;			//高さ
-//		//texresDesc.DepthOrArraySize = 1;
-//		//texresDesc.MipLevels = 1;
-//		//texresDesc.SampleDesc.Count = 1;
-//
-//		//画像読み込み
-//		D3D12_RESOURCE_DESC texresDesc{};		//テクスチャ設定
-//		//texresDesc.Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(metadata.dimension);
-//		texresDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-//		texresDesc.Format = metadata.format;
-//		texresDesc.Width = metadata.width;			//幅
-//		texresDesc.Height = (UINT)metadata.height;	//高さ
-//		texresDesc.DepthOrArraySize = (UINT16)metadata.arraySize;
-//		texresDesc.MipLevels = (UINT16)metadata.mipLevels;
-//		texresDesc.SampleDesc.Count = 1;
-//
-//		ComPtr<ID3D12Resource> texbuff = nullptr;
-//		result = dx12->device->CreateCommittedResource(		//GPUリソースの生成
-//			&texHeapProp,
-//			D3D12_HEAP_FLAG_NONE,
-//			&texresDesc,
-//			D3D12_RESOURCE_STATE_GENERIC_READ,		//テクスチャ用指定
-//			nullptr,
-//			IID_PPV_ARGS(&texbuff));
-//
-//#pragma endregion テクスチャバッファの生成
-//
-//	#pragma region テクスチャバッファへのデータ転送
-//		
-//		for (size_t i = 0; i < metadata.mipLevels; i++)
-//		{
-//			const Image* img = scratchImg.GetImage(i, 0, 0);
-//			//テクスチャバッファにデータ転送
-//			result = texbuff->WriteToSubresource(
-//				(UINT)i,
-//				nullptr,				//全領域へコピー
-//				img->pixels,			//元データアドレス
-//				//sizeof(XMFLOAT4) * textureWidth,
-//				//sizeof(XMFLOAT4) * imageDataCount
-//				(UINT)img->rowPitch,	//1ラインサイズ
-//				(UINT)img->slicePitch	//1枚サイズ
-//			);
-//			assert(SUCCEEDED(result));
-//		}
-//
-//		//元データ解放（忘れずに解放）
-//		//delete[] imageData;
-//
-//#pragma endregion テクスチャバッファへのデータ転送
-//
-//	//-------------------------
-//
-//	#pragma region デスクリプタヒープ生成
-//
-//		const size_t kMaxSRVCount = 2056;
-//
-//		D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-//		srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-//		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-//		srvHeapDesc.NumDescriptors = kMaxSRVCount;
-//
-//		ID3D12DescriptorHeap* srvHeap = nullptr;
-//		result = dx12->device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&srvHeap));
-//		assert(SUCCEEDED(result));
-//
-//		D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = srvHeap->GetCPUDescriptorHandleForHeapStart();
-//#pragma endregion デスクリプタヒープ生成
-//
-//	//-------------------------
-//
-//	#pragma region デスクリプタレンジの設定
-//
-//		D3D12_DESCRIPTOR_RANGE descRangeSRV{};														//テクスチャ用
-//		descRangeSRV.NumDescriptors = 1;															//テクスチャ一つ
-//		descRangeSRV.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;									//種別はテクスチャ
-//		descRangeSRV.BaseShaderRegister = 0;														//0番スロットから
-//		descRangeSRV.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-//
-//#pragma endregion デスクリプタレンジの設定
-
-	//----------------------------
 
 	#pragma region ルートパラメータの設定
 
-	vector<D3D12_ROOT_PARAMETER> rootParams = {};
-	D3D12_ROOT_PARAMETER rootParamSeed;
-	//定数用
-	rootParamSeed.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//種類
-	rootParamSeed.Descriptor.ShaderRegister = 0;								//デスクリプタレンジ
-	rootParamSeed.Descriptor.RegisterSpace = 0;									//デスクリプタレンジ数
-	rootParamSeed.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
-	rootParams.push_back(rootParamSeed);
-	D3D12_ROOT_PARAMETER rootParamSeed2;
-	//テクスチャ用
-	rootParamSeed2.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//種類
-	rootParamSeed2.DescriptorTable.pDescriptorRanges = &tex.descRangeSRV;				//デスクリプタレンジ
-	rootParamSeed2.DescriptorTable.NumDescriptorRanges = 1;						//デスクリプタレンジ数
-	rootParamSeed2.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
-	rootParams.push_back(rootParamSeed2);
-	D3D12_ROOT_PARAMETER rootParamSeed3;
-	rootParamSeed3.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//種類
-	rootParamSeed3.Descriptor.ShaderRegister = 1;								//デスクリプタレンジ
-	rootParamSeed3.Descriptor.RegisterSpace = 0;									//デスクリプタレンジ数
-	rootParamSeed3.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;				//すべてのシェーダーから見える
-	rootParams.push_back(rootParamSeed3);
+	RootParam root(tex.descRangeSRV, 1);
 
 #pragma endregion ルートパラメータの設定
 
@@ -622,51 +472,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//------------------------
 
 	#pragma region グラフィックスパイプライン設定
-// グラフィックスパイプライン設定
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc{};
 
-	pipelineDesc.VS.pShaderBytecode = vsBlob->GetBufferPointer();
-	pipelineDesc.VS.BytecodeLength = vsBlob->GetBufferSize();
-	pipelineDesc.PS.pShaderBytecode = psBlob->GetBufferPointer();
-	pipelineDesc.PS.BytecodeLength = psBlob->GetBufferSize();
+	GPipeline gPipeline(*vsBlob.Get(), *psBlob.Get(), inputLayout);
 
 		#pragma region デプスステンシルステートの設定
 
-	//デプスステンシルステートの設定
-	pipelineDesc.DepthStencilState.DepthEnable = true;		//深度テストを行う
-	pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	//書き込み許可
-	pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-	pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;		//深度値フォーマット
-
-		#pragma endregion デプスステンシルステートの設定
-
-	pipelineDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
-	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;  // 背面をカリング
-	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
-	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
-
-	//ブレンド設定
-	//pipelineDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;  // RBGA全てのチャンネルを描画
-	D3D12_RENDER_TARGET_BLEND_DESC& blenddesc = pipelineDesc.BlendState.RenderTarget[0];
-	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-	blenddesc.BlendEnable = true;						//ブレンドを有効にする
-	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;		//加算
-	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;			//ソースの値を100%使う
-	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;		//デストの値を  0%使う
-
-	blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
-	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;			//ソースのアルファ値
-	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;	//1.0f-ソースのアルファ値
-
-	pipelineDesc.InputLayout.pInputElementDescs = inputLayout;
-	pipelineDesc.InputLayout.NumElements = _countof(inputLayout);
-
-	pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-	pipelineDesc.NumRenderTargets = 1; // 描画対象は1つ
-	pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 0～255指定のRGBA
-	pipelineDesc.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 
 #pragma endregion グラフィックスパイプライン設定
 
@@ -696,8 +506,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	rootSignatureDesc.pParameters = &rootParams.front();
-	rootSignatureDesc.NumParameters = rootParams.size();
+	rootSignatureDesc.pParameters = &root.rootParams.front();
+	rootSignatureDesc.NumParameters = root.rootParams.size();
 	//テクスチャ追加
 	rootSignatureDesc.pStaticSamplers = &samplerDesc;
 	rootSignatureDesc.NumStaticSamplers = 1;
@@ -709,15 +519,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	assert(SUCCEEDED(result));
 	rootSigBlob->Release();
 
-	// パイプラインにルートシグネチャをセット
-	pipelineDesc.pRootSignature = rootsignature.Get();
+	gPipeline.RootSignature(*rootsignature.Get());
 #pragma endregion ルートシグネチャの設定
 
 	//----------------------
 
 	#pragma region パイプラインステートの生成
 	ComPtr<ID3D12PipelineState> pipelinestate = nullptr;
-	result = dx12->device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelinestate));
+	result = dx12->device->CreateGraphicsPipelineState(&gPipeline.pipelineDesc[0], IID_PPV_ARGS(&pipelinestate));
 	assert(SUCCEEDED(result));
 #pragma endregion パイプラインステートの生成
 
@@ -816,23 +625,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	#pragma region パイプラインステート
 		dx12->commandList->SetPipelineState(pipelinestate.Get());
 		dx12->commandList->SetGraphicsRootSignature(rootsignature.Get());
-
-		////デスクリプタヒープを設定
-		//ID3D12DescriptorHeap* ppHeaps[] = { basicDescHeap };
-		//cmdList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-		////定数バッファビューをセット
-		////cmdList->SetGraphicsRootDescriptorTable(0, basicDescHeap->GetGPUDescriptorHandleForHeapStart());
-
-		////テクスチャ追加
-		////デスクリプタヒープの先頭ハンドルを取得(GPU版)
-		//D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandle = basicDescHeap->GetGPUDescriptorHandleForHeapStart();
-		////ヒープの先頭にあるCBVをルートパラメータ0番に設定
-		//cmdList->SetGraphicsRootDescriptorTable(0, gpuDescHandle);
-		////ハンドルを1つ進める
-		//gpuDescHandle.ptr += dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-		////ヒープの2番目にあるSRVをルートパラメータを1番に設定
-		//cmdList->SetGraphicsRootDescriptorTable(1, gpuDescHandle);
-
 #pragma endregion パイプラインステート
 
 	#pragma region プリミティブ形状

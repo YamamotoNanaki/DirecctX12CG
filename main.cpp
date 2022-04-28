@@ -473,15 +473,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region グラフィックスパイプライン設定
 
-	GPipeline gPipeline(inputLayout,_countof(inputLayout));
+	GPipeline gPipeline(vsBlob.Get(), psBlob.Get(), inputLayout, _countof(inputLayout));
 
-	for (int i = 0; i < _countof(gPipeline.pipelineDesc); i++)
-	{
-		gPipeline.pipelineDesc[i].VS.pShaderBytecode = vsBlob->GetBufferPointer();
-		gPipeline.pipelineDesc[i].VS.BytecodeLength = vsBlob->GetBufferSize();
-		gPipeline.pipelineDesc[i].PS.pShaderBytecode = psBlob->GetBufferPointer();
-		gPipeline.pipelineDesc[i].PS.BytecodeLength = psBlob->GetBufferSize();
-	}
 
 #pragma endregion グラフィックスパイプライン設定
 
@@ -531,7 +524,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region パイプラインステートの生成
 	ComPtr<ID3D12PipelineState> pipelinestate = nullptr;
-	result = dx12->device->CreateGraphicsPipelineState(&gPipeline.pipelineDesc[0], IID_PPV_ARGS(&pipelinestate));
+	result = dx12->device->CreateGraphicsPipelineState(&gPipeline.pipelineDesc[4], IID_PPV_ARGS(&pipelinestate));
 	assert(SUCCEEDED(result));
 #pragma endregion パイプラインステートの生成
 

@@ -1,9 +1,13 @@
 #include "GPipeline.h"
 
-GPipeline::GPipeline(D3D12_INPUT_ELEMENT_DESC* inputLayout, int layoutCount)
+GPipeline::GPipeline(ID3DBlob* vsBlob,ID3DBlob*psBlob, D3D12_INPUT_ELEMENT_DESC* inputLayout, int layoutCount)
 {
 	for (int i = 0; i < _countof(pipelineDesc); i++)
 	{
+		pipelineDesc[i].VS.pShaderBytecode = vsBlob->GetBufferPointer();
+		pipelineDesc[i].VS.BytecodeLength = vsBlob->GetBufferSize();
+		pipelineDesc[i].PS.pShaderBytecode = psBlob->GetBufferPointer();
+		pipelineDesc[i].PS.BytecodeLength = psBlob->GetBufferSize();
 		//デプスステンシルステートの設定
 		pipelineDesc[i].DepthStencilState.DepthEnable = true;		//深度テストを行う
 		pipelineDesc[i].DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	//書き込み許可
@@ -15,21 +19,49 @@ GPipeline::GPipeline(D3D12_INPUT_ELEMENT_DESC* inputLayout, int layoutCount)
 		pipelineDesc[i].RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
 		pipelineDesc[i].RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 
+		D3D12_RENDER_TARGET_BLEND_DESC& blenddesc = pipelineDesc[i].BlendState.RenderTarget[0];
+		blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+		blenddesc.BlendEnable = true;						//ブレンドを有効にする
+		blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;			//加算
+		blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;			//ソースの値を100%使う
+		blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;			//デストの値を  0%使う
+
+		if (i == 1)
+		{
+			blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
+			blenddesc.SrcBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
+			blenddesc.DestBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
+		}
+		else if (i == 2)
+		{
+			blenddesc.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;		//デストからソースを減算
+			blenddesc.SrcBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
+			blenddesc.DestBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
+		}
+		else if (i == 3)
+		{
+			blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
+			blenddesc.SrcBlend = D3D12_BLEND_INV_DEST_COLOR;		//1.0f-デストカラーの値
+			blenddesc.DestBlend = D3D12_BLEND_ZERO;				//使わない
+		}
+		else
+		{
+			blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
+			blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;			//ソースのアルファ値
+			blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;		//1.0f-ソースのアルファ値
+		}
+
 		pipelineDesc[i].InputLayout.pInputElementDescs = inputLayout;
 		pipelineDesc[i].InputLayout.NumElements = layoutCount;
-				
+
 		pipelineDesc[i].PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-				
+
 		pipelineDesc[i].NumRenderTargets = 1; // 描画対象は1つ
 		pipelineDesc[i].RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 0～255指定のRGBA
 		pipelineDesc[i].SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
+		
 	}
-	blendDesc = new Blend(pipelineDesc, _countof(pipelineDesc));
-}
-
-GPipeline::~GPipeline()
-{
-	delete blendDesc;
 }
 
 void GPipeline::RootSignature(ID3D12RootSignature& rootsignature)

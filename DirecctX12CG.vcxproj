@@ -143,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Blend.cpp" />
     <ClCompile Include="DirectX12.cpp" />
     <ClCompile Include="GPipeline.cpp" />
     <ClCompile Include="Projection.cpp" />
@@ -176,7 +175,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Blend.h" />
     <ClInclude Include="DirectX12.h" />
     <ClInclude Include="GPipeline.h" />
     <ClInclude Include="Projection.h" />

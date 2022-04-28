@@ -1,14 +1,12 @@
 #pragma once
-#include "Blend.h"
+#include <d3d12.h>
 
 class GPipeline
 {
 private:
-	Blend* blendDesc;
 
 public:
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc[4];
-	GPipeline(D3D12_INPUT_ELEMENT_DESC* inputLayout, int layoutCount);
-	~GPipeline();
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc[4] = {};
+	GPipeline(ID3DBlob* vsBlob, ID3DBlob* psBlob, D3D12_INPUT_ELEMENT_DESC* inputLayout, int layoutCount);
 	void RootSignature(ID3D12RootSignature& rootsignature);
 };

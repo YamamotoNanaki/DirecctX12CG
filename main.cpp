@@ -524,7 +524,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region パイプラインステートの生成
 	ComPtr<ID3D12PipelineState> pipelinestate = nullptr;
-	result = dx12->device->CreateGraphicsPipelineState(&gPipeline.pipelineDesc[4], IID_PPV_ARGS(&pipelinestate));
+	result = dx12->device->CreateGraphicsPipelineState(&gPipeline.pipelineDesc[0], IID_PPV_ARGS(&pipelinestate));
 	assert(SUCCEEDED(result));
 #pragma endregion パイプラインステートの生成
 

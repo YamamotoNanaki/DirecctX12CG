@@ -34,7 +34,6 @@ private:
 	void LoadTransfer(HRESULT result);
 	HRESULT Heap(ID3D12Device* device);
 	void Range();
-	
 
 public:
 	HRESULT LoadTexture(const wchar_t* szFile, ID3D12Device* device);

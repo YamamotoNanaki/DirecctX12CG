@@ -506,7 +506,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	#pragma region 描画コマンド
 		for (int i = 0; i < _countof(object3ds); i++)
 		{
-			dx12->commandList->SetPipelineState(graph.pipelinestate[i % 4].Get());
+			dx12->commandList->SetPipelineState(graph.pipelinestate[1].Get());
 			object3ds[i].Draw(dx12->commandList.Get(), vbView, ibView, _countof(indices));
 		}
 #pragma endregion 描画コマンド

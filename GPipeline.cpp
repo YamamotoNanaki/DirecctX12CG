@@ -10,7 +10,6 @@ GPipeline::GPipeline(ID3DBlob* vsBlob,ID3DBlob*psBlob, D3D12_INPUT_ELEMENT_DESC*
 		pipelineDesc[i].PS.BytecodeLength = psBlob->GetBufferSize();
 		//デプスステンシルステートの設定
 		pipelineDesc[i].DepthStencilState.DepthEnable = true;		//深度テストを行う
-		pipelineDesc[i].DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	//書き込み許可
 		pipelineDesc[i].DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 		pipelineDesc[i].DSVFormat = DXGI_FORMAT_D32_FLOAT;		//深度値フォーマット
 
@@ -32,24 +31,28 @@ GPipeline::GPipeline(ID3DBlob* vsBlob,ID3DBlob*psBlob, D3D12_INPUT_ELEMENT_DESC*
 			blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
 			blenddesc.SrcBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
 			blenddesc.DestBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
+			pipelineDesc[i].DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		}
 		else if (i == 2)
 		{
 			blenddesc.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;		//デストからソースを減算
 			blenddesc.SrcBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
 			blenddesc.DestBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
+			pipelineDesc[i].DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		}
 		else if (i == 3)
 		{
 			blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
 			blenddesc.SrcBlend = D3D12_BLEND_INV_DEST_COLOR;		//1.0f-デストカラーの値
 			blenddesc.DestBlend = D3D12_BLEND_ZERO;				//使わない
+			pipelineDesc[i].DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		}
 		else
 		{
 			blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
 			blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;			//ソースのアルファ値
 			blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;		//1.0f-ソースのアルファ値
+			pipelineDesc[i].DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	//書き込み許可
 		}
 
 		pipelineDesc[i].InputLayout.pInputElementDescs = inputLayout;

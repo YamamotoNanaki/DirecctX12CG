@@ -88,7 +88,7 @@
       <Filter>ソース ファイル\Graphic</Filter>
     </ClCompile>
     <ClCompile Include="Graphic.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Graphic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,7 @@ using namespace DirectX;
 HRESULT Texture::TexLoad(const wchar_t* szFile)
 {
 	HRESULT result = LoadFromWICFile(
-		L"Resources/texture.png",			//Data\Resources\texture.png‚ðŽw’è
+		szFile,			//Data\Resources\texture.png‚ðŽw’è
 		WIC_FLAGS_NONE, &metadata, scratchImg);
 
 	ScratchImage mipChain{};

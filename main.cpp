@@ -16,6 +16,7 @@
 #include "Texture.h"
 #include "RootParam.h"
 #include "GPipeline.h"
+#include "Graphic.h"
 
 using namespace DirectX;
 using namespace std;
@@ -154,8 +155,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	tex.LoadTexture(L"Resources/texture.png", dx12->device.Get());
 
 	#pragma region ルートパラメータの設定
-
-	RootParam root(tex.descRangeSRV, 1);
 
 #pragma endregion ルートパラメータの設定
 
@@ -382,151 +381,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma endregion インデックスバッファへのデータ転送
 
-	//------------------------------
-
-	#pragma region 頂点シェーダーファイルの読み込みとコンパイル
-
-	ComPtr<ID3DBlob> vsBlob = nullptr; // 頂点シェーダオブジェクト
-	ComPtr<ID3DBlob> psBlob = nullptr; // ピクセルシェーダオブジェクト
-	ComPtr<ID3DBlob> errorBlob = nullptr; // エラーオブジェクト
-
-	// 頂点シェーダの読み込みとコンパイル
-	result = D3DCompileFromFile( L"BasicVS.hlsl",  // シェーダファイル名
-		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
-		"main", "vs_5_0", // エントリーポイント名、シェーダーモデル指定
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0, &vsBlob, &errorBlob);
-
-
-#pragma endregion 頂点シェーダーファイルの読み込みとコンパイル
-
-	//-------------------------
-
-	#pragma region シェーダーのエラー内容を表示
-	if (FAILED(result)) {
-		// errorBlobからエラー内容をstring型にコピー
-		string error;
-		error.resize(errorBlob->GetBufferSize());
-
-		copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			error.begin());
-		error += "\n";
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(error.c_str());
-		assert(0);
-	}
-
-#pragma endregion シェーダーのエラー内容を表示
-
-	//---------------------
-
-	#pragma region ピクセルシェーダーの読み込みとコンパイル
-// ピクセルシェーダの読み込みとコンパイル
-	result = D3DCompileFromFile( L"BasicPS.hlsl",   // シェーダファイル名
-		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
-		"main", "ps_5_0", // エントリーポイント名、シェーダーモデル指定
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0, &psBlob, &errorBlob);
-
-
-#pragma endregion ピクセルシェーダーの読み込みとコンパイル
-
-	//------------------------
-
-	#pragma region シェーダーのエラー内容を表示
-	if (FAILED(result)) {
-		// errorBlobからエラー内容をstring型にコピー
-		string error;
-		error.resize(errorBlob->GetBufferSize());
-
-		copy_n((char*)errorBlob->GetBufferPointer(),
-			errorBlob->GetBufferSize(),
-			error.begin());
-		error += "\n";
-		// エラー内容を出力ウィンドウに表示
-		OutputDebugStringA(error.c_str());
-		assert(0);
-	}
-
-#pragma endregion シェーダーのエラー内容を表示
-
-	//---------------------
-
-	#pragma region 頂点レイアウト
-	// 頂点レイアウト
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{// xyz座標
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{// 法線ベクトル
-			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{// uv座標
-			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-
-#pragma endregion 頂点レイアウト
-
-	//------------------------
-
-	#pragma region グラフィックスパイプライン設定
-
-	GPipeline gPipeline(vsBlob.Get(), psBlob.Get(), inputLayout, _countof(inputLayout));
-
-
-#pragma endregion グラフィックスパイプライン設定
-
-	//-----------------
-
-	#pragma region テクスチャサンプラーの設定
-
-	D3D12_STATIC_SAMPLER_DESC samplerDesc{};
-
-	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//横繰り返し
-	samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//縦繰り返し
-	samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//奥行繰り返し
-	samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;	//ボーダーの時は黒
-	samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;					//リニア補完
-	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;									//ミップマップ最大値
-	samplerDesc.MinLOD = 0.0f;												//ミップマップ最小値
-	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-	samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;			//ピクセルシェーダーからのみ可視
-
-
-#pragma endregion テクスチャサンプラーの設定
-
-	//---------------------
-
-	#pragma region ルートシグネチャの設定
-	ComPtr<ID3D12RootSignature> rootsignature;
-
-	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
-	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	rootSignatureDesc.pParameters = &root.rootParams.front();
-	rootSignatureDesc.NumParameters = root.rootParams.size();
-	//テクスチャ追加
-	rootSignatureDesc.pStaticSamplers = &samplerDesc;
-	rootSignatureDesc.NumStaticSamplers = 1;
-
-	ID3DBlob* rootSigBlob = nullptr;
-	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
-	assert(SUCCEEDED(result));
-	result = dx12->device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
-	assert(SUCCEEDED(result));
-	rootSigBlob->Release();
-
-	gPipeline.RootSignature(*rootsignature.Get());
-#pragma endregion ルートシグネチャの設定
-
 	//----------------------
 
-	#pragma region パイプラインステートの生成
-	ComPtr<ID3D12PipelineState> pipelinestate = nullptr;
-	result = dx12->device->CreateGraphicsPipelineState(&gPipeline.pipelineDesc[0], IID_PPV_ARGS(&pipelinestate));
-	assert(SUCCEEDED(result));
-#pragma endregion パイプラインステートの生成
+	Graphic graph;
+	result = graph.Initialize(dx12->device.Get(), tex.descRangeSRV);
 
 #pragma endregion 描画初期化
 
@@ -621,8 +479,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion シザー矩形の設定コマンド
 
 	#pragma region パイプラインステート
-		dx12->commandList->SetPipelineState(pipelinestate.Get());
-		dx12->commandList->SetGraphicsRootSignature(rootsignature.Get());
+		dx12->commandList->SetGraphicsRootSignature(graph.rootsignature.Get());
 #pragma endregion パイプラインステート
 
 	#pragma region プリミティブ形状
@@ -649,6 +506,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	#pragma region 描画コマンド
 		for (int i = 0; i < _countof(object3ds); i++)
 		{
+			dx12->commandList->SetPipelineState(graph.pipelinestate[i % 4].Get());
 			object3ds[i].Draw(dx12->commandList.Get(), vbView, ibView, _countof(indices));
 		}
 #pragma endregion 描画コマンド

@@ -85,6 +85,9 @@
       <Filter>ソース ファイル\Base</Filter>
     </ClCompile>
     <ClCompile Include="GPipeline.cpp">
+      <Filter>ソース ファイル\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,6 +131,9 @@
       <Filter>ヘッダー ファイル\Base</Filter>
     </ClInclude>
     <ClInclude Include="GPipeline.h">
+      <Filter>ヘッダー ファイル\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic.h">
       <Filter>ヘッダー ファイル\Graphic</Filter>
     </ClInclude>
   </ItemGroup>

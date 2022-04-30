@@ -393,6 +393,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	float angleY = 0.0f;
 	float angleX = 0.0f;
+	float color = 0;
 	//-----------------------
 
 
@@ -451,6 +452,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			object3ds[i].Update(matView.Get(), matPro.Get());
 		}
 
+		color+=0.005;
+		if (color >= 1.0f)
+		{
+			color = 0;
+		}
+		result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);	//マッピング
+		assert(SUCCEEDED(result));
+		constMapMaterial->color = XMFLOAT4(color, 0, 0, 1);					//RGBAで半透明の赤
+		constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
+
 
 		dx12->DrawBefore();
 
@@ -506,7 +517,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	#pragma region 描画コマンド
 		for (int i = 0; i < _countof(object3ds); i++)
 		{
-			dx12->commandList->SetPipelineState(graph.pipelinestate[1].Get());
+			dx12->commandList->SetPipelineState(graph.pipelinestate[0].Get());
 			object3ds[i].Draw(dx12->commandList.Get(), vbView, ibView, _countof(indices));
 		}
 #pragma endregion 描画コマンド

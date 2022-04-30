@@ -146,6 +146,7 @@
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="DirectX12.cpp" />
     <ClCompile Include="GPipeline.cpp" />
+    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="RootParam.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="DirectX12.h" />
     <ClInclude Include="GPipeline.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="Projection.h" />
     <ClInclude Include="RootParam.h" />
     <ClInclude Include="Texture.h" />

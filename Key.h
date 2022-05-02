@@ -29,6 +29,16 @@ namespace IF
 			key7 = DIK_7,
 			key8 = DIK_8,
 			key9 = DIK_9,
+			num0 = DIK_NUMPAD0,
+			num1 = DIK_NUMPAD1,
+			num2 = DIK_NUMPAD2,
+			num3 = DIK_NUMPAD3,
+			num4 = DIK_NUMPAD4,
+			num5 = DIK_NUMPAD5,
+			num6 = DIK_NUMPAD6,
+			num7 = DIK_NUMPAD7,
+			num8 = DIK_NUMPAD8,
+			num9 = DIK_NUMPAD9,
 			A = DIK_A,
 			B = DIK_B,
 			C = DIK_C,
@@ -58,15 +68,31 @@ namespace IF
 			SPACE = DIK_SPACE,
 			ENTER = DIK_RETURN,
 			ESC = DIK_ESCAPE,
-			LSHIFT = DIK_LSHIFT,
-			LCTRL = DIK_LCONTROL,
+			SHIFT = DIK_LSHIFT,
+			CTRL = DIK_LCONTROL,
 			TAB = DIK_TAB,
 			UP = DIK_UP,
 			DOWN = DIK_DOWN,
 			LEFT = DIK_LEFT,
 			RIGHT = DIK_RIGHT,
 			BACK = DIK_BACKSPACE,
-			LALT = DIK_LALT
+			ALT = DIK_LALT,
+			CLOCK = DIK_CAPSLOCK,
+			RALT = DIK_RALT,
+			RSHIFT = DIK_RSHIFT,
+			RCTRL = DIK_RCONTROL,
+			F1 = DIK_F1,
+			F2 = DIK_F2,
+			F3 = DIK_F3,
+			F4 = DIK_F4,
+			F5 = DIK_F5,
+			F6 = DIK_F6,
+			F7 = DIK_F7,
+			F8 = DIK_F8,
+			F9 = DIK_F9,
+			F10 = DIK_F10,
+			F11 = DIK_F11,
+			F12 = DIK_F12
 		};
 
 		const KeyCode Arrow[4] = { LEFT,RIGHT,UP,DOWN };
@@ -84,7 +110,7 @@ namespace IF
 		/// キーボード情報のアップデート
 		/// </summary>
 		/// <param name="result"></param>
-		void Update(HRESULT& result);
+		HRESULT Update();
 
 		/// <summary>
 		/// トリガー判定

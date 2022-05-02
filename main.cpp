@@ -106,14 +106,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	float color = 0;
 	//-----------------------
 
-
-
 	while (!key->Down(key->ESC))
 	{
 		//メッセージ
 		if (win->Message())break;
 		//キーアップデート
-		key->Update(result);
+		key->Update();
 
 
 		if (key->Judge(key->WASD, key->OR))
@@ -175,19 +173,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 		dx12->DrawBefore();
 
-	#pragma region ビューポート設定コマンド
-		D3D12_VIEWPORT viewport{};
-
-		viewport.Width = winWidth;
-		viewport.Height = winHeight;
-		viewport.TopLeftX = 0;
-		viewport.TopLeftY = 0;
-		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
-
-		dx12->commandList->RSSetViewports(1, &viewport);
-#pragma endregion ビューポート設定コマンド5
-
 	#pragma region シザー矩形の設定コマンド
 		D3D12_RECT scissorrect{};
 
@@ -207,25 +192,21 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		dx12->commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 #pragma endregion プリミティブ形状
 
-
-	#pragma region 定数バッファビューの設定コマンド
-
 		dx12->commandList->SetGraphicsRootConstantBufferView(0, cb.GetGPUAddress());
 		dx12->commandList->SetDescriptorHeaps(1, &tex.srvHeap);
 		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = tex.srvHeap->GetGPUDescriptorHandleForHeapStart();
 		dx12->commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 
-#pragma endregion 定数バッファビューの設定コマンド
 			dx12->commandList->SetPipelineState(graph.pipelinestate[0].Get());
 
 	#pragma region 描画コマンド
 		for (int i = 0; i < _countof(object3ds); i++)
 		{
-			object3ds[i].Draw(dx12->commandList.Get());
+			object3ds[i].Draw(dx12->commandList.Get(),dx12->viewport);
 		}
 #pragma endregion 描画コマンド
 
-		dx12->DrawAfter(result);
+		dx12->DrawAfter();
 	}
 
 	delete key;

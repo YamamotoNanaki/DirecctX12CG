@@ -120,16 +120,20 @@ void Object::Update(XMMATRIX matView, XMMATRIX matProjection)
 	constMapTransform->mat = matWorld * matView * matProjection;
 }
 
-void Object::Draw(ID3D12GraphicsCommandList* commandList)
+void Object::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)
 {
-	//頂点バッファの設定
-	commandList->IASetVertexBuffers(0, 1, &vi->vbView);
-	//インデックスバッファの設定
-	commandList->IASetIndexBuffer(&vi->ibView);
-	//定数バッファビューの設定
-	commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
-	//描画コマンド
-	commandList->DrawIndexedInstanced(vi->indices.size(), 1, 0, 0, 0);
+	for (int i = 0; i < viewport.size(); i++)
+	{
+		commandList->RSSetViewports(1, &viewport[i]);
+		//頂点バッファの設定
+		commandList->IASetVertexBuffers(0, 1, &vi->vbView);
+		//インデックスバッファの設定
+		commandList->IASetIndexBuffer(&vi->ibView);
+		//定数バッファビューの設定
+		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
+		//描画コマンド
+		commandList->DrawIndexedInstanced(vi->indices.size(), 1, 0, 0, 0);
+	}
 }
 
 Object::~Object()

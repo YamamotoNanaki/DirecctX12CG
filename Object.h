@@ -2,6 +2,7 @@
 #include <d3d12.h>
 #include <DirectXMath.h>
 #include <wrl.h>
+#include <vector>
 #include "VertexIndex.h"
 #include "ConstStruct.h"
 
@@ -12,6 +13,7 @@ namespace IF
 	class Object
 	{
 		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+		template<class T> using vector = std::vector<T>;
 		using XMFLOAT3 = DirectX::XMFLOAT3;
 		using XMMATRIX = DirectX::XMMATRIX;
 	private:
@@ -35,7 +37,7 @@ namespace IF
 		HRESULT Initialize(ID3D12Device* device);
 		HRESULT VIInitialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle);
 		void Update(XMMATRIX matView, XMMATRIX matProjection);
-		void Draw(ID3D12GraphicsCommandList* commandList);
+		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);
 		~Object();
 	};
 }

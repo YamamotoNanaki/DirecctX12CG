@@ -31,6 +31,7 @@ namespace IF
 		// ÉtÉFÉìÉXÇÃê∂ê¨
 		ComPtr<ID3D12Fence> fence = nullptr;
 		UINT64 fenceVal = 0;
+		vector<D3D12_VIEWPORT> viewport{};
 
 	private:
 		//èâä˙âª
@@ -55,30 +56,31 @@ namespace IF
 		float clearColor[4] = { 0.1f ,0.25f ,0.5f ,1.0f };
 
 	private:
-		void Adapter(HRESULT& result);
-		void CreateDevice(HRESULT& result);
-		void CmdList(HRESULT& result);
-		void CmdQueue(HRESULT& result);
-		void SwapChain(HRESULT& result, HWND hwnd, int window_width, int window_height);
-		void Heap(HRESULT& result);
-		void TargetView(HRESULT& result);
-		void Fence(HRESULT& result);
-		void DepthDesc(HRESULT result, int window_width, int window_height);
-		void DepthHeap(HRESULT result);
+		HRESULT Adapter();
+		HRESULT CreateDevice();
+		HRESULT CmdList();
+		HRESULT CmdQueue();
+		HRESULT SwapChain(HWND hwnd, int window_width, int window_height);
+		void Heap();
+		void TargetView();
+		HRESULT Fence();
+		HRESULT DepthDesc(int window_width, int window_height);
+		HRESULT DepthHeap();
 
 		void ResourceBarrierSet();
 		void RenderTarget();
 		void Clear();
 
 		void ResourceBarrierReturn();
-		void ExecutCommand(HRESULT& result);
+		HRESULT ExecutCommand();
 		void BufferSwap();
-		void CommandReset(HRESULT& result);
+		HRESULT CommandReset();
 
 	public:
 		DirectX12(HRESULT& result, HWND hwnd, int window_width, int window_height);
 		void DrawBefore();
-		void DrawAfter(HRESULT& result);
+		HRESULT DrawAfter();
+		void SetNewViewPort(float width, float height, float topX, float topY, float minDepth = 0.0f, float maxDepth = 1.0f);
 
 	public:
 		void SetClearColor(XMFLOAT4 color);

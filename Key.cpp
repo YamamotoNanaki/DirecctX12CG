@@ -31,14 +31,16 @@ Key::Key(HRESULT& result, HINSTANCE& hInstance, HWND& hwnd)
 	}
 }
 
-void Key::Update(HRESULT& result)
+HRESULT Key::Update()
 {
 	for (int i = 0; i < 256; i++)
 	{
 		oldkey[i] = key[i];
 	}
 	keyboard->Acquire();
-	result = keyboard->GetDeviceState(sizeof(key), key);
+	HRESULT result = keyboard->GetDeviceState(sizeof(key), key);
+
+	return result;
 }
 
 bool Key::Triggere(KeyCode keyCode)

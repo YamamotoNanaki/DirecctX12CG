@@ -16,5 +16,6 @@ namespace IF
 	public:
 		HRESULT Initialize(ID3D12Device* device);
 		D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress();
+		void SetView(ID3D12CommandList* commandList);
 	};
 }

@@ -1,8 +1,9 @@
 #include "Matrix.h"
+#include <math.h>
 
-using namespace NA;
+using namespace IF;
 
-void NA::Matrix::IdentityMatrix()
+void IF::Matrix::IdentityMatrix()
 {
 	_1_1 = 1, _1_2 = 0, _1_3 = 0, _1_4 = 0;
 	_2_1 = 0, _2_2 = 1, _2_3 = 0, _2_4 = 0;
@@ -10,17 +11,43 @@ void NA::Matrix::IdentityMatrix()
 	_4_1 = 0, _4_2 = 0, _4_3 = 0, _4_4 = 1;
 }
 
-Matrix NA::Matrix::operator+() const
+Matrix IF::Matrix::RotationMatrix(float x, float y, float z, float angle)
+{
+	float cs = cosf(angle);
+	float si = sinf(angle);
+	Matrix a;
+	a._1_1 = cs + x * x * (1 - cs);
+	a._1_2 = x * y * (1 - cs) - z * si;
+	a._1_3 = z * y * (1 - cs) + x * si;
+	a._2_1 = x * y * (1 - cs) - z * si;
+	a._2_2 = cs + y * y * (1 - cs);
+	a._2_3 = z * y * (1 - cs) - x * si;
+	a._3_1 = z * x * (1 - cs) - y * si;
+	a._3_2 = z * y * (1 - cs) + x * si;
+	a._3_3 = cs + z * z * (1 - cs);
+
+	a._1_4 = 0;
+	a._2_4 = 0;
+	a._3_4 = 0;
+	a._4_1 = 0;
+	a._4_2 = 0;
+	a._4_3 = 0;
+	a._4_4 = 1;
+
+	return a;
+}
+
+Matrix IF::Matrix::operator+() const
 {
 	return *this;
 }
 
-Matrix NA::Matrix::operator-() const
+Matrix IF::Matrix::operator-() const
 {
 	return *this;
 }
 
-Matrix NA::Matrix::operator+(Matrix m)const
+Matrix IF::Matrix::operator+(Matrix m)const
 {
 	Matrix a;
 	a._1_1 = _1_1 + m._1_1;
@@ -43,7 +70,7 @@ Matrix NA::Matrix::operator+(Matrix m)const
 	return a;
 }
 
-Matrix NA::Matrix::operator-(Matrix m)const
+Matrix IF::Matrix::operator-(Matrix m)const
 {
 	Matrix a;
 	a._1_1 = _1_1 - m._1_1;
@@ -66,7 +93,7 @@ Matrix NA::Matrix::operator-(Matrix m)const
 	return a;
 }
 
-Matrix NA::Matrix::operator*(Matrix m)const
+Matrix IF::Matrix::operator*(Matrix m)const
 {
 	Matrix a;
 	a._1_1 = _1_1 * m._1_1 + _1_2 * m._2_1 + _1_3 * m._3_1 + _1_4 * m._4_1;
@@ -91,7 +118,7 @@ Matrix NA::Matrix::operator*(Matrix m)const
 	return a;
 }
 
-Matrix NA::Matrix::operator*(float s)const
+Matrix IF::Matrix::operator*(float s)const
 {
 	Matrix a;
 	a._1_1 = _1_1 * s;
@@ -114,7 +141,7 @@ Matrix NA::Matrix::operator*(float s)const
 	return a;
 }
 
-Matrix NA::Matrix::operator/(float s)const
+Matrix IF::Matrix::operator/(float s)const
 {
 	Matrix a;
 	a._1_1 = _1_1 / s;
@@ -137,31 +164,31 @@ Matrix NA::Matrix::operator/(float s)const
 	return a;
 }
 
-Matrix& NA::Matrix::operator+=(Matrix m)
+Matrix& IF::Matrix::operator+=(Matrix m)
 {
 	*this = *this + m;
 	return *this;
 }
 
-Matrix& NA::Matrix::operator-=(Matrix m)
+Matrix& IF::Matrix::operator-=(Matrix m)
 {
 	*this = *this - m;
 	return *this;
 }
 
-Matrix& NA::Matrix::operator*=(Matrix m)
+Matrix& IF::Matrix::operator*=(Matrix m)
 {
 	*this = *this * m;
 	return *this;
 }
 
-Matrix& NA::Matrix::operator*=(float s)
+Matrix& IF::Matrix::operator*=(float s)
 {
 	*this = *this * s;
 	return *this;
 }
 
-Matrix& NA::Matrix::operator/=(float s)
+Matrix& IF::Matrix::operator/=(float s)
 {
 	*this = *this / s;
 	return *this;

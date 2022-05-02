@@ -1,6 +1,7 @@
 #include "View.h"
 
 using namespace DirectX;
+using namespace IF;
 
 View::View(XMFLOAT3 eye, XMFLOAT3 target, XMFLOAT3 up)
 {

@@ -1,5 +1,8 @@
 #include "GPipeline.h"
 
+
+using namespace IF;
+
 GPipeline::GPipeline(ID3DBlob* vsBlob,ID3DBlob*psBlob, D3D12_INPUT_ELEMENT_DESC* inputLayout, int layoutCount)
 {
 	for (int i = 0; i < _countof(pipelineDesc); i++)

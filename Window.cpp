@@ -1,5 +1,8 @@
 #include "Window.h"
 
+
+using namespace IF;
+
 Window::Window(int window_width,int window_height)
 {
 	w.cbSize = sizeof(WNDCLASSEX);

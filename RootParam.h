@@ -4,15 +4,18 @@
 
 #pragma comment(lib,"d3d12.lib") 
 
-class RootParam
+namespace IF
 {
-	template <class T>using vector = std::vector<T>;
+	class RootParam
+	{
+		template <class T>using vector = std::vector<T>;
 
-private:
-	void ConstRoot(int num);
-	void TexRoot(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax);
+	private:
+		void ConstRoot(int num);
+		void TexRoot(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax);
 
-public:
-	vector<D3D12_ROOT_PARAMETER> rootParams = {};
-	RootParam(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax);
-};
+	public:
+		vector<D3D12_ROOT_PARAMETER> rootParams = {};
+		RootParam(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax);
+	};
+}

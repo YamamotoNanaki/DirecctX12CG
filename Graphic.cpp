@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 
 using namespace std;
+using namespace IF;
 
 HRESULT Graphic::CompillerVS()
 {

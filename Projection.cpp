@@ -1,5 +1,6 @@
 #include "Projection.h"
 using namespace DirectX;
+using namespace IF;
 
 Projection::Projection(float radian, float winWidth, float winHeight, float nearZ, float farZ)
 {

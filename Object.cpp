@@ -1,9 +1,11 @@
 #include "Object.h"
 
 using namespace DirectX;
+using namespace IF;
 
-void Object::Initialize(HRESULT& result, ID3D12Device* device)
+HRESULT Object::Initialize(ID3D12Device* device)
 {
+	HRESULT result;
 	//定数バッファのヒープ設定
 	D3D12_HEAP_PROPERTIES heapProp{};
 	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -24,6 +26,72 @@ void Object::Initialize(HRESULT& result, ID3D12Device* device)
 	//定数バッファのマッピング
 	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 	assert(SUCCEEDED(result));
+
+	Vertex vertices[] = {
+		// x   y   z        u    v
+		//前
+		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
+		{{-5, +5, -5},{},{0.0f, 0.0f}},	//左上
+		{{+5, -5, -5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, -5},{},{1.0f, 0.0f}},	//右上
+		//後			
+		{{+5, -5, +5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		{{-5, -5, +5},{},{0.0f, 1.0f}},	//左下
+		{{-5, +5, +5},{},{0.0f, 0.0f}},	//左上
+		//左			
+		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
+		{{-5, -5, +5},{},{0.0f, 0.0f}},	//左上
+		{{-5, +5, -5},{},{1.0f, 1.0f}},	//右下
+		{{-5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		//右			
+		{{+5, +5, -5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		{{+5, -5, -5},{},{0.0f, 1.0f}},	//左下
+		{{+5, -5, +5},{},{0.0f, 0.0f}},	//左上
+		//下			
+		{{-5, +5, +5},{},{1.0f, 1.0f}},	//右下
+		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
+		{{-5, +5, -5},{},{0.0f, 1.0f}},	//左下
+		{{+5, +5, -5},{},{0.0f, 0.0f}},	//左上
+		//上			
+		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
+		{{+5, -5, -5},{},{0.0f, 0.0f}},	//左上
+		{{-5, -5, +5},{},{1.0f, 1.0f}},	//右下
+		{{+5, -5, +5},{},{1.0f, 0.0f}},	//右上
+	};
+
+	//インデックスデータ
+	unsigned short indices[] = {
+		//
+		0,1,2,
+		2,1,3,
+		//
+		4,5,6,
+		6,5,7,
+		//
+		8,9,10,
+		10,9,11,
+		//
+		12,13,14,
+		14,13,15,
+		//
+		16,17,18,
+		18,17,19,
+		//
+		20,21,22,
+		22,21,23
+	};
+
+	vi = new VI(vertices, _countof(vertices), indices, _countof(indices));
+
+	return result;
+}
+
+HRESULT Object::VIInitialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle)
+{
+	HRESULT result = vi->Initialize(device, texBuff, srvHandle);
+	return result;
 }
 
 void Object::Update(XMMATRIX matView, XMMATRIX matProjection)
@@ -52,14 +120,19 @@ void Object::Update(XMMATRIX matView, XMMATRIX matProjection)
 	constMapTransform->mat = matWorld * matView * matProjection;
 }
 
-void Object::Draw(ID3D12GraphicsCommandList* commandList, D3D12_VERTEX_BUFFER_VIEW& vbView, D3D12_INDEX_BUFFER_VIEW& ibView, UINT indices)
+void Object::Draw(ID3D12GraphicsCommandList* commandList)
 {
 	//頂点バッファの設定
-	commandList->IASetVertexBuffers(0, 1, &vbView);
+	commandList->IASetVertexBuffers(0, 1, &vi->vbView);
 	//インデックスバッファの設定
-	commandList->IASetIndexBuffer(&ibView);
+	commandList->IASetIndexBuffer(&vi->ibView);
 	//定数バッファビューの設定
 	commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
 	//描画コマンド
-	commandList->DrawIndexedInstanced(indices, 1, 0, 0, 0);
+	commandList->DrawIndexedInstanced(vi->indices.size(), 1, 0, 0, 0);
+}
+
+Object::~Object()
+{
+	delete vi;
 }

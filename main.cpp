@@ -17,10 +17,12 @@
 #include "RootParam.h"
 #include "GPipeline.h"
 #include "Graphic.h"
+#include "VertexIndex.h"
 
 using namespace DirectX;
 using namespace std;
 using namespace Microsoft::WRL;
+using namespace IF;
 
 #pragma comment(lib,"d3d12.lib") 
 #pragma comment(lib,"dxgi.lib")
@@ -36,14 +38,6 @@ struct ConstBufferDataMaterial
 
 #pragma endregion 定数バッファ構造体
 
-#pragma region 頂点データ構造体
-struct Vertex
-{
-	XMFLOAT3 pos;			//XYZ座標
-	XMFLOAT3 normal;		//法線ベクトル
-	XMFLOAT2 uv;			//UV座標
-};
-#pragma endregion 頂点データ構造体
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,
 	_In_ int nCmdShow) {
@@ -111,7 +105,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	Object object3ds[kObjectConst];
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
-		object3ds[i].Initialize(result,dx12->device.Get());
+		result = object3ds[i].Initialize(dx12->device.Get());
 
 		if (i > 0)
 		{
@@ -154,234 +148,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	tex.LoadTexture(L"Resources/texture.png", dx12->device.Get());
 
-	#pragma region ルートパラメータの設定
-
-#pragma endregion ルートパラメータの設定
-
-	//-----------------------
-	//頂点
-	#pragma region 頂点データー
-	//頂点データ
-	Vertex vertices[] = {
-		// x   y   z        u    v
-		//前
-		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{-5, +5, -5},{},{0.0f, 0.0f}},	//左上
-		{{+5, -5, -5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, -5},{},{1.0f, 0.0f}},	//右上
-		//後			
-		{{+5, -5, +5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		{{-5, -5, +5},{},{0.0f, 1.0f}},	//左下
-		{{-5, +5, +5},{},{0.0f, 0.0f}},	//左上
-		//左			
-		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{-5, -5, +5},{},{0.0f, 0.0f}},	//左上
-		{{-5, +5, -5},{},{1.0f, 1.0f}},	//右下
-		{{-5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		//右			
-		{{+5, +5, -5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		{{+5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, -5, +5},{},{0.0f, 0.0f}},	//左上
-		//下			
-		{{-5, +5, +5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		{{-5, +5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, +5, -5},{},{0.0f, 0.0f}},	//左上
-		//上			
-		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, -5, -5},{},{0.0f, 0.0f}},	//左上
-		{{-5, -5, +5},{},{1.0f, 1.0f}},	//右下
-		{{+5, -5, +5},{},{1.0f, 0.0f}},	//右上
-	};
-
-	//インデックスデータ
-	unsigned short indices[] = {
-		//
-		0,1,2,
-		2,1,3,
-		//
-		4,5,6,
-		6,5,7,
-		//
-		8,9,10,
-		10,9,11,
-		//
-		12,13,14,
-		14,13,15,
-		//
-		16,17,18,
-		18,17,19,
-		//
-		20,21,22,
-		22,21,23
-	};
-
-	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
-	UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * _countof(vertices));
-
-
-#pragma endregion 頂点データー
-
-	//---------------------------
-
-	#pragma region 法線ベクトルの計算
-
-	for (int i = 0; i < _countof(indices) / 3; i++)
+	for (int i = 0; i < _countof(object3ds); i++)
 	{
-		//
-		//
-		unsigned short index0 = indices[i * 3 + 0];
-		unsigned short index1 = indices[i * 3 + 1];
-		unsigned short index2 = indices[i * 3 + 2];
-		//
-		XMVECTOR p0 = XMLoadFloat3(&vertices[index0].pos);
-		XMVECTOR p1 = XMLoadFloat3(&vertices[index1].pos);
-		XMVECTOR p2 = XMLoadFloat3(&vertices[index2].pos);
-		//
-		XMVECTOR v1 = XMVectorSubtract(p1, p0);
-		XMVECTOR v2 = XMVectorSubtract(p2, p0);
-		//
-		XMVECTOR normal = XMVector3Cross(v1, v2);
-		//
-		normal = XMVector3Normalize(normal);
-		//
-		XMStoreFloat3(&vertices[index0].normal, normal);
-		XMStoreFloat3(&vertices[index1].normal, normal);
-		XMStoreFloat3(&vertices[index2].normal, normal);
+		object3ds[i].VIInitialize(dx12->device.Get(), tex.texbuff.Get(), tex.srvHandle);
 	}
-
-#pragma endregion 法線ベクトルの計算
-
-	//---------------------------
-
-	#pragma region 頂点バッファの確保
-	// 頂点バッファの設定
-	D3D12_HEAP_PROPERTIES heapProp{};   // ヒープ設定
-	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD; // GPUへの転送用
-
-	D3D12_RESOURCE_DESC resDesc{};  // リソース設定
-	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resDesc.Width = sizeVB; // 頂点データ全体のサイズ
-	resDesc.Height = 1;
-	resDesc.DepthOrArraySize = 1;
-	resDesc.MipLevels = 1;
-	resDesc.SampleDesc.Count = 1;
-	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	// 頂点バッファの生成
-	ComPtr<ID3D12Resource> vertBuff = nullptr;
-	result = dx12->device->CreateCommittedResource(
-		&heapProp, // ヒープ設定
-		D3D12_HEAP_FLAG_NONE, &resDesc, // リソース設定
-		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
-	assert(SUCCEEDED(result));
-
-#pragma endregion 頂点バッファの確保
-
-	//------------------------
-
-	#pragma region シェーダーリソースビュー
-
-	//シェーダリソースビュー設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};			//設定構造体
-	//srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;	//RGBA
-	srvDesc.Format = resDesc.Format;					//画像読み込み
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;		//2dテクスチャ
-	srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
-
-	//ヒープの２番目にシェーダーリソースビュー作成
-	dx12->device->CreateShaderResourceView(
-		tex.texbuff.Get(),		//ビューと関連付けるバッファ
-		&srvDesc,		//テクスチャ設定情報
-		tex.srvHandle);
-
-#pragma endregion シェーダーリソースビュー
-
-	//---------------------------
-
-	#pragma region 頂点バッファへのデータ転送
-// GPU上のバッファに対応した仮想メモリを取得
-	Vertex* vertMap = nullptr;
-	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
-	assert(SUCCEEDED(result));
-
-	// 全頂点に対して
-	for (int i = 0; i < _countof(vertices); i++)
-	{
-		vertMap[i] = vertices[i];   // 座標をコピー
-	}
-
-	// マップを解除
-	vertBuff->Unmap(0, nullptr);
-
-#pragma endregion 頂点バッファへのデータ転送
-
-	//-----------------------------
-
-	#pragma region 頂点バッファビューの作成
-	// 頂点バッファビューの作成
-	D3D12_VERTEX_BUFFER_VIEW vbView{};
-
-	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
-	vbView.SizeInBytes = sizeVB;
-	vbView.StrideInBytes = sizeof(vertices[0]);
-
-#pragma endregion 頂点バッファへビューの作成
-
-	//-------------------------------
-
-	#pragma region インデックスバッファの生成
-
-// インデックスデータ全体のサイズ
-	UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
-	// インデックスバッファの設定
-	ComPtr<ID3D12Resource> indexBuff = nullptr;
-	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resDesc.Width = sizeIB;//インデックスバッファの生成
-	resDesc.Height = 1;
-	resDesc.DepthOrArraySize = 1;
-	resDesc.MipLevels = 1;
-	resDesc.SampleDesc.Count = 1;
-	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	result = dx12->device->CreateCommittedResource(
-		&heapProp,				//ヒープ設定
-		D3D12_HEAP_FLAG_NONE,
-		&resDesc,				//リソース設定
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&indexBuff));
-
-#pragma endregion インデックスバッファの生成
-
-	//----------------------------
-
-	#pragma region インデックスバッファへのデータ転送
-//GPU上のバッファに対応した仮想メモリを取得
-	uint16_t* indexMap = nullptr;
-	result = indexBuff->Map(0, nullptr, (void**)&indexMap);
-
-	//全インデックスに対して
-	for (int i = 0; i < _countof(indices); i++)
-	{
-		indexMap[i] = indices[i];	//インデックスをコピー
-	}
-
-	//つながりを解除
-	indexBuff->Unmap(0, nullptr);
-
-
-	D3D12_INDEX_BUFFER_VIEW ibView{};
-
-	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
-	ibView.Format = DXGI_FORMAT_R16_UINT;
-	ibView.SizeInBytes = sizeIB;
-
-#pragma endregion インデックスバッファへのデータ転送
-
-	//----------------------
 
 	Graphic graph;
 	result = graph.Initialize(dx12->device.Get(), tex.descRangeSRV);
@@ -457,10 +227,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		{
 			color = 0;
 		}
-		result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);	//マッピング
-		assert(SUCCEEDED(result));
-		constMapMaterial->color = XMFLOAT4(color, 0, 0, 1);					//RGBAで半透明の赤
-		constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
+		//result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);	//マッピング
+		//assert(SUCCEEDED(result));
+		//constMapMaterial->color = XMFLOAT4(color, 0, 0, 1);					//RGBAで半透明の赤
+		//constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
 
 
 		dx12->DrawBefore();
@@ -497,13 +267,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		dx12->commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 #pragma endregion プリミティブ形状
 
-	#pragma region 頂点バッファビューの設定コマンド
-		dx12->commandList->IASetVertexBuffers(0, 1, &vbView);
-#pragma endregion 頂点バッファビューの設定コマンド
-
-	#pragma region インデックスバッファビューのセット
-		dx12->commandList->IASetIndexBuffer(&ibView);
-#pragma endregion インデックスバッファビューのセット
 
 	#pragma region 定数バッファビューの設定コマンド
 
@@ -513,12 +276,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		dx12->commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 
 #pragma endregion 定数バッファビューの設定コマンド
+			dx12->commandList->SetPipelineState(graph.pipelinestate[0].Get());
 
 	#pragma region 描画コマンド
 		for (int i = 0; i < _countof(object3ds); i++)
 		{
-			dx12->commandList->SetPipelineState(graph.pipelinestate[0].Get());
-			object3ds[i].Draw(dx12->commandList.Get(), vbView, ibView, _countof(indices));
+			object3ds[i].Draw(dx12->commandList.Get());
 		}
 #pragma endregion 描画コマンド
 

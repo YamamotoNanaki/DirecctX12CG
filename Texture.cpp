@@ -2,6 +2,7 @@
 #include <utility>
 
 using namespace DirectX;
+using namespace IF;
 
 HRESULT Texture::TexLoad(const wchar_t* szFile)
 {

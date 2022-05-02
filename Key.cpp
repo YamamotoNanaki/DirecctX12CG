@@ -1,6 +1,8 @@
 #include "Key.h"
 #include <cassert>
 
+using namespace IF;
+
 #define DIRECTINPUT_VERSION	0x0800		//DirectInputのバージョン指定
 
 Key::Key(HRESULT& result, HINSTANCE& hInstance, HWND& hwnd)

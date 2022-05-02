@@ -1,5 +1,8 @@
 #include "RootParam.h"
 
+
+using namespace IF;
+
 void RootParam::ConstRoot(int num)
 {
 	D3D12_ROOT_PARAMETER rootParamSeed;

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace NA
+namespace IF
 {
 	class Matrix
 	{
@@ -12,6 +12,7 @@ namespace NA
 
 	public:
 		void IdentityMatrix();
+		Matrix RotationMatrix(float x, float y, float z, float angle);
 		Matrix operator+()const;
 		Matrix operator-()const;
 		Matrix operator+(Matrix m)const;

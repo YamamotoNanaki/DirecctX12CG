@@ -3,20 +3,12 @@
 #include <DirectXMath.h>
 #include <wrl.h>
 #include "VertexIndex.h"
+#include "ConstStruct.h"
 
 #pragma comment(lib,"d3d12.lib") 
 
 namespace IF
 {
-
-#pragma region 定数バッファ構造体
-
-	struct ConstBufferDataTransform
-	{
-		DirectX::XMMATRIX mat;
-	};
-#pragma endregion 定数バッファ構造体
-
 	class Object
 	{
 		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;

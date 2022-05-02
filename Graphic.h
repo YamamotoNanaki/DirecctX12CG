@@ -4,6 +4,8 @@
 #include "GPipeline.h"
 #include "RootParam.h"
 
+#pragma comment(lib,"d3dcompiler.lib")
+
 namespace IF
 {
 	class Graphic

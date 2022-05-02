@@ -1,12 +1,4 @@
-#include <Windows.h>
-#include <d3d12.h>
-#include <dxgi1_6.h>
-#include <vector>
-#include <string>
 #include <DirectXMath.h>
-#include <d3dcompiler.h>
-#include <DirectXTex.h>
-#include <wrl.h>
 #include "Window.h"
 #include "DirectX12.h"
 #include "Key.h"
@@ -18,25 +10,10 @@
 #include "GPipeline.h"
 #include "Graphic.h"
 #include "VertexIndex.h"
+#include "ConstBuff.h"
 
 using namespace DirectX;
-using namespace std;
-using namespace Microsoft::WRL;
 using namespace IF;
-
-#pragma comment(lib,"d3d12.lib") 
-#pragma comment(lib,"dxgi.lib")
-#pragma comment(lib,"d3dcompiler.lib")
-#pragma comment(lib,"dxguid.lib")
-
-#pragma region 定数バッファ構造体
-
-struct ConstBufferDataMaterial
-{
-	XMFLOAT4 color;	//色(RGBA)
-};
-
-#pragma endregion 定数バッファ構造体
 
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,
@@ -76,29 +53,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma region 描画初期化
 
 	#pragma region 定数バッファの生成用の設定
-//ヒープ設定
-	D3D12_HEAP_PROPERTIES cbHeapProp{};
-	cbHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
-	//リソース設定
-	D3D12_RESOURCE_DESC cbResourceDesc{};
-	cbResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	cbResourceDesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff;
-	cbResourceDesc.Height = 1;
-	cbResourceDesc.DepthOrArraySize = 1;
-	cbResourceDesc.MipLevels = 1;
-	cbResourceDesc.SampleDesc.Count = 1;
-	cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	//GPUリソースの生成
-	ComPtr<ID3D12Resource> constBuffMaterial = nullptr;
-	result = dx12->device->CreateCommittedResource(
-		&cbHeapProp,	//ヒープ設定
-		D3D12_HEAP_FLAG_NONE,
-		&cbResourceDesc,		//リソース設定
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constBuffMaterial)
-	);
+	ConstBuff cb;
+	result = cb.Initialize(dx12->device.Get());
 
 	const size_t kObjectConst = 50;
 
@@ -115,22 +71,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			object3ds[i].position = { 0.0f,0.0f,-8.0f };
 		}
 	}
-
-#pragma endregion 定数バッファの生成用の設定
-
-	//-------------------------
-
-	#pragma region 定数バッファにデータを転送する
-	ConstBufferDataMaterial* constMapMaterial = nullptr;
-	result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);	//マッピング
-	assert(SUCCEEDED(result));
-	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1);					//RGBAで半透明の赤
-	constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
-
-
-#pragma endregion 定数バッファにデータを転送する
-
-	//----------------------
 
 	#pragma region ビュー行列
 
@@ -270,7 +210,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	#pragma region 定数バッファビューの設定コマンド
 
-		dx12->commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
+		dx12->commandList->SetGraphicsRootConstantBufferView(0, cb.GetGPUAddress());
 		dx12->commandList->SetDescriptorHeaps(1, &tex.srvHeap);
 		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = tex.srvHeap->GetGPUDescriptorHandleForHeapStart();
 		dx12->commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
@@ -287,6 +227,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 		dx12->DrawAfter(result);
 	}
+
+	delete key;
+	delete dx12;
+	delete win;
 
 	return 0;
 }

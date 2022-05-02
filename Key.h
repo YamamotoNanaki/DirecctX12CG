@@ -3,6 +3,7 @@
 #include "Window.h"
 
 #pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"dxguid.lib")
 
 typedef unsigned short KeyCode;
 

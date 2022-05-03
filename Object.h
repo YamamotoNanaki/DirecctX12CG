@@ -10,6 +10,12 @@
 
 namespace IF
 {
+	enum BillBoardMode
+	{
+		NOON,
+		BILLBOARD,
+		YBOARD
+	};
 	class Object
 	{
 		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -36,7 +42,7 @@ namespace IF
 	public:
 		HRESULT Initialize(ID3D12Device* device);
 		HRESULT VIInitialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle);
-		void Update(XMMATRIX matView, XMMATRIX matProjection);
+		void Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode);
 		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);
 		~Object();
 	};

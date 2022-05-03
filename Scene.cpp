@@ -56,7 +56,7 @@ void IF::Scene::Update()
 
 	if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
 	{
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < _countof(object3ds); i++)
 		{
 			if (Key::getInstance().Down(KEY::RIGHT))	object3ds[i].position.x += 1.0f;
 			if (Key::getInstance().Down(KEY::LEFT))		object3ds[i].position.x -= 1.0f;
@@ -67,7 +67,10 @@ void IF::Scene::Update()
 
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
-		object3ds[i].Update(matView.Get(), matPro->Get());
+		if(Key::getInstance().Down(KEY::key0))
+		object3ds[i].Update(matView.Get(), matPro->Get(), YBOARD);
+		else
+		object3ds[i].Update(matView.Get(), matPro->Get(), BILLBOARD);
 	}
 }
 

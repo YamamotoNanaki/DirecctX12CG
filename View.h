@@ -9,7 +9,10 @@ namespace IF
 		using XMFLOAT3 = DirectX::XMFLOAT3;
 	private:
 		XMMATRIX matView;
+
 	public:
+		static XMMATRIX matBillBoard;
+		static XMMATRIX matBillBoardY;
 		XMFLOAT3 eye;
 		XMFLOAT3 target;
 		XMFLOAT3 up;

@@ -12,7 +12,7 @@ namespace IF
 	{
 		template <class T>using vector = std::vector<T>;
 	private:
-		Object object3ds[50];
+		Object object3ds[1];
 		View matView;
 		Projection* matPro;
 	public:

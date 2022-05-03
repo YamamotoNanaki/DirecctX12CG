@@ -30,10 +30,10 @@ namespace IF
 		ComPtr<ID3D12PipelineState> pipelinestate[4]{ nullptr };
 
 	public:
-		HRESULT CompillerVS();
-		HRESULT CompillerPS();
-		HRESULT CompillerGS();
-		HRESULT Compiller();
+		HRESULT CompillerVS(LPCWSTR fillname);
+		HRESULT CompillerPS(LPCWSTR fillname);
+		HRESULT CompillerGS(LPCWSTR fillname);
+		HRESULT Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs);
 		HRESULT Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV);
 		void DrawBlendMode(ID3D12GraphicsCommandList* commandList, Blend blend = NORMAL);
 	};

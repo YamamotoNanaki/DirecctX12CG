@@ -6,12 +6,12 @@
 using namespace std;
 using namespace IF;
 
-HRESULT Graphic::CompillerVS()
+HRESULT Graphic::CompillerVS(LPCWSTR fillname)
 {
 	HRESULT result;
 	
 	// 頂点シェーダの読み込みとコンパイル
-	result = D3DCompileFromFile(L"BasicVS.hlsl",  // シェーダファイル名
+	result = D3DCompileFromFile(fillname,  // シェーダファイル名
 		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "vs_5_0", // エントリーポイント名、シェーダーモデル	指定
 		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
@@ -36,12 +36,12 @@ HRESULT Graphic::CompillerVS()
     return result;
 }
 
-HRESULT Graphic::CompillerPS()
+HRESULT Graphic::CompillerPS(LPCWSTR fillname)
 {
 	HRESULT result;
 
 	// 頂点シェーダの読み込みとコンパイル
-	result = D3DCompileFromFile(L"BasicPS.hlsl",  // シェーダファイル名
+	result = D3DCompileFromFile(fillname,  // シェーダファイル名
 		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "ps_5_0", // エントリーポイント名、シェーダーモデル	指定
 		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
@@ -66,12 +66,12 @@ HRESULT Graphic::CompillerPS()
 	return result;
 }
 
-HRESULT Graphic::CompillerGS()
+HRESULT Graphic::CompillerGS(LPCWSTR fillname)
 {
 	HRESULT result;
 
 	// 頂点シェーダの読み込みとコンパイル
-	result = D3DCompileFromFile(L"BasicGS.hlsl",  // シェーダファイル名
+	result = D3DCompileFromFile(fillname,  // シェーダファイル名
 		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "gs_5_0", // エントリーポイント名、シェーダーモデル	指定
 		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
@@ -96,12 +96,12 @@ HRESULT Graphic::CompillerGS()
 	return result;
 }
 
-HRESULT Graphic::Compiller()
+HRESULT Graphic::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs)
 {
 	HRESULT result;
-	result = CompillerVS();
-	result = CompillerPS();
-	result = CompillerGS();
+	result = CompillerVS(vs);
+	result = CompillerPS(ps);
+	result = CompillerGS(gs);
 
 	return result;
 }
@@ -112,7 +112,7 @@ HRESULT Graphic::Initialize(ID3D12Device* device,D3D12_DESCRIPTOR_RANGE& descRan
 
 	RootParam root(descRangeSRV, 1);
 
-	result= Compiller();
+	result= Compiller(L"BasicVS.hlsl", L"BasicPS.hlsl", L"BasicGS.hlsl");
 
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{// xyz座標

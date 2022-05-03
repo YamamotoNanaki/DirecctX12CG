@@ -107,15 +107,12 @@ namespace IF
 		IDirectInputDevice8* keyboard = nullptr;
 	private:
 		/// <summary>
-		/// インストラクタ
+		/// コンストラクタ
 		/// キーボード入力の初期化
 		/// </summary>
-		/// <param name="result"></param>
-		/// <param name="w"></param>
-		/// <param name="hwnd"></param>
 		Key();
 		Key(const Key&);
-		Key& operator=(const Key&);
+		Key& operator=(const Key&) {}
 		~Key() {}
 	public:
 		static Key& getInstance()

@@ -1,11 +1,9 @@
-#include <DirectXMath.h>
 #include "Window.h"
 #include "DirectX12.h"
 #include "Key.h"
 #include "Scene.h"
 #include "Util.h"
 
-using namespace DirectX;
 using namespace IF;
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,

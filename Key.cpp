@@ -2,12 +2,22 @@
 #include <cassert>
 
 using namespace IF;
+using namespace KEY;
 
 #define DIRECTINPUT_VERSION	0x0800		//DirectInputのバージョン指定
 
-Key::Key(HRESULT& result, HINSTANCE& hInstance, HWND& hwnd)
+Key::Key()
 {
-	result = DirectInput8Create(
+	for (int i = 0; i < 256; i++)
+	{
+		key[i] = 0;
+		oldkey[i] = 0;
+	}
+}
+
+HRESULT IF::Key::Initialize(HINSTANCE& hInstance, HWND& hwnd)
+{
+	HRESULT result = DirectInput8Create(
 		hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
 	assert(SUCCEEDED(result));
 
@@ -24,11 +34,7 @@ Key::Key(HRESULT& result, HINSTANCE& hInstance, HWND& hwnd)
 		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(result));
 
-	for (int i = 0; i < 256; i++)
-	{
-		key[i] = 0;
-		oldkey[i] = 0;
-	}
+	return result;
 }
 
 HRESULT Key::Update()

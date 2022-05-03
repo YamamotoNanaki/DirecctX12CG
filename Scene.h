@@ -5,7 +5,6 @@
 #include "Projection.h"
 #include "Texture.h"
 #include "Graphic.h"
-#include "Key.h"
 
 namespace IF
 {
@@ -34,7 +33,7 @@ namespace IF
 		//-----------------------
 
 	public:
-		void Update(Key* key);
+		void Update();
 		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport);
 	};
 }

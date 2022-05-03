@@ -21,21 +21,20 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	HRESULT result;
 	DirectX12* dx12 = new DirectX12(result, win->hwnd, winWidth, winHeight);
-	Key* key = new Key(result, win->w.hInstance, win->hwnd);
+	result = Key::getInstance().Initialize(win->w.hInstance, win->hwnd);
 	Scene scene(winWidth, winHeight, result, dx12->device.Get());
 
-	while (!key->Down(key->ESC))
+	while (!Key::getInstance().Down(KEY::ESC))
 	{
 		//メッセージ
 		if (win->Message())break;
 
-		scene.Update(key);
+		scene.Update();
 
 		dx12->DrawBefore(scene.graph.rootsignature.Get(), scene.cb.GetGPUAddress(), scene.tex.srvHeap);
 		scene.Draw(dx12->commandList.Get(), dx12->viewport);
 		dx12->DrawAfter();
 	}
-	delete key;
 	delete dx12;
 	delete win;
 	return 0;

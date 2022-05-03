@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "Key.h"
 #include <DirectXMath.h>
 
 using namespace DirectX;
@@ -34,17 +35,17 @@ IF::Scene::~Scene()
 	delete matPro;
 }
 
-void IF::Scene::Update(Key* key)
+void IF::Scene::Update()
 {
-	key->Update();
+	Key::getInstance().Update();
 
 
-	if (key->Judge(key->WASD, key->OR))
+	if (Key::getInstance().Judge(KEY::WASD, KEY::OR))
 	{
-		if (key->Down(key->D))angleY += XMConvertToRadians(1.0f);
-		if (key->Down(key->A))angleY -= XMConvertToRadians(1.0f);
-		if (key->Down(key->S))angleX += XMConvertToRadians(1.0f);
-		if (key->Down(key->W))angleX -= XMConvertToRadians(1.0f);
+		if (Key::getInstance().Down(KEY::D))angleY += XMConvertToRadians(1.0f);
+		if (Key::getInstance().Down(KEY::A))angleY -= XMConvertToRadians(1.0f);
+		if (Key::getInstance().Down(KEY::S))angleX += XMConvertToRadians(1.0f);
+		if (Key::getInstance().Down(KEY::W))angleX -= XMConvertToRadians(1.0f);
 
 		matView.eye.x = -100 * sinf(angleY);
 		matView.eye.y = -100 * sinf(angleX);
@@ -53,30 +54,14 @@ void IF::Scene::Update(Key* key)
 		matView.Update();
 	}
 
-	if (key->Judge(key->Arrow, key->OR))
+	if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
 	{
 		for (int i = 0; i < 4; i++)
 		{
-			//‰E
-			if (key->Down(key->RIGHT))
-			{
-				object3ds[i].position.x += 1.0f;
-			}
-			//¶
-			if (key->Down(key->LEFT))
-			{
-				object3ds[i].position.x -= 1.0f;
-			}
-			//ã
-			if (key->Down(key->UP))
-			{
-				object3ds[i].position.y += 1.0f;
-			}
-			//‰º
-			if (key->Down(key->DOWN))
-			{
-				object3ds[i].position.y -= 1.0f;
-			}
+			if (Key::getInstance().Down(KEY::RIGHT))	object3ds[i].position.x += 1.0f;
+			if (Key::getInstance().Down(KEY::LEFT))		object3ds[i].position.x -= 1.0f;
+			if (Key::getInstance().Down(KEY::UP))		object3ds[i].position.y += 1.0f;
+			if (Key::getInstance().Down(KEY::DOWN))		object3ds[i].position.y -= 1.0f;
 		}
 	}
 

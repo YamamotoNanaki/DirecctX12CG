@@ -5,18 +5,17 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
-typedef unsigned short KeyCode;
 
 namespace IF
 {
-	class Key
+	namespace KEY
 	{
-	private:
-		char key[256], oldkey[256];
-		IDirectInput8* directInput = nullptr;
-		IDirectInputDevice8* keyboard = nullptr;
-	public:
-
+		typedef unsigned short KeyCode;
+		enum Type
+		{
+			OR,
+			AND,
+		};
 		enum KEYCODE
 		{
 			key0 = DIK_0,
@@ -97,7 +96,16 @@ namespace IF
 
 		const KeyCode Arrow[4] = { LEFT,RIGHT,UP,DOWN };
 		const KeyCode WASD[4] = { W,A,S,D };
+	}
 
+	class Key
+	{
+		using KeyCode = KEY::KeyCode;
+	private:
+		char key[256], oldkey[256];
+		IDirectInput8* directInput = nullptr;
+		IDirectInputDevice8* keyboard = nullptr;
+	private:
 		/// <summary>
 		/// インストラクタ
 		/// キーボード入力の初期化
@@ -105,7 +113,18 @@ namespace IF
 		/// <param name="result"></param>
 		/// <param name="w"></param>
 		/// <param name="hwnd"></param>
-		Key(HRESULT& result, HINSTANCE& hInstance, HWND& hwnd);
+		Key();
+		Key(const Key&);
+		Key& operator=(const Key&);
+		~Key() {}
+	public:
+		static Key& getInstance()
+		{
+			static Key inst;
+			return inst;
+		}
+		HRESULT Initialize(HINSTANCE& hInstance, HWND& hwnd);
+
 		/// <summary>
 		/// キーボード情報のアップデート
 		/// </summary>
@@ -130,12 +149,6 @@ namespace IF
 		/// <param name="keyCode">判定を取りたいキーのマクロ</param>
 		/// <returns></returns>
 		bool Release(KeyCode keyCode);
-
-		enum Type
-		{
-			OR,
-			AND,
-		};
 
 		bool Judge(const KeyCode a[], int Type);
 	};

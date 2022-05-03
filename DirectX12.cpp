@@ -210,6 +210,7 @@ DirectX12::DirectX12(HRESULT& result, HWND hwnd, int window_width, int window_he
 	DepthDesc(window_width, window_height);
 	DepthHeap();
 	SetNewViewPort(window_width, window_height, 0, 0);
+	SetScissorrect(0, window_width, 0, window_height);
 }
 
 void DirectX12::BufferSwap()
@@ -258,11 +259,18 @@ HRESULT DirectX12::CommandReset()
 	return result;
 }
 
-void DirectX12::DrawBefore()
+void DirectX12::DrawBefore(ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, ID3D12DescriptorHeap* srvHeap, D3D_PRIMITIVE_TOPOLOGY topology)
 {
 	ResourceBarrierSet();
 	RenderTarget();
 	Clear();
+	commandList->RSSetScissorRects(1, &scissorrect);
+	commandList->SetGraphicsRootSignature(root);
+	commandList->IASetPrimitiveTopology(topology);
+	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
+	commandList->SetDescriptorHeaps(1, &srvHeap);
+	D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
+	commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 }
 
 HRESULT DirectX12::DrawAfter()
@@ -287,6 +295,14 @@ void IF::DirectX12::SetNewViewPort(float width, float height, float topX, float 
 	viewport.MaxDepth = maxDepth;
 
 	this->viewport.push_back(viewport);
+}
+
+void IF::DirectX12::SetScissorrect(float left, float right, float top, float bottom)
+{
+	scissorrect.left = left;
+	scissorrect.right = scissorrect.left + right;
+	scissorrect.top = top;
+	scissorrect.bottom = scissorrect.top + bottom;
 }
 
 void DirectX12::SetClearColor(XMFLOAT4 color)

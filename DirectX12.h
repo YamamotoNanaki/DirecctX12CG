@@ -51,6 +51,7 @@ namespace IF
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 		D3D12_CPU_DESCRIPTOR_HANDLE dsvH;
 		D3D12_RESOURCE_BARRIER barrierDesc{};
+		D3D12_RECT scissorrect{};
 
 		// 3ÅDâÊñ ÉNÉäÉA           R     G     B    A
 		float clearColor[4] = { 0.1f ,0.25f ,0.5f ,1.0f };
@@ -78,9 +79,11 @@ namespace IF
 
 	public:
 		DirectX12(HRESULT& result, HWND hwnd, int window_width, int window_height);
-		void DrawBefore();
+		void DrawBefore(ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, ID3D12DescriptorHeap* srvHeap,
+			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		HRESULT DrawAfter();
 		void SetNewViewPort(float width, float height, float topX, float topY, float minDepth = 0.0f, float maxDepth = 1.0f);
+		void SetScissorrect(float left, float right, float top, float bottom);
 
 	public:
 		void SetClearColor(XMFLOAT4 color);

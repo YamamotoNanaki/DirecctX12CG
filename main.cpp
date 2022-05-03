@@ -19,21 +19,11 @@ using namespace IF;
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,
 	_In_ int nCmdShow) {
 
-	//--- ウインドウの生成処理 -----------------------------------------------------//
-
-// ウィンドウの生成（前処理）
-#pragma region ウィンドウの生成（前処理）
-
 	// ウィンドウサイズ
 	const int winWidth = 1280;  // 横幅
 	const int winHeight = 720;  // 縦幅
 
 	Window* win = new Window(winWidth, winHeight);
-
-#pragma endregion ウィンドウの生成（前処理）
-
-	//------------------------------------------------------------------------------//
-
 
 #pragma region デバッグ
 #ifdef _DEBUG
@@ -103,7 +93,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	float angleY = 0.0f;
 	float angleX = 0.0f;
-	float color = 0;
 	//-----------------------
 
 	while (!key->Down(key->ESC))
@@ -160,44 +149,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			object3ds[i].Update(matView.Get(), matPro.Get());
 		}
 
-		color+=0.005;
-		if (color >= 1.0f)
-		{
-			color = 0;
-		}
-		//result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);	//マッピング
-		//assert(SUCCEEDED(result));
-		//constMapMaterial->color = XMFLOAT4(color, 0, 0, 1);					//RGBAで半透明の赤
-		//constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
-
-
-		dx12->DrawBefore();
-
-	#pragma region シザー矩形の設定コマンド
-		D3D12_RECT scissorrect{};
-
-		scissorrect.left = 0;
-		scissorrect.right = scissorrect.left + winWidth;
-		scissorrect.top = 0;
-		scissorrect.bottom = scissorrect.top + winHeight;
-
-		dx12->commandList->RSSetScissorRects(1, &scissorrect);
-#pragma endregion シザー矩形の設定コマンド
-
-	#pragma region パイプラインステート
-		dx12->commandList->SetGraphicsRootSignature(graph.rootsignature.Get());
-#pragma endregion パイプラインステート
-
-	#pragma region プリミティブ形状
-		dx12->commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-#pragma endregion プリミティブ形状
-
-		dx12->commandList->SetGraphicsRootConstantBufferView(0, cb.GetGPUAddress());
-		dx12->commandList->SetDescriptorHeaps(1, &tex.srvHeap);
-		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = tex.srvHeap->GetGPUDescriptorHandleForHeapStart();
-		dx12->commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
-
-			dx12->commandList->SetPipelineState(graph.pipelinestate[0].Get());
+		dx12->DrawBefore(graph.rootsignature.Get(), cb.GetGPUAddress(), tex.srvHeap);
+		graph.DrawBlendMode(dx12->commandList.Get());
 
 	#pragma region 描画コマンド
 		for (int i = 0; i < _countof(object3ds); i++)

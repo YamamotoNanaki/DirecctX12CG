@@ -16,6 +16,14 @@ namespace IF
 	public:
 		HRESULT Initialize(ID3D12Device* device);
 		D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress();
-		void SetView(ID3D12CommandList* commandList);
+
+	private:
+		short R, G, B, A;
+		float r, g, b, a;
+
+	public:
+		HRESULT SetBright(int red, int green, int blue);
+		HRESULT SetAlpha(int alpha);
+		HRESULT SetColor(int red, int green, int blue, int alpha);
 	};
 }

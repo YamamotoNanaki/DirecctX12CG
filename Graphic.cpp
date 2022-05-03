@@ -135,3 +135,8 @@ HRESULT Graphic::Initialize(ID3D12Device* device,D3D12_DESCRIPTOR_RANGE& descRan
 
 	return result;
 }
+
+void IF::Graphic::DrawBlendMode(ID3D12GraphicsCommandList* commandList, Blend blend)
+{
+	commandList->SetPipelineState(pipelinestate[blend].Get());
+}

@@ -151,6 +151,7 @@
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="RootParam.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Util.cpp" />
     <ClCompile Include="VertexIndex.cpp" />
     <ClCompile Include="View.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Projection.h" />
     <ClInclude Include="RootParam.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Util.h" />
     <ClInclude Include="VertexIndex.h" />
     <ClInclude Include="View.h" />
     <ClInclude Include="Window.h" />

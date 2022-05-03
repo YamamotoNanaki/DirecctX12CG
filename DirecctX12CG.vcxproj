@@ -150,6 +150,7 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="RootParam.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="VertexIndex.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Projection.h" />
     <ClInclude Include="RootParam.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="VertexIndex.h" />

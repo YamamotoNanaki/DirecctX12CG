@@ -23,6 +23,7 @@ namespace IF
 		ComPtr<ID3DBlob> errorBlob = nullptr;		// エラーオブジェクト
 		ComPtr<ID3DBlob> vsBlob = nullptr;			// 頂点シェーダオブジェクト
 		ComPtr<ID3DBlob> psBlob = nullptr;			// ピクセルシェーダオブジェクト
+		ComPtr<ID3DBlob> gsBlob = nullptr;			// ジオメトリシェーダオブジェクト
 		
 	public:
 		ComPtr<ID3D12RootSignature> rootsignature;
@@ -31,6 +32,7 @@ namespace IF
 	public:
 		HRESULT CompillerVS();
 		HRESULT CompillerPS();
+		HRESULT CompillerGS();
 		HRESULT Compiller();
 		HRESULT Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV);
 		void DrawBlendMode(ID3D12GraphicsCommandList* commandList, Blend blend = NORMAL);

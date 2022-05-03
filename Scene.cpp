@@ -67,10 +67,7 @@ void IF::Scene::Update()
 
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
-		if(Key::getInstance().Down(KEY::key0))
-		object3ds[i].Update(matView.Get(), matPro->Get(), YBOARD);
-		else
-		object3ds[i].Update(matView.Get(), matPro->Get(), BILLBOARD);
+		object3ds[i].Update(matView.Get(), matPro->Get(), NOON);
 	}
 }
 

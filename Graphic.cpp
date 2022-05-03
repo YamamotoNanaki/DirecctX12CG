@@ -66,11 +66,42 @@ HRESULT Graphic::CompillerPS()
 	return result;
 }
 
+HRESULT Graphic::CompillerGS()
+{
+	HRESULT result;
+
+	// 頂点シェーダの読み込みとコンパイル
+	result = D3DCompileFromFile(L"BasicGS.hlsl",  // シェーダファイル名
+		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
+		"main", "gs_5_0", // エントリーポイント名、シェーダーモデル	指定
+		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
+		0, &gsBlob, &errorBlob);
+
+	//-------------------------
+
+	if (FAILED(result)) {
+		// errorBlobからエラー内容をstring型にコピー
+		string error;
+		error.resize(errorBlob->GetBufferSize());
+
+		copy_n((char*)errorBlob->GetBufferPointer(),
+			errorBlob->GetBufferSize(),
+			error.begin());
+		error += "\n";
+		// エラー内容を出力ウィンドウに表示
+		OutputDebugStringA(error.c_str());
+		assert(0);
+	}
+
+	return result;
+}
+
 HRESULT Graphic::Compiller()
 {
 	HRESULT result;
 	result = CompillerVS();
 	result = CompillerPS();
+	result = CompillerGS();
 
 	return result;
 }
@@ -95,7 +126,7 @@ HRESULT Graphic::Initialize(ID3D12Device* device,D3D12_DESCRIPTOR_RANGE& descRan
 		},
 	};
 
-	GPipeline pipeline(vsBlob.Get(), psBlob.Get(), inputLayout, _countof(inputLayout));
+	GPipeline pipeline(vsBlob.Get(), psBlob.Get(), gsBlob.Get(), inputLayout, _countof(inputLayout));
 
 	D3D12_STATIC_SAMPLER_DESC samplerDesc{};
 	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//横繰り返し

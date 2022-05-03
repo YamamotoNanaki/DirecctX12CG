@@ -3,12 +3,14 @@
 
 using namespace IF;
 
-GPipeline::GPipeline(ID3DBlob* vsBlob,ID3DBlob*psBlob, D3D12_INPUT_ELEMENT_DESC* inputLayout, int layoutCount)
+GPipeline::GPipeline(ID3DBlob* vsBlob,ID3DBlob* psBlob, ID3DBlob* gsBlob, D3D12_INPUT_ELEMENT_DESC* inputLayout, int layoutCount)
 {
 	for (int i = 0; i < _countof(pipelineDesc); i++)
 	{
 		pipelineDesc[i].VS.pShaderBytecode = vsBlob->GetBufferPointer();
 		pipelineDesc[i].VS.BytecodeLength = vsBlob->GetBufferSize();
+		pipelineDesc[i].GS.pShaderBytecode = gsBlob->GetBufferPointer();
+		pipelineDesc[i].GS.BytecodeLength = gsBlob->GetBufferSize();
 		pipelineDesc[i].PS.pShaderBytecode = psBlob->GetBufferPointer();
 		pipelineDesc[i].PS.BytecodeLength = psBlob->GetBufferSize();
 		//デプスステンシルステートの設定

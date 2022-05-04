@@ -64,6 +64,12 @@
     <Filter Include="ヘッダー ファイル\Effect">
       <UniqueIdentifier>{d92c6128-2241-47d7-9ed8-8a04767791cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Obj">
+      <UniqueIdentifier>{4872850b-e2d9-473a-8ece-5e3f19f5d094}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\Obj">
+      <UniqueIdentifier>{89d49f7a-8a79-495a-82df-65b3a54b9f46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -81,9 +87,6 @@
     <ClCompile Include="Key.cpp">
       <Filter>ソース ファイル\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>ソース ファイル\3D</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>ソース ファイル\Other</Filter>
     </ClCompile>
@@ -99,14 +102,8 @@
     <ClCompile Include="GPipeline.cpp">
       <Filter>ソース ファイル\Graphic</Filter>
     </ClCompile>
-    <ClCompile Include="Graphic.cpp">
-      <Filter>ソース ファイル\Graphic</Filter>
-    </ClCompile>
     <ClCompile Include="Matrix.cpp">
       <Filter>ソース ファイル\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexIndex.cpp">
-      <Filter>ソース ファイル\Base</Filter>
     </ClCompile>
     <ClCompile Include="ConstBuff.cpp">
       <Filter>ソース ファイル\Base</Filter>
@@ -118,6 +115,21 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Particle.cpp">
+      <Filter>ソース ファイル\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>ソース ファイル\3D\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjVI.cpp">
+      <Filter>ソース ファイル\3D\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjGraphic.cpp">
+      <Filter>ソース ファイル\3D\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleGrap.cpp">
+      <Filter>ソース ファイル\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleVI.cpp">
       <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
   </ItemGroup>
@@ -154,9 +166,6 @@
     <ClInclude Include="Key.h">
       <Filter>ヘッダー ファイル\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>ヘッダー ファイル\3D</Filter>
-    </ClInclude>
     <ClInclude Include="Rand.h">
       <Filter>ヘッダー ファイル\Other</Filter>
     </ClInclude>
@@ -175,14 +184,8 @@
     <ClInclude Include="GPipeline.h">
       <Filter>ヘッダー ファイル\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="Graphic.h">
-      <Filter>ヘッダー ファイル\Graphic</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix.h">
       <Filter>ヘッダー ファイル\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexIndex.h">
-      <Filter>ヘッダー ファイル\Base</Filter>
     </ClInclude>
     <ClInclude Include="ConstBuff.h">
       <Filter>ヘッダー ファイル\Base</Filter>
@@ -197,6 +200,21 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Particle.h">
+      <Filter>ヘッダー ファイル\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>ヘッダー ファイル\3D\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjVI.h">
+      <Filter>ヘッダー ファイル\3D\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleVI.h">
+      <Filter>ヘッダー ファイル\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjGraphic.h">
+      <Filter>ヘッダー ファイル\3D\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleGrap.h">
       <Filter>ヘッダー ファイル\Effect</Filter>
     </ClInclude>
   </ItemGroup>

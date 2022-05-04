@@ -84,7 +84,7 @@ HRESULT Object::Initialize(ID3D12Device* device)
 		22,21,23
 	};
 
-	vi = new VI(vertices, _countof(vertices), indices, _countof(indices));
+	vi = new objVI(vertices, _countof(vertices), indices, _countof(indices));
 
 	return result;
 }

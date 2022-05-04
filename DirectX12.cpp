@@ -259,7 +259,7 @@ HRESULT DirectX12::CommandReset()
 	return result;
 }
 
-void DirectX12::DrawBefore(ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, ID3D12DescriptorHeap* srvHeap, D3D_PRIMITIVE_TOPOLOGY topology)
+void DirectX12::DrawBefore(ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
 {
 	ResourceBarrierSet();
 	RenderTarget();
@@ -268,6 +268,19 @@ void DirectX12::DrawBefore(ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS 
 	commandList->SetGraphicsRootSignature(root);
 	commandList->IASetPrimitiveTopology(topology);
 	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
+	commandList->SetDescriptorHeaps(1, &srvHeap);
+	D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
+	commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+}
+
+void DirectX12::DrawBefore(ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D_PRIMITIVE_TOPOLOGY topology)
+{
+	ResourceBarrierSet();
+	RenderTarget();
+	Clear();
+	commandList->RSSetScissorRects(1, &scissorrect);
+	commandList->SetGraphicsRootSignature(root);
+	commandList->IASetPrimitiveTopology(topology);
 	commandList->SetDescriptorHeaps(1, &srvHeap);
 	D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
 	commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);

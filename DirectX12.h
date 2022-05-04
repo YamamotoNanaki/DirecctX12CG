@@ -79,7 +79,9 @@ namespace IF
 
 	public:
 		DirectX12(HRESULT& result, HWND hwnd, int window_width, int window_height);
-		void DrawBefore(ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, ID3D12DescriptorHeap* srvHeap,
+		void DrawBefore(ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
+			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		void DrawBefore(ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap,
 			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		HRESULT DrawAfter();
 		void SetNewViewPort(float width, float height, float topX, float topY, float minDepth = 0.0f, float maxDepth = 1.0f);

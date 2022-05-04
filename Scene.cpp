@@ -8,9 +8,9 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 {
 	matPro = new Projection(45.0f, winWidth, winHeight);
 
-	result = cb.Initialize(device);
+	//result = cb.Initialize(device);
 
-	for (int i = 0; i < _countof(object3ds); i++)
+	/*for (int i = 0; i < _countof(object3ds); i++)
 	{
 		result = object3ds[i].Initialize(device);
 		if (i > 0)
@@ -20,12 +20,26 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 			object3ds[i].rotation = { 0.0f,0.0f,XMConvertToRadians(30.0f) };
 			object3ds[i].position = { 0.0f,0.0f,-8.0f };
 		}
+	}*/
+	for (int i = 0; i < _countof(particle); i++)
+	{
+		result = particle[i].Initialize(device);
+		if (i > 0)
+		{
+			particle[i].scale = { 0.9f,0.9f,0.9f };
+			particle[i].rotation = { 0.0f,0.0f,XMConvertToRadians(30.0f) };
+			particle[i].position = { 0.0f,0.0f,-8.0f };
+		}
 	}
 
 	tex.LoadTexture(L"Resources/texture.png", device);
-	for (int i = 0; i < _countof(object3ds); i++)
+	/*for (int i = 0; i < _countof(object3ds); i++)
 	{
 		object3ds[i].VIInitialize(device, tex.texbuff.Get(), tex.srvHandle);
+	}*/
+	for (int i = 0; i < _countof(particle); i++)
+	{
+		particle[i].VIInitialize(device, tex.texbuff.Get(), tex.srvHandle);
 	}
 	result = graph.Initialize(device, tex.descRangeSRV);
 }
@@ -56,26 +70,26 @@ void IF::Scene::Update()
 
 	if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
 	{
-		for (int i = 0; i < _countof(object3ds); i++)
+		for (int i = 0; i < _countof(particle); i++)
 		{
-			if (Key::getInstance().Down(KEY::RIGHT))	object3ds[i].position.x += 1.0f;
-			if (Key::getInstance().Down(KEY::LEFT))		object3ds[i].position.x -= 1.0f;
-			if (Key::getInstance().Down(KEY::UP))		object3ds[i].position.y += 1.0f;
-			if (Key::getInstance().Down(KEY::DOWN))		object3ds[i].position.y -= 1.0f;
+			if (Key::getInstance().Down(KEY::RIGHT))	particle[i].position.x += 1.0f;
+			if (Key::getInstance().Down(KEY::LEFT))		particle[i].position.x -= 1.0f;
+			if (Key::getInstance().Down(KEY::UP))		particle[i].position.y += 1.0f;
+			if (Key::getInstance().Down(KEY::DOWN))		particle[i].position.y -= 1.0f;
 		}
 	}
 
-	for (int i = 0; i < _countof(object3ds); i++)
+	for (int i = 0; i < _countof(particle); i++)
 	{
-		object3ds[i].Update(matView.Get(), matPro->Get(), NOON);
+		particle[i].Update(matView.Get(), matPro->Get(), particle[0].NOON);
 	}
 }
 
 void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
 {
 	graph.DrawBlendMode(commandList);
-	for (int i = 0; i < _countof(object3ds); i++)
+	for (int i = 0; i < _countof(particle); i++)
 	{
-		object3ds[i].Draw(commandList, viewport);
+		particle[i].Draw(commandList, viewport);
 	}
 }

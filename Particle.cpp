@@ -28,63 +28,14 @@ HRESULT Particle::Initialize(ID3D12Device* device)
 	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 	assert(SUCCEEDED(result));
 
-	Vertex vertices[] = {
+	VertexPos vertices[] = {
 		// x   y   z        u    v
 		//前
-		{{-5, -5, -5},{0,0,1},{0.0f, 1.0f}},	//左下
-		{{-5, +5, -5},{0,0,1},{0.0f, 0.0f}},	//左上
-		{{+5, -5, -5},{0,0,1},{1.0f, 1.0f}},	//右下
-		{{+5, +5, -5},{0,0,1},{1.0f, 0.0f}},	//右上
-		//後			
-		{{+5, -5, +5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		{{-5, -5, +5},{},{0.0f, 1.0f}},	//左下
-		{{-5, +5, +5},{},{0.0f, 0.0f}},	//左上
-		//左			
-		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{-5, -5, +5},{},{0.0f, 0.0f}},	//左上
-		{{-5, +5, -5},{},{1.0f, 1.0f}},	//右下
-		{{-5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		//右			
-		{{+5, +5, -5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		{{+5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, -5, +5},{},{0.0f, 0.0f}},	//左上
-		//下			
-		{{-5, +5, +5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		{{-5, +5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, +5, -5},{},{0.0f, 0.0f}},	//左上
-		//上			
-		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, -5, -5},{},{0.0f, 0.0f}},	//左上
-		{{-5, -5, +5},{},{1.0f, 1.0f}},	//右下
-		{{+5, -5, +5},{},{1.0f, 0.0f}},	//右上
+		{{-0, -0, -0}},	//左下
 	};
 
-	//インデックスデータ
-	unsigned short indices[] = {
-		//前
-		0,1,2,
-		2,1,3,
-		//後
-		4,5,6,
-		6,5,7,
-		//左
-		8,9,10,
-		10,9,11,
-		//右
-		12,13,14,
-		14,13,15,
-		//下
-		16,17,18,
-		18,17,19,
-		//上
-		20,21,22,
-		22,21,23
-	};
 
-	vi = new VI(vertices, _countof(vertices), indices, _countof(indices));
+	vi = new PVI(vertices, _countof(vertices));
 
 	return result;
 }
@@ -125,12 +76,10 @@ void Particle::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPOR
 		commandList->RSSetViewports(1, &viewport[i]);
 		//頂点バッファの設定
 		commandList->IASetVertexBuffers(0, 1, &vi->vbView);
-		//インデックスバッファの設定
-		commandList->IASetIndexBuffer(&vi->ibView);
 		//定数バッファビューの設定
 		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
 		//描画コマンド
-		commandList->DrawIndexedInstanced(vi->indices.size(), 1, 0, 0, 0);
+		commandList->DrawInstanced(vi->vertices.size(), 0, 0, 0);
 	}
 }
 

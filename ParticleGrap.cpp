@@ -1,4 +1,4 @@
-#include "Graphic.h"
+#include "ParticleGrap.h"
 #include <cassert>
 #include <string>
 #include <d3dcompiler.h>
@@ -6,10 +6,10 @@
 using namespace std;
 using namespace IF;
 
-HRESULT Graphic::CompillerVS(LPCWSTR fillname)
+HRESULT ParticleGrap::CompillerVS(LPCWSTR fillname)
 {
 	HRESULT result;
-	
+
 	// 頂点シェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(fillname,  // シェーダファイル名
 		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
@@ -33,10 +33,10 @@ HRESULT Graphic::CompillerVS(LPCWSTR fillname)
 		assert(0);
 	}
 
-    return result;
+	return result;
 }
 
-HRESULT Graphic::CompillerPS(LPCWSTR fillname)
+HRESULT ParticleGrap::CompillerPS(LPCWSTR fillname)
 {
 	HRESULT result;
 
@@ -66,7 +66,7 @@ HRESULT Graphic::CompillerPS(LPCWSTR fillname)
 	return result;
 }
 
-HRESULT Graphic::CompillerGS(LPCWSTR fillname)
+HRESULT ParticleGrap::CompillerGS(LPCWSTR fillname)
 {
 	HRESULT result;
 
@@ -96,7 +96,7 @@ HRESULT Graphic::CompillerGS(LPCWSTR fillname)
 	return result;
 }
 
-HRESULT Graphic::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs)
+HRESULT ParticleGrap::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs)
 {
 	HRESULT result;
 	result = CompillerVS(vs);
@@ -106,23 +106,17 @@ HRESULT Graphic::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs)
 	return result;
 }
 
-HRESULT Graphic::Initialize(ID3D12Device* device,D3D12_DESCRIPTOR_RANGE& descRangeSRV)
+HRESULT ParticleGrap::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV)
 {
 	HRESULT result;
 
 	RootParam root(descRangeSRV, 1);
 
-	result= Compiller(L"BasicVS.hlsl", L"BasicPS.hlsl", L"BasicGS.hlsl");
+	result = Compiller(L"ParticleVS.hlsl", L"ParticlePS.hlsl", L"ParticleGS.hlsl");
 
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{// xyz座標
 			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{// 法線ベクトル
-			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{// uv座標
-			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
 	};
 
@@ -167,7 +161,7 @@ HRESULT Graphic::Initialize(ID3D12Device* device,D3D12_DESCRIPTOR_RANGE& descRan
 	return result;
 }
 
-void IF::Graphic::DrawBlendMode(ID3D12GraphicsCommandList* commandList, Blend blend)
+void IF::ParticleGrap::DrawBlendMode(ID3D12GraphicsCommandList* commandList, Blend blend)
 {
 	commandList->SetPipelineState(pipelinestate[blend].Get());
 }

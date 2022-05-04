@@ -1,18 +1,27 @@
 #include "Particle.hlsli"
 
+static const uint vnum = 4;
 
-[maxvertexcount(3)]
+static const float4 offset_array[vnum] =
+{
+	float4(-0.5f,-0.5f,0,0),
+	float4(-0.5f,+0.5f,0,0),
+	float4(+0.5f,-0.5f,0,0),
+	float4(+0.5f,+0.5f,0,0),
+};
+
+[maxvertexcount(vnum)]
 void main(
-	triangle VSOutput input[3] : SV_POSITION,
+	point VSOutput input[1] : SV_POSITION,
 	inout TriangleStream< GSOutput > output
 )
 {
-	for (uint i = 0; i < 3; i++)
+	GSOutput element;
+	for (uint i = 0; i < vnum; i++)
 	{
-		GSOutput element;
-		element.svpos = input[i].svpos;
-		element.normal = input[i].normal;
-		element.uv = input[i].uv;
+		element.svpos = input[0].pos + offset_array[i];
+		element.svpos = mul(mat, element.svpos);
+		element.uv = float2(0.5f, 0.5f);
 		output.Append(element);
 	}
 }

@@ -1,23 +1,15 @@
-cbuffer cbuff0:register(b0)
-{
-	float4 color;	//êF(RGBA)
-};
-
-cbuffer ConstBufferDataTransform : register(b1)
+cbuffer ConstBufferDataTransform : register(b0)
 {
 	matrix mat;		//3Dïœä∑çsóÒ
 };
 
 struct VSOutput
 {
-	float4 svpos : SV_POSITION;
-	float3 normal :NORMAL;
-	float2 uv :TEXCOORD;
+	float4 pos : SV_POSITION;
 };
 
 struct GSOutput
 {
-	float4 svpos : SV_POSITION;
-	float3 normal :NORMAL;
+	float4 svpos : POSITION;
 	float2 uv :TEXCOORD;
 };

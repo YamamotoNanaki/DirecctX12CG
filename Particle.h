@@ -3,27 +3,28 @@
 #include <DirectXMath.h>
 #include <wrl.h>
 #include <vector>
-#include "VertexIndex.h"
+#include "ParticleVI.h"
 #include "ConstStruct.h"
 
 #pragma comment(lib,"d3d12.lib") 
 
 namespace IF
 {
-	enum BillBoardMode
-	{
-		NOON,
-		BILLBOARD,
-		YBOARD
-	};
 	class Particle
 	{
 		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 		template<class T> using vector = std::vector<T>;
 		using XMFLOAT3 = DirectX::XMFLOAT3;
 		using XMMATRIX = DirectX::XMMATRIX;
+	public:
+	enum BillBoardMode
+	{
+		NOON,
+		BILLBOARD,
+		YBOARD
+	};
 	private:
-		VI* vi;
+		PVI* vi;
 
 	public:
 		//定数バッファ

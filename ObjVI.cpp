@@ -1,9 +1,9 @@
-#include "VertexIndex.h"
+#include "ObjVI.h"
 
 using namespace DirectX;
 using namespace IF;
 
-VI::VI(Vertex* vertices, int vertexCount, unsigned short* indices, int indexCount)
+objVI::objVI(Vertex* vertices, int vertexCount, unsigned short* indices, int indexCount)
 {
 	for (int i = 0; i < vertexCount; i++)
 	{
@@ -15,7 +15,7 @@ VI::VI(Vertex* vertices, int vertexCount, unsigned short* indices, int indexCoun
 	}
 }
 
-HRESULT VI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle)
+HRESULT objVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle)
 {
 	HRESULT result;
 

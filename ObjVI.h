@@ -15,7 +15,7 @@ namespace IF
 		XMFLOAT2 uv;			//UVç¿ïW
 	};
 
-	class VI
+	class objVI
 	{
 		using XMFLOAT3 = DirectX::XMFLOAT3;
 		using XMFLOAT2 = DirectX::XMFLOAT2;
@@ -33,7 +33,7 @@ namespace IF
 		D3D12_INDEX_BUFFER_VIEW ibView{};
 
 	public:
-		VI(Vertex* vertices, int vertexCount, unsigned short* indices, int indexCount);
+		objVI(Vertex* vertices, int vertexCount, unsigned short* indices, int indexCount);
 		HRESULT Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle);
 	};
 }

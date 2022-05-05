@@ -31,7 +31,7 @@ HRESULT Particle::Initialize(ID3D12Device* device)
 	VertexPos vertices[] = {
 		// x   y   z        u    v
 		//ëO
-		{{-0, -0, -0}},	//ç∂â∫
+		{{0, 0, 0}},	//ç∂â∫
 	};
 
 

@@ -58,17 +58,17 @@
     <Filter Include="ヘッダー ファイル\Math">
       <UniqueIdentifier>{9819064d-8cdf-4341-9dc4-3c0680a261f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Effect">
-      <UniqueIdentifier>{ecd696a8-a3e7-43e4-856e-10acd558e073}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Effect">
-      <UniqueIdentifier>{d92c6128-2241-47d7-9ed8-8a04767791cf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\3D\Obj">
       <UniqueIdentifier>{4872850b-e2d9-473a-8ece-5e3f19f5d094}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\3D\Obj">
       <UniqueIdentifier>{89d49f7a-8a79-495a-82df-65b3a54b9f46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Effect">
+      <UniqueIdentifier>{d92c6128-2241-47d7-9ed8-8a04767791cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\Effect">
+      <UniqueIdentifier>{ecd696a8-a3e7-43e4-856e-10acd558e073}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -115,7 +115,7 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Particle.cpp">
-      <Filter>ソース ファイル\Effect</Filter>
+      <Filter>ソース ファイル\3D\Effect</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>ソース ファイル\3D\Obj</Filter>
@@ -127,10 +127,10 @@
       <Filter>ソース ファイル\3D\Obj</Filter>
     </ClCompile>
     <ClCompile Include="ParticleGrap.cpp">
-      <Filter>ソース ファイル\Effect</Filter>
+      <Filter>ソース ファイル\3D\Effect</Filter>
     </ClCompile>
     <ClCompile Include="ParticleVI.cpp">
-      <Filter>ソース ファイル\Effect</Filter>
+      <Filter>ソース ファイル\3D\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -200,7 +200,7 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Particle.h">
-      <Filter>ヘッダー ファイル\Effect</Filter>
+      <Filter>ヘッダー ファイル\3D\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>ヘッダー ファイル\3D\Obj</Filter>
@@ -209,13 +209,13 @@
       <Filter>ヘッダー ファイル\3D\Obj</Filter>
     </ClInclude>
     <ClInclude Include="ParticleVI.h">
-      <Filter>ヘッダー ファイル\Effect</Filter>
+      <Filter>ヘッダー ファイル\3D\Effect</Filter>
     </ClInclude>
     <ClInclude Include="ObjGraphic.h">
       <Filter>ヘッダー ファイル\3D\Obj</Filter>
     </ClInclude>
     <ClInclude Include="ParticleGrap.h">
-      <Filter>ヘッダー ファイル\Effect</Filter>
+      <Filter>ヘッダー ファイル\3D\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

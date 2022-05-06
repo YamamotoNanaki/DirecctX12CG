@@ -27,6 +27,7 @@ HRESULT Particle::Initialize(ID3D12Device* device)
 	//定数バッファのマッピング
 	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 	assert(SUCCEEDED(result));
+	constBuffTransform->Unmap(0, nullptr);
 
 	VertexPos vertices[] = {
 		// x   y   z        u    v
@@ -79,7 +80,7 @@ void Particle::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPOR
 		//定数バッファビューの設定
 		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
 		//描画コマンド
-		commandList->DrawInstanced(vi->vertices.size(), 0, 0, 0);
+		commandList->DrawInstanced(vi->vertices.size(), 1, 0, 0);
 	}
 }
 

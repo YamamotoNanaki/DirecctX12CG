@@ -19,7 +19,7 @@ namespace IF
 		View matView;
 		Projection* matPro;
 	public:
-		//ConstBuff cb;
+		ConstBuff cb;
 		Texture tex;
 		//ObjGraphic graph;
 		ParticleGrap graph;

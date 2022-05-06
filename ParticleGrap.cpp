@@ -121,6 +121,10 @@ HRESULT ParticleGrap::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& d
 	};
 
 	GPipeline pipeline(vsBlob.Get(), psBlob.Get(), gsBlob.Get(), inputLayout, _countof(inputLayout));
+	for (int i = 0; i < _countof(pipeline.pipelineDesc); i++)
+	{
+		pipeline.pipelineDesc[i].PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+	}
 
 	D3D12_STATIC_SAMPLER_DESC samplerDesc{};
 	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//‰¡ŒJ‚è•Ô‚µ

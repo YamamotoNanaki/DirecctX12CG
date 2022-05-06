@@ -21,6 +21,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	DirectX12* dx12 = new DirectX12(result, win->hwnd, winWidth, winHeight);
 	result = Key::getInstance().Initialize(win->w.hInstance, win->hwnd);
 	Scene scene(winWidth, winHeight, result, dx12->device.Get());
+	dx12->SetClearColor(0, 0, 0);
 
 	while (!Key::getInstance().Down(KEY::ESC))
 	{
@@ -29,7 +30,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 		scene.Update();
 
-		dx12->DrawBefore(scene.graph.rootsignature.Get(), scene.tex.srvHeap);
+		dx12->DrawBefore(scene.graph.rootsignature.Get(), scene.tex.srvHeap, scene.cb.GetGPUAddress(),D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 		scene.Draw(dx12->commandList.Get(), dx12->viewport);
 		dx12->DrawAfter();
 	}

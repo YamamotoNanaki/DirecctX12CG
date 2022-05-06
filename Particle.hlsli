@@ -1,4 +1,9 @@
-cbuffer ConstBufferDataTransform : register(b0)
+cbuffer cbuff0:register(b0)
+{
+	float4 color;	//F(RGBA)
+};
+
+cbuffer ConstBufferDataTransform : register(b1)
 {
 	matrix mat;		//3D•ÏŠ·s—ñ
 };

@@ -6,6 +6,7 @@ cbuffer cbuff0:register(b0)
 cbuffer ConstBufferDataTransform : register(b1)
 {
 	matrix mat;		//3D•ÏŠ·s—ñ
+	matrix matBillboard;
 };
 
 struct VSOutput

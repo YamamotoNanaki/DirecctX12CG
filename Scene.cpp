@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "Key.h"
 #include <DirectXMath.h>
+#include "Rand.h"
 
 using namespace DirectX;
 
@@ -32,14 +33,17 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 		}*/
 	}
 
-	tex.LoadTexture(L"Resources/texture.png", device);
+	tex.LoadTexture(L"Resources/particle.png", device);
 	/*for (int i = 0; i < _countof(object3ds); i++)
 	{
 		object3ds[i].VIInitialize(device, tex.texbuff.Get(), tex.srvHandle);
 	}*/
+	Rand r;
+	r.Initialize();
 	for (int i = 0; i < _countof(particle); i++)
 	{
 		particle[i].VIInitialize(device, tex.texbuff.Get(), tex.srvHandle);
+		particle[i].position = { (float)r.GetRand(-5,5) ,(float)r.GetRand(-5,5) ,(float)r.GetRand(-5,5) };
 	}
 	result = graph.Initialize(device, tex.descRangeSRV);
 
@@ -80,6 +84,7 @@ void IF::Scene::Update()
 			if (Key::getInstance().Down(KEY::DOWN))		object3ds[i].position.y -= 1.0f;
 		}
 	}*/
+
 	if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
 	{
 		for (int i = 0; i < _countof(particle); i++)
@@ -97,13 +102,14 @@ void IF::Scene::Update()
 	}*/
 	for (int i = 0; i < _countof(particle); i++)
 	{
-		particle[i].Update(matView.Get(), matPro->Get(), particle[0].NOON);
+		particle[i].Update(matView.Get(), matPro->Get(), View::matBillBoard);
 	}
 }
 
 void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
 {
-	graph.DrawBlendMode(commandList);
+	graph.DrawBlendMode(commandList, graph.ADD);
+	cb.SetBright(255, 50, 10);
 	/*for (int i = 0; i < _countof(object3ds); i++)
 	{
 		object3ds[i].Draw(commandList, viewport);

@@ -27,7 +27,8 @@ void main(
 	GSOutput element;
 	for (uint i = 0; i < vnum; i++)
 	{
-		element.svpos = input[0].pos + offset_array[i];
+		float4 offset = mul(matBillboard, offset_array[i]);
+		element.svpos = input[0].pos + offset;
 		element.svpos = mul(mat, element.svpos);
 		element.uv = uv_array[i];
 		output.Append(element);

@@ -13,4 +13,10 @@ namespace IF
 	{
 		DirectX::XMMATRIX mat;
 	};
+
+	struct ConstBufferBillboard
+	{
+		DirectX::XMMATRIX mat;
+		DirectX::XMMATRIX matBillboard;
+	};
 }

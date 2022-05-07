@@ -68,10 +68,10 @@ void View::Update()
 	yBillAxisY = XMVector3Normalize(upVector);
 	yBillAxisZ = XMVector3Cross(yBillAxisX, yBillAxisY);
 
-	matBillBoard.r[0] = yBillAxisX;
-	matBillBoard.r[1] = yBillAxisY;
-	matBillBoard.r[2] = yBillAxisZ;
-	matBillBoard.r[3] = XMVectorSet(0, 0, 0, 1);
+	matBillBoardY.r[0] = yBillAxisX;
+	matBillBoardY.r[1] = yBillAxisY;
+	matBillBoardY.r[2] = yBillAxisZ;
+	matBillBoardY.r[3] = XMVectorSet(0, 0, 0, 1);
 }
 
 XMMATRIX View::Get() const

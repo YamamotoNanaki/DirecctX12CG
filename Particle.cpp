@@ -47,7 +47,7 @@ HRESULT Particle::VIInitialize(ID3D12Device* device, ID3D12Resource* texBuff, D3
 	return result;
 }
 
-void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode)
+void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard, BillBoardMode mode)
 {
 	XMMATRIX matScale, matRot, matTrams;
 
@@ -60,14 +60,13 @@ void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mo
 	matTrams = XMMatrixTranslation(position.x, position.y, position.z);
 	//ワールド行列の合成
 	matWorld = XMMatrixIdentity();
-	if (mode == BILLBOARD)matWorld *= View::matBillBoard;
-	else if (mode == YBOARD)matWorld *= View::matBillBoardY;
 	matWorld *= matScale;
 	matWorld *= matRot;
 	matWorld *= matTrams;
 
 	//定数バッファへのデータ転送
 	constMapTransform->mat = matWorld * matView * matProjection;
+	constMapTransform->matBillboard = matBillBoard;
 }
 
 void Particle::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)

@@ -15,7 +15,7 @@ namespace IF
 		template <class T>using vector = std::vector<T>;
 	private:
 		//Object object3ds[1];
-		Particle particle[1];
+		Particle particle[30];
 		View matView;
 		Projection* matPro;
 	public:

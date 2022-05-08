@@ -2,19 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-class Rand
+namespace Rand
 {
-public:
-	static void Initialize()
-	{
-		srand(time(nullptr));
-	}
-	static int GetRand()
-	{
-		return rand();
-	}
-	static int GetRand(int min, int max)
-	{
-		return min + rand() % (max - min);
-	}
-};
+	void Initialize();
+	int GetRand();
+	int GetRand(int min, int max);
+}

@@ -144,6 +144,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConstBuff.cpp" />
+    <ClCompile Include="Ease.cpp" />
+    <ClCompile Include="Fire.cpp" />
     <ClCompile Include="ObjGraphic.cpp" />
     <ClCompile Include="DirectX12.cpp" />
     <ClCompile Include="GPipeline.cpp" />
@@ -152,6 +154,7 @@
     <ClCompile Include="ParticleGrap.cpp" />
     <ClCompile Include="ParticleVI.cpp" />
     <ClCompile Include="Projection.cpp" />
+    <ClCompile Include="Rand.cpp" />
     <ClCompile Include="RootParam.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -218,6 +221,8 @@
   <ItemGroup>
     <ClInclude Include="ConstBuff.h" />
     <ClInclude Include="ConstStruct.h" />
+    <ClInclude Include="Ease.h" />
+    <ClInclude Include="Fire.h" />
     <ClInclude Include="ObjGraphic.h" />
     <ClInclude Include="DirectX12.h" />
     <ClInclude Include="GPipeline.h" />

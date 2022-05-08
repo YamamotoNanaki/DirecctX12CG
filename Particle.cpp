@@ -47,21 +47,16 @@ HRESULT Particle::VIInitialize(ID3D12Device* device, ID3D12Resource* texBuff, D3
 	return result;
 }
 
-void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard, BillBoardMode mode)
+void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard)
 {
-	XMMATRIX matScale, matRot, matTrams;
+	XMMATRIX matScale, matTrams;
 
 	//スケール、回転、平行移動
-	matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(rotation.z);
-	matRot *= XMMatrixRotationZ(rotation.x);
-	matRot *= XMMatrixRotationZ(rotation.y);
+	matScale = XMMatrixScaling(scale, scale, scale);
 	matTrams = XMMatrixTranslation(position.x, position.y, position.z);
 	//ワールド行列の合成
 	matWorld = XMMatrixIdentity();
 	matWorld *= matScale;
-	matWorld *= matRot;
 	matWorld *= matTrams;
 
 	//定数バッファへのデータ転送

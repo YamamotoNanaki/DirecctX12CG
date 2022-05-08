@@ -32,16 +32,21 @@ namespace IF
 		//定数バッファマップ
 		ConstBufferBillboard* constMapTransform;
 		//アフィン変換情報
-		XMFLOAT3 scale = { 1,1,1 };
-		XMFLOAT3 rotation = { 0,0,0 };
 		XMFLOAT3 position = { 0,0,0 };
 		//ワールド変換行列
 		XMMATRIX matWorld;
+		float scale = 1;
+		float endScale;
+		float startScale;
+		unsigned int flame = 0;
+		bool flag = 0;
+		float targetY;
+		float startY;
 
 	public:
 		HRESULT Initialize(ID3D12Device* device);
 		HRESULT VIInitialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle);
-		void Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard = DirectX::XMMatrixIdentity(), BillBoardMode mode = NOON);
+		void Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard = DirectX::XMMatrixIdentity());
 		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);
 		~Particle();
 	};

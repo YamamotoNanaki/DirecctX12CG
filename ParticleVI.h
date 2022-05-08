@@ -29,5 +29,6 @@ namespace IF
 	public:
 		PVI(VertexPos* vertices, int vertexCount);
 		HRESULT Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle);
+		HRESULT ScaleUpdate();
 	};
 }

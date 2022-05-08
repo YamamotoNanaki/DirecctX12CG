@@ -6,7 +6,7 @@
 #include "Texture.h"
 #include "ObjGraphic.h"
 #include "ParticleGrap.h"
-#include "Particle.h"
+#include "Fire.h"
 
 namespace IF
 {
@@ -15,7 +15,7 @@ namespace IF
 		template <class T>using vector = std::vector<T>;
 	private:
 		//Object object3ds[1];
-		Particle particle[30];
+		Fire* fire;
 		View matView;
 		Projection* matPro;
 	public:
@@ -37,6 +37,7 @@ namespace IF
 		//-----------------------
 
 	public:
+		void Update(ID3D12Device* device);
 		void Update();
 		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport);
 	};

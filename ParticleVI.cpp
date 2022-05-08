@@ -19,12 +19,9 @@ HRESULT PVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU
 	UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * vertices.size());
 
 
-#pragma endregion 頂点データー
-
 	//---------------------------
 
-#pragma region 頂点バッファの確保
-// 頂点バッファの設定
+	// 頂点バッファの設定
 	D3D12_HEAP_PROPERTIES heapProp{};   // ヒープ設定
 	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD; // GPUへの転送用
 
@@ -45,11 +42,7 @@ HRESULT PVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU
 		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertBuff));
 	assert(SUCCEEDED(result));
 
-#pragma endregion 頂点バッファの確保
-
 	//------------------------
-
-#pragma region シェーダーリソースビュー
 
 //シェーダリソースビュー設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};			//設定構造体
@@ -65,11 +58,8 @@ HRESULT PVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU
 		&srvDesc,		//テクスチャ設定情報
 		srvHandle);
 
-#pragma endregion シェーダーリソースビュー
-
 	//---------------------------
 
-#pragma region 頂点バッファへのデータ転送
 // GPU上のバッファに対応した仮想メモリを取得
 	VertexPos* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
@@ -84,18 +74,14 @@ HRESULT PVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU
 	// マップを解除
 	vertBuff->Unmap(0, nullptr);
 
-#pragma endregion 頂点バッファへのデータ転送
-
 	//-----------------------------
 
-#pragma region 頂点バッファビューの作成
 // 頂点バッファビューの作成
 
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	vbView.SizeInBytes = sizeVB;
 	vbView.StrideInBytes = sizeof(vertices[0]);
 
-#pragma endregion 頂点バッファへビューの作成
 
 	return result;
 }

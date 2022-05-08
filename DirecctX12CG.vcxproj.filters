@@ -132,6 +132,15 @@
     <ClCompile Include="ParticleVI.cpp">
       <Filter>ソース ファイル\3D\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Fire.cpp">
+      <Filter>ソース ファイル\3D\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Rand.cpp">
+      <Filter>ソース ファイル\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="Ease.cpp">
+      <Filter>ソース ファイル\Other</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicPS.hlsl">
@@ -216,6 +225,12 @@
     </ClInclude>
     <ClInclude Include="ParticleGrap.h">
       <Filter>ヘッダー ファイル\3D\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Fire.h">
+      <Filter>ヘッダー ファイル\3D\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Ease.h">
+      <Filter>ヘッダー ファイル\Other</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

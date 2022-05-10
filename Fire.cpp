@@ -35,7 +35,7 @@ void Fire::AddParticle()
 				particle[i].position = { pos.x,pos.y,pos.z };
 				j++;
 			}
-			if (j == 10)break;
+			if (j == 3)break;
 		}
 	}
 }

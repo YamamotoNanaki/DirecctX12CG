@@ -14,7 +14,7 @@ private:
 
 public:
 	XMFLOAT3 pos;
-	IF::Particle particle[2000];
+	IF::Particle particle[500];
 
 public:
 	Fire(XMFLOAT3 pos, float scale = 1.0f, unsigned int maxFlame = 100);

@@ -36,8 +36,6 @@ namespace IF
 		//ƒ[ƒ‹ƒh•ÏŠ·s—ñ
 		XMMATRIX matWorld;
 		float scale = 1;
-		float endScale;
-		float startScale;
 		unsigned int flame = 0;
 		bool flag = 0;
 		float targetY;

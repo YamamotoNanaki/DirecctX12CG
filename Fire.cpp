@@ -22,21 +22,18 @@ void Fire::AddParticle()
 {
 	const float offset = 500;
 	int j = 0;
-	if (moveOffset == false)
+	for (int i = 0; i < _countof(particle); i++)
 	{
-		for (int i = 0; i < _countof(particle); i++)
+		if (particle[i].flag == false && j < 3)
 		{
-			if (particle[i].flag == false && j < 3)
-			{
-				particle[i].targetY = pos.y + scale * 25 + (float)Rand::GetRand(0, offset) / 50;
-				particle[i].startY = pos.y + (float)Rand::GetRand(0, offset) / 100;
-				particle[i].flag = true;
-				particle[i].flame = 0;
-				particle[i].position = { pos.x,pos.y,pos.z };
-				j++;
-			}
-			if (j == 3)break;
+			particle[i].targetY = pos.y + scale * 25 + (float)Rand::GetRand(0, offset) / 50;
+			particle[i].startY = pos.y + (float)Rand::GetRand(0, offset) / 100;
+			particle[i].flag = true;
+			particle[i].flame = 0;
+			particle[i].position = { pos.x,pos.y,pos.z };
+			j++;
 		}
+		if (j == 3)break;
 	}
 }
 
@@ -45,6 +42,7 @@ void Fire::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoar
 	int offset = 100;
 	if (moveOffset == false)
 	{
+		AddParticle();
 		for (int i = 0; i < _countof(particle); i++)
 		{
 			if (particle[i].flag == false)continue;

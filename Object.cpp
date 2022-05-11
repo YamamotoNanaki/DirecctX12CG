@@ -95,6 +95,16 @@ HRESULT Object::VIInitialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D1
 	return result;
 }
 
+void IF::Object::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
+{
+	commandList->SetGraphicsRootSignature(root);
+	commandList->IASetPrimitiveTopology(topology);
+	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
+	commandList->SetDescriptorHeaps(1, &srvHeap);
+	D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
+	commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+}
+
 void Object::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode)
 {
 	XMMATRIX matScale, matRot, matTrams;

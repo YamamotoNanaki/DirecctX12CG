@@ -30,7 +30,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 		scene.Update(dx12->device.Get());
 
-		dx12->DrawBefore(scene.graph.rootsignature.Get(), scene.tex.srvHeap, scene.cb.GetGPUAddress(),D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+		dx12->DrawBefore();
 		scene.Draw(dx12->commandList.Get(), dx12->viewport);
 		dx12->DrawAfter();
 	}

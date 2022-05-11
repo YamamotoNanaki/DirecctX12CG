@@ -64,6 +64,16 @@ void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBill
 	constMapTransform->matBillboard = matBillBoard;
 }
 
+void IF::Particle::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
+{
+	commandList->SetGraphicsRootSignature(root);
+	commandList->IASetPrimitiveTopology(topology);
+	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
+	commandList->SetDescriptorHeaps(1, &srvHeap);
+	D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
+	commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+}
+
 void Particle::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)
 {
 	for (int i = 0; i < viewport.size(); i++)

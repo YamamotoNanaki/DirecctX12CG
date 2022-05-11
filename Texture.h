@@ -18,10 +18,6 @@ namespace IF
 		//WICテクスチャのロード
 		TexMetadata metadata{};
 		ScratchImage scratchImg{};
-		ScratchImage mipChain{};
-		D3D12_HEAP_PROPERTIES texHeapProp{};
-		D3D12_RESOURCE_DESC texresDesc{};
-		D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 
 	public:
 		ComPtr<ID3D12Resource> texbuff = nullptr;

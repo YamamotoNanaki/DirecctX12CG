@@ -24,7 +24,7 @@ static const float2 uv_array[vnum] =
 //main関数
 [maxvertexcount(vnum)]
 void main(
-	point VSOutput input[1] : SV_POSITION,					//点の入力
+	point VSOutput input[1] : POSITION,						//点の入力
 	inout TriangleStream< GSOutput > output					//三角形を出力
 )
 {

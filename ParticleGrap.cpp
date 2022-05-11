@@ -70,7 +70,7 @@ HRESULT ParticleGrap::CompillerGS(LPCWSTR fillname)
 {
 	HRESULT result;
 
-	// 頂点シェーダの読み込みとコンパイル
+	// ジオメトリシェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(fillname,  // シェーダファイル名
 		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "gs_5_0", // エントリーポイント名、シェーダーモデル	指定

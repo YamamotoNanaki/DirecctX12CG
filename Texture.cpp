@@ -25,10 +25,12 @@ HRESULT Texture::TexLoad(const wchar_t* szFile)
 
 HRESULT Texture::LoadBuffer(ID3D12Device* device)
 {
+	D3D12_HEAP_PROPERTIES texHeapProp{};
 	texHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;
 	texHeapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 	texHeapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
 
+	D3D12_RESOURCE_DESC texresDesc{};
 	texresDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	texresDesc.Format = metadata.format;
 	texresDesc.Width = metadata.width;			//ïù

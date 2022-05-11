@@ -11,7 +11,7 @@ cbuffer ConstBufferDataTransform : register(b1)
 
 struct VSOutput
 {
-	float4 pos : SV_POSITION;	//頂点座標
+	float4 pos : POSITION;	//頂点座標
 };
 
 struct GSOutput

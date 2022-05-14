@@ -70,6 +70,12 @@
     <Filter Include="ソース ファイル\3D\Effect">
       <UniqueIdentifier>{ecd696a8-a3e7-43e4-856e-10acd558e073}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\3D\Model">
+      <UniqueIdentifier>{1ab4b3ee-bfdb-459a-ab9c-8393635fdddf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Model">
+      <UniqueIdentifier>{4518a4bf-ba50-4de2-b519-a8a4dc37dd7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -123,12 +129,6 @@
     <ClCompile Include="ObjVI.cpp">
       <Filter>ソース ファイル\3D\Obj</Filter>
     </ClCompile>
-    <ClCompile Include="ObjGraphic.cpp">
-      <Filter>ソース ファイル\3D\Obj</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleGrap.cpp">
-      <Filter>ソース ファイル\3D\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleVI.cpp">
       <Filter>ソース ファイル\3D\Effect</Filter>
     </ClCompile>
@@ -141,15 +141,21 @@
     <ClCompile Include="Ease.cpp">
       <Filter>ソース ファイル\Other</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>ソース ファイル\3D\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic.cpp">
+      <Filter>ソース ファイル\Graphic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="BasicPS.hlsl">
+    <FxCompile Include="ModelPS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
-    <FxCompile Include="BasicVS.hlsl">
+    <FxCompile Include="ModelVS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
-    <FxCompile Include="BasicGS.hlsl">
+    <FxCompile Include="ModelGS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
     <FxCompile Include="ParticleGS.hlsl">
@@ -220,21 +226,21 @@
     <ClInclude Include="ParticleVI.h">
       <Filter>ヘッダー ファイル\3D\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="ObjGraphic.h">
-      <Filter>ヘッダー ファイル\3D\Obj</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleGrap.h">
-      <Filter>ヘッダー ファイル\3D\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="Fire.h">
       <Filter>ヘッダー ファイル\3D\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Ease.h">
       <Filter>ヘッダー ファイル\Other</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>ヘッダー ファイル\3D\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic.h">
+      <Filter>ヘッダー ファイル\Graphic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Basic.hlsli">
+    <None Include="Model.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
     <None Include="Particle.hlsli">

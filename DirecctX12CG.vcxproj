@@ -158,12 +158,12 @@
     <ClCompile Include="ConstBuff.cpp" />
     <ClCompile Include="Ease.cpp" />
     <ClCompile Include="Fire.cpp" />
-    <ClCompile Include="ObjGraphic.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="DirectX12.cpp" />
     <ClCompile Include="GPipeline.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="ParticleGrap.cpp" />
     <ClCompile Include="ParticleVI.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="Rand.cpp" />
@@ -180,7 +180,7 @@
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="BasicGS.hlsl">
+    <FxCompile Include="ModelGS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
@@ -190,7 +190,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="BasicPS.hlsl">
+    <FxCompile Include="ModelPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -200,7 +200,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="BasicVS.hlsl">
+    <FxCompile Include="ModelVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -251,12 +251,12 @@
     <ClInclude Include="ConstStruct.h" />
     <ClInclude Include="Ease.h" />
     <ClInclude Include="Fire.h" />
-    <ClInclude Include="ObjGraphic.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Graphic.h" />
     <ClInclude Include="DirectX12.h" />
     <ClInclude Include="GPipeline.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Particle.h" />
-    <ClInclude Include="ParticleGrap.h" />
     <ClInclude Include="ParticleVI.h" />
     <ClInclude Include="Projection.h" />
     <ClInclude Include="RootParam.h" />
@@ -272,7 +272,7 @@
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Basic.hlsli" />
+    <None Include="Model.hlsli" />
     <None Include="Particle.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

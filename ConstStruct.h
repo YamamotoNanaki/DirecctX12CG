@@ -4,7 +4,7 @@
 
 namespace IF
 {
-	struct ConstBufferDataMaterial
+	struct ConstBufferDataColor
 	{
 		DirectX::XMFLOAT4 color;	//êF(RGBA)
 	};
@@ -18,5 +18,15 @@ namespace IF
 	{
 		DirectX::XMMATRIX mat;
 		DirectX::XMMATRIX matBillboard;
+	};
+
+	struct ConstBufferMaterial
+	{
+		DirectX::XMFLOAT3 ambient;
+		float pad1;
+		DirectX::XMFLOAT3 diffuse;
+		float pad2;
+		DirectX::XMFLOAT3 specular;
+		float alpha;
 	};
 }

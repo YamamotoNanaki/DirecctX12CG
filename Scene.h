@@ -1,11 +1,11 @@
 #pragma once
 #include "ConstBuff.h"
 #include "Object.h"
+#include "Model.h"
 #include "View.h"
 #include "Projection.h"
 #include "Texture.h"
-#include "ObjGraphic.h"
-#include "ParticleGrap.h"
+#include "Graphic.h"
 #include "Fire.h"
 
 namespace IF
@@ -14,15 +14,12 @@ namespace IF
 	{
 		template <class T>using vector = std::vector<T>;
 	private:
-		Object object3ds[50];
+		Model object3ds[1];
 		//Fire* fire;
 		View matView;
 		Projection* matPro;
 	public:
 		ConstBuff cb;
-		Texture tex;
-		ObjGraphic Ograph;
-		//ParticleGrap graph;
 
 	public:
 		Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device);

@@ -1,4 +1,4 @@
-#include "Basic.hlsli"
+#include "Model.hlsli"
 
 
 [maxvertexcount(3)]

@@ -15,6 +15,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
+		object3ds[i].scale = { 20,20,20 };
 		result = object3ds[i].Initialize(device);
 		if (i > 0)
 		{
@@ -26,15 +27,12 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	}
 	//fire = new Fire({ 0,0,0 });
 
-	tex.LoadTexture(L"Resources/texture.png", device);
-
 	//result = fire->Initialize(device, tex.texbuff.Get(), tex.srvHandle);
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
-		object3ds[i].VIInitialize(device, tex.texbuff.Get(), tex.srvHandle);
+		object3ds[i].VIInitialize(device);
 	}
-	//result = graph.Initialize(device, tex.descRangeSRV);
-	result = Ograph.Initialize(device, tex.descRangeSRV);
+	//result = graph.InitializeParticle(device, tex.descRangeSRV);
 
 	matView.eye = { 0,0,-5.0f };
 }
@@ -46,14 +44,17 @@ IF::Scene::~Scene()
 
 void IF::Scene::Update(ID3D12Device* device)
 {
-	Key::getInstance().Update();
+	Key* key = nullptr;
+	key = Key::getInstance();
 
-	if (Key::getInstance().Judge(KEY::WASD, KEY::OR))
+	key->Update();
+
+	if (key->Judge(KEY::WASD, KEY::OR))
 	{
-		if (Key::getInstance().Down(KEY::D))angleY += XMConvertToRadians(1.0f);
-		if (Key::getInstance().Down(KEY::A))angleY -= XMConvertToRadians(1.0f);
-		if (Key::getInstance().Down(KEY::S))angleX += XMConvertToRadians(1.0f);
-		if (Key::getInstance().Down(KEY::W))angleX -= XMConvertToRadians(1.0f);
+		if (key->Down(KEY::D))angleY += XMConvertToRadians(1.0f);
+		if (key->Down(KEY::A))angleY -= XMConvertToRadians(1.0f);
+		if (key->Down(KEY::S))angleX += XMConvertToRadians(1.0f);
+		if (key->Down(KEY::W))angleX -= XMConvertToRadians(1.0f);
 
 		matView.eye.x = -100 * sinf(angleY);
 		matView.eye.y = -100 * sinf(angleX);
@@ -62,23 +63,23 @@ void IF::Scene::Update(ID3D12Device* device)
 		matView.Update();
 	}
 
-	if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
+	if (key->Judge(KEY::Arrow, KEY::OR))
 	{
 		for (int i = 0; i < _countof(object3ds); i++)
 		{
-			if (Key::getInstance().Down(KEY::RIGHT))	object3ds[i].position.x += 1.0f;
-			if (Key::getInstance().Down(KEY::LEFT))		object3ds[i].position.x -= 1.0f;
-			if (Key::getInstance().Down(KEY::UP))		object3ds[i].position.y += 1.0f;
-			if (Key::getInstance().Down(KEY::DOWN))		object3ds[i].position.y -= 1.0f;
+			if (key->Down(KEY::RIGHT))	object3ds[i].position.x += 1.0f;
+			if (key->Down(KEY::LEFT))		object3ds[i].position.x -= 1.0f;
+			if (key->Down(KEY::UP))		object3ds[i].position.y += 1.0f;
+			if (key->Down(KEY::DOWN))		object3ds[i].position.y -= 1.0f;
 		}
 	}
 
 	/*if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
 	{
-		if (Key::getInstance().Down(KEY::RIGHT))	fire->pos.x += 1.0f;
-		if (Key::getInstance().Down(KEY::LEFT))		fire->pos.x -= 1.0f;
-		if (Key::getInstance().Down(KEY::UP))		fire->pos.y += 1.0f;
-		if (Key::getInstance().Down(KEY::DOWN))		fire->pos.y -= 1.0f;
+		if (key->Down(KEY::RIGHT))	fire->pos.x += 1.0f;
+		if (key->Down(KEY::LEFT))		fire->pos.x -= 1.0f;
+		if (key->Down(KEY::UP))		fire->pos.y += 1.0f;
+		if (key->Down(KEY::DOWN))		fire->pos.y -= 1.0f;
 	}*/
 
 	for (int i = 0; i < _countof(object3ds); i++)
@@ -90,8 +91,8 @@ void IF::Scene::Update(ID3D12Device* device)
 
 void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
 {
-	object3ds->DrawBefore(commandList, Ograph.rootsignature.Get(), tex.srvHeap, cb.GetGPUAddress());
-	Ograph.DrawBlendMode(commandList);
+	object3ds->DrawBefore(commandList, cb.GetGPUAddress());
+	object3ds->DrawBlendMode(commandList);
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
 		object3ds[i].Draw(commandList, viewport);

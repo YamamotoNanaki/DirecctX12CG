@@ -33,6 +33,7 @@ namespace IF
 		D3D12_INDEX_BUFFER_VIEW ibView{};
 
 	public:
+		objVI(vector<Vertex> vertices, int vertexCount, vector<unsigned short> indices, int indexCount);
 		objVI(Vertex* vertices, int vertexCount, unsigned short* indices, int indexCount);
 		HRESULT Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle);
 	};

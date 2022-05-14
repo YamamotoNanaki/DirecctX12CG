@@ -3,6 +3,18 @@
 using namespace DirectX;
 using namespace IF;
 
+IF::objVI::objVI(vector<Vertex> vertices, int vertexCount, vector<unsigned short> indices, int indexCount)
+{
+	for (int i = 0; i < vertexCount; i++)
+	{
+		this->vertices.push_back(vertices[i]);
+	}
+	for (int i = 0; i < indexCount; i++)
+	{
+		this->indices.push_back(indices[i]);
+	}
+}
+
 objVI::objVI(Vertex* vertices, int vertexCount, unsigned short* indices, int indexCount)
 {
 	for (int i = 0; i < vertexCount; i++)

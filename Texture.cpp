@@ -23,7 +23,7 @@ HRESULT Texture::TexLoad(const wchar_t* szFile)
 	return result;
 }
 
-HRESULT Texture::LoadBuffer(ID3D12Device* device)
+HRESULT Texture::LoadBuffer()
 {
 	D3D12_HEAP_PROPERTIES texHeapProp{};
 	texHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;
@@ -67,7 +67,7 @@ void Texture::LoadTransfer(HRESULT result)
 	}
 }
 
-HRESULT Texture::Heap(ID3D12Device* device)
+HRESULT Texture::Heap()
 {
 	const size_t kMaxSRVCount = 2056;
 
@@ -91,13 +91,18 @@ void Texture::Range()
 	descRangeSRV.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 }
 
+void IF::Texture::Initialize(ID3D12Device* device)
+{
+	this->device = device;
+}
 
-HRESULT Texture::LoadTexture(const wchar_t* szFile, ID3D12Device* device)
+
+HRESULT Texture::Loadtexture(const wchar_t* szFile)
 {
 	HRESULT result = TexLoad(szFile);
-	result = LoadBuffer(device);
+	result = LoadBuffer();
 	LoadTransfer(result);
-	result = Heap(device);
+	result = Heap();
 	Range();
 
 	return result;

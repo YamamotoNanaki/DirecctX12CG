@@ -16,24 +16,24 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
 		result = object3ds[i].Initialize(device);
-		object3ds[i].position = { -10.0f,-20.0f,-10 };
-		/*if (i > 0)
+		if (i > 0)
 		{
 			object3ds[i].parent = &object3ds[i - 1];
 			object3ds[i].scale = { 0.9f,0.9f,0.9f };
 			object3ds[i].rotation = { 0.0f,0.0f,XMConvertToRadians(30.0f) };
-		}*/
+			object3ds[i].position = { 0.0f,0.0f,-8.0f };
+		}
 	}
-	fire = new Fire({ 0,0,0 });
+	//fire = new Fire({ 0,0,0 });
 
-	tex.LoadTexture(L"Resources/particle.png", device);
+	tex.LoadTexture(L"Resources/texture.png", device);
 
-	result = fire->Initialize(device, tex.texbuff.Get(), tex.srvHandle);
+	//result = fire->Initialize(device, tex.texbuff.Get(), tex.srvHandle);
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
 		object3ds[i].VIInitialize(device, tex.texbuff.Get(), tex.srvHandle);
 	}
-	result = graph.Initialize(device, tex.descRangeSRV);
+	//result = graph.Initialize(device, tex.descRangeSRV);
 	result = Ograph.Initialize(device, tex.descRangeSRV);
 
 	matView.eye = { 0,0,-5.0f };
@@ -62,7 +62,7 @@ void IF::Scene::Update(ID3D12Device* device)
 		matView.Update();
 	}
 
-	/*if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
+	if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
 	{
 		for (int i = 0; i < _countof(object3ds); i++)
 		{
@@ -71,34 +71,33 @@ void IF::Scene::Update(ID3D12Device* device)
 			if (Key::getInstance().Down(KEY::UP))		object3ds[i].position.y += 1.0f;
 			if (Key::getInstance().Down(KEY::DOWN))		object3ds[i].position.y -= 1.0f;
 		}
-	}*/
+	}
 
-	if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
+	/*if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
 	{
 		if (Key::getInstance().Down(KEY::RIGHT))	fire->pos.x += 1.0f;
 		if (Key::getInstance().Down(KEY::LEFT))		fire->pos.x -= 1.0f;
 		if (Key::getInstance().Down(KEY::UP))		fire->pos.y += 1.0f;
 		if (Key::getInstance().Down(KEY::DOWN))		fire->pos.y -= 1.0f;
-	}
+	}*/
 
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
 		object3ds[i].Update(matView.Get(), matPro->Get(), object3ds[0].NOON);
 	}
-	fire->Update(matView.Get(), matPro->Get(), matView.matBillBoard);
+	//fire->Update(matView.Get(), matPro->Get(), matView.matBillBoard);
 }
 
 void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
 {
 	object3ds->DrawBefore(commandList, Ograph.rootsignature.Get(), tex.srvHeap, cb.GetGPUAddress());
-	cb.SetBright(255, 255, 255);
 	Ograph.DrawBlendMode(commandList);
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
 		object3ds[i].Draw(commandList, viewport);
 	}
-	cb.SetBright(175, 25, 5);
+	/*cb.SetBright(175, 25, 5);
 	graph.DrawBlendMode(commandList, graph.ADD);
 	fire->particle[0].DrawBefore(commandList, graph.rootsignature.Get(), tex.srvHeap, cb.GetGPUAddress(), D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-	fire->Draw(commandList, viewport);
+	fire->Draw(commandList, viewport);*/
 }

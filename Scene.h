@@ -14,15 +14,15 @@ namespace IF
 	{
 		template <class T>using vector = std::vector<T>;
 	private:
-		Object object3ds[1];
-		Fire* fire;
+		Object object3ds[50];
+		//Fire* fire;
 		View matView;
 		Projection* matPro;
 	public:
 		ConstBuff cb;
 		Texture tex;
 		ObjGraphic Ograph;
-		ParticleGrap graph;
+		//ParticleGrap graph;
 
 	public:
 		Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device);

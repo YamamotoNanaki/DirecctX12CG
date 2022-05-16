@@ -5,7 +5,7 @@ using namespace IF;
 
 void RootParam::ConstRoot(int num)
 {
-	D3D12_ROOT_PARAMETER rootParamSeed{};
+	D3D12_ROOT_PARAMETER rootParamSeed;
 	//定数用
 	rootParamSeed.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;				//種類
 	rootParamSeed.Descriptor.ShaderRegister = num;								//デスクリプタレンジ
@@ -18,7 +18,7 @@ void RootParam::TexRoot(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax)
 {
 	for (int i = 0; i < texMax; i++)
 	{
-		D3D12_ROOT_PARAMETER rootParamSeed{};
+		D3D12_ROOT_PARAMETER rootParamSeed;
 		rootParamSeed.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		//種類
 		rootParamSeed.DescriptorTable.pDescriptorRanges = &descRangeSRV;				//デスクリプタレンジ
 		rootParamSeed.DescriptorTable.NumDescriptorRanges = 1;							//デスクリプタレンジ数
@@ -27,12 +27,10 @@ void RootParam::TexRoot(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax)
 	}
 }
 
-RootParam::RootParam(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax, int cbnum)
+RootParam::RootParam(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax)
 {
-	for (int i = 0; i < cbnum - 1; i++)
-	{
-		ConstRoot(i);
-	}
+	ConstRoot(0);
 	TexRoot(descRangeSRV, texMax);
-	ConstRoot(cbnum - 1);
+	ConstRoot(1);
+	ConstRoot(2);
 }

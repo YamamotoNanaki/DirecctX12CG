@@ -158,11 +158,10 @@
     <ClCompile Include="ConstBuff.cpp" />
     <ClCompile Include="Ease.cpp" />
     <ClCompile Include="Fire.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="DirectX12.cpp" />
     <ClCompile Include="GPipeline.cpp" />
     <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="ObjGraphic.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleVI.cpp" />
     <ClCompile Include="Projection.cpp" />
@@ -251,11 +250,10 @@
     <ClInclude Include="ConstStruct.h" />
     <ClInclude Include="Ease.h" />
     <ClInclude Include="Fire.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Graphic.h" />
     <ClInclude Include="DirectX12.h" />
     <ClInclude Include="GPipeline.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="ObjGraphic.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleVI.h" />
     <ClInclude Include="Projection.h" />

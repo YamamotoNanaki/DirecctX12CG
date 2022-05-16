@@ -16,6 +16,6 @@ namespace IF
 
 	public:
 		vector<D3D12_ROOT_PARAMETER> rootParams = {};
-		RootParam(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax, int cbnum);
+		RootParam(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax);
 	};
 }

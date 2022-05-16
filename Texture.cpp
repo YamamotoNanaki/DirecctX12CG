@@ -1,5 +1,4 @@
 #include "Texture.h"
-#include <utility>
 
 using namespace DirectX;
 using namespace IF;
@@ -23,7 +22,7 @@ HRESULT Texture::TexLoad(const wchar_t* szFile)
 	return result;
 }
 
-HRESULT Texture::LoadBuffer()
+HRESULT Texture::LoadBuffer(ID3D12Device* device)
 {
 	D3D12_HEAP_PROPERTIES texHeapProp{};
 	texHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;
@@ -67,7 +66,7 @@ void Texture::LoadTransfer(HRESULT result)
 	}
 }
 
-HRESULT Texture::Heap()
+HRESULT Texture::Heap(ID3D12Device* device)
 {
 	const size_t kMaxSRVCount = 2056;
 
@@ -91,18 +90,13 @@ void Texture::Range()
 	descRangeSRV.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 }
 
-void IF::Texture::Initialize(ID3D12Device* device)
-{
-	this->device = device;
-}
 
-
-HRESULT Texture::Loadtexture(const wchar_t* szFile)
+HRESULT Texture::LoadTexture(const wchar_t* szFile, ID3D12Device* device)
 {
 	HRESULT result = TexLoad(szFile);
-	result = LoadBuffer();
+	result = LoadBuffer(device);
 	LoadTransfer(result);
-	result = Heap();
+	result = Heap(device);
 	Range();
 
 	return result;

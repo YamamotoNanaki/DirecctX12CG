@@ -18,8 +18,8 @@ namespace IF
 		D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress();
 
 	private:
-		short R = 0, G = 0, B = 0, A = 0;
-		float r = 0, g = 0, b = 0, a = 0;
+		short R, G, B, A;
+		float r, g, b, a;
 
 	public:
 		HRESULT SetBright(int red, int green, int blue);

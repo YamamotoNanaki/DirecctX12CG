@@ -18,7 +18,6 @@ namespace IF
 		//WICテクスチャのロード
 		TexMetadata metadata{};
 		ScratchImage scratchImg{};
-		ComPtr<ID3D12Device> device;
 
 	public:
 		ComPtr<ID3D12Resource> texbuff = nullptr;
@@ -28,13 +27,12 @@ namespace IF
 
 	private:
 		HRESULT TexLoad(const wchar_t* szFile);
-		HRESULT LoadBuffer();
+		HRESULT LoadBuffer(ID3D12Device* device);
 		void LoadTransfer(HRESULT result);
-		HRESULT Heap();
+		HRESULT Heap(ID3D12Device* device);
 		void Range();
 
 	public:
-		void Initialize(ID3D12Device* device);
-		HRESULT Loadtexture(const wchar_t* szFile);
+		HRESULT LoadTexture(const wchar_t* szFile, ID3D12Device* device);
 	};
 }

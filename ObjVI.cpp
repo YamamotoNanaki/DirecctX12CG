@@ -3,7 +3,7 @@
 using namespace DirectX;
 using namespace IF;
 
-IF::objVI::objVI(vector<Vertex> vertices, int vertexCount, vector<unsigned short> indices, int indexCount)
+objVI::objVI(Vertex* vertices, int vertexCount, unsigned short* indices, int indexCount)
 {
 	for (int i = 0; i < vertexCount; i++)
 	{
@@ -15,7 +15,7 @@ IF::objVI::objVI(vector<Vertex> vertices, int vertexCount, vector<unsigned short
 	}
 }
 
-objVI::objVI(Vertex* vertices, int vertexCount, unsigned short* indices, int indexCount)
+IF::objVI::objVI(vector<Vertex> vertices, int vertexCount, vector<unsigned short> indices, int indexCount)
 {
 	for (int i = 0; i < vertexCount; i++)
 	{

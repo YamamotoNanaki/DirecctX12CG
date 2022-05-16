@@ -19,7 +19,6 @@ namespace IF
 		DirectX::XMMATRIX mat;
 		DirectX::XMMATRIX matBillboard;
 	};
-
 	struct ConstBufferMaterial
 	{
 		DirectX::XMFLOAT3 ambient;

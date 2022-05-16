@@ -4,7 +4,7 @@
 #include "View.h"
 #include "Projection.h"
 #include "Texture.h"
-#include "ObjGraphic.h"
+#include "Graphic.h"
 #include "ParticleGrap.h"
 #include "Fire.h"
 
@@ -21,7 +21,7 @@ namespace IF
 	public:
 		ConstBuff cb;
 		Texture tex;
-		ObjGraphic Ograph;
+		Graphic Ograph;
 		//ParticleGrap graph;
 
 	public:

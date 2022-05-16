@@ -160,10 +160,9 @@
     <ClCompile Include="Fire.cpp" />
     <ClCompile Include="DirectX12.cpp" />
     <ClCompile Include="GPipeline.cpp" />
+    <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="Matrix.cpp" />
-    <ClCompile Include="ObjGraphic.cpp" />
     <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="ParticleGrap.cpp" />
     <ClCompile Include="ParticleVI.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="Rand.cpp" />
@@ -256,7 +255,6 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Particle.h" />
-    <ClInclude Include="ParticleGrap.h" />
     <ClInclude Include="ParticleVI.h" />
     <ClInclude Include="Projection.h" />
     <ClInclude Include="RootParam.h" />

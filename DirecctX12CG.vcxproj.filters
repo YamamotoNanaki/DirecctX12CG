@@ -141,10 +141,7 @@
     <ClCompile Include="Ease.cpp">
       <Filter>ソース ファイル\Other</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleGrap.cpp">
-      <Filter>ソース ファイル\3D\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjGraphic.cpp">
+    <ClCompile Include="Graphic.cpp">
       <Filter>ソース ファイル\Graphic</Filter>
     </ClCompile>
   </ItemGroup>
@@ -231,9 +228,6 @@
     </ClInclude>
     <ClInclude Include="Ease.h">
       <Filter>ヘッダー ファイル\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleGrap.h">
-      <Filter>ヘッダー ファイル\3D\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Graphic.h">
       <Filter>ヘッダー ファイル\Graphic</Filter>

@@ -27,7 +27,6 @@ HRESULT Particle::Initialize(ID3D12Device* device)
 	//定数バッファのマッピング
 	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 	assert(SUCCEEDED(result));
-	constBuffTransform->Unmap(0, nullptr);
 
 	VertexPos vertices[] = {
 		// x   y   z        u    v

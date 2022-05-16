@@ -14,14 +14,14 @@ namespace IF
 	{
 		template <class T>using vector = std::vector<T>;
 	private:
-		Object object3ds[1];
-		//Fire* fire;
+		//Object object3ds[1];
+		Fire* fire;
 		View matView;
 		Projection* matPro;
 	public:
 		ConstBuff cb;
 		Texture tex;
-		Graphic Ograph;
+		Graphic graph;
 		//ParticleGrap graph;
 
 	public:

@@ -5,7 +5,6 @@
 #include "Projection.h"
 #include "Texture.h"
 #include "Graphic.h"
-#include "ParticleGrap.h"
 #include "Fire.h"
 
 namespace IF
@@ -14,15 +13,14 @@ namespace IF
 	{
 		template <class T>using vector = std::vector<T>;
 	private:
-		//Object object3ds[1];
-		Fire* fire;
+		Object object3ds[1];
+		//Fire* fire;
 		View matView;
 		Projection* matPro;
 	public:
 		ConstBuff cb;
 		Texture tex;
 		Graphic graph;
-		//ParticleGrap graph;
 
 	public:
 		Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device);

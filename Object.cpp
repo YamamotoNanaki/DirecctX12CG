@@ -136,7 +136,7 @@ HRESULT Object::LoadModelInitialize(ID3D12Device* device)
 	file.open(directory + filename);
 	if (file.fail())
 	{
-		assert(0);
+		assert(0 && "ファイルが開けません");
 	}
 
 	vector<XMFLOAT3> position;
@@ -206,7 +206,7 @@ HRESULT Object::LoadModelInitialize(ID3D12Device* device)
 			line_stream >> mfilename;
 			ifstream mfile;
 			mfile.open(directory + mfilename);
-			if (mfile.fail())assert(0);
+			if (mfile.fail())assert(0 && "ファイルが開けません");
 
 			string line;
 			while (getline(mfile, line))

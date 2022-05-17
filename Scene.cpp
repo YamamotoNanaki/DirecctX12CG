@@ -34,7 +34,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	{
 		object3ds[i].VIInitialize(device, tex.texbuff.Get(), tex.srvHandle);
 	}
-	result = graph.ParticleInitialize(device, tex.descRangeSRV);
+	result = graph.Initialize(device, tex.descRangeSRV);
 
 	matView.eye = { 0,0,-5.0f };
 }

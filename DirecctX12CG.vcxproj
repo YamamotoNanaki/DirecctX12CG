@@ -164,6 +164,7 @@
     <ClCompile Include="Float4.cpp" />
     <ClCompile Include="GPipeline.cpp" />
     <ClCompile Include="Graphic.cpp" />
+    <ClCompile Include="IFMath.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleVI.cpp" />

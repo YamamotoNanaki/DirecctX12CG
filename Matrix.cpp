@@ -3,6 +3,11 @@
 
 using namespace IF;
 
+IF::Matrix::Matrix()
+{
+	IdentityMatrix();
+}
+
 void IF::Matrix::IdentityMatrix()
 {
 	_1_1 = 1, _1_2 = 0, _1_3 = 0, _1_4 = 0;

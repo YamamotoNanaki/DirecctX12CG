@@ -11,6 +11,7 @@ namespace IF
 		float _4_1, _4_2, _4_3, _4_4;
 
 	public:
+		Matrix();
 		void IdentityMatrix();
 		Matrix RotationMatrix(float x, float y, float z, float angle);
 		Matrix operator+()const;

@@ -86,5 +86,6 @@ void Particle::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPOR
 
 Particle::~Particle()
 {
+	constBuffTransform->Unmap(0, nullptr);
 	delete vi;
 }

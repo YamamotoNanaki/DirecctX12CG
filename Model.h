@@ -11,7 +11,7 @@
 
 namespace IF
 {
-	class Object
+	class Model
 	{
 		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 		template<class T> using vector = std::vector<T>;
@@ -60,7 +60,7 @@ namespace IF
 		//ワールド変換行列
 		XMMATRIX matWorld;
 		//親オブジェクトへのポインタ
-		Object* parent = nullptr;
+		Model* parent = nullptr;
 
 	public:
 		HRESULT Initialize(ID3D12Device* device);
@@ -69,6 +69,6 @@ namespace IF
 			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		void Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode);
 		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);
-		~Object();
+		~Model();
 	};
 }

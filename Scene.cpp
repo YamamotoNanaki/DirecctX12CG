@@ -15,7 +15,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
-		result = object3ds[i].LoadModelInitialize(device);
+		result = object3ds[i].Initialize(device);
 		object3ds[i].scale = { 20,20,20 };
 		if (i > 0)
 		{

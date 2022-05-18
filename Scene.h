@@ -1,6 +1,7 @@
 #pragma once
 #include "ConstBuff.h"
 #include "Object.h"
+#include "Model.h"
 #include "View.h"
 #include "Projection.h"
 #include "Texture.h"
@@ -13,7 +14,7 @@ namespace IF
 	{
 		template <class T>using vector = std::vector<T>;
 	private:
-		Object object3ds[1];
+		Model object3ds[1];
 		Fire* fire;
 		View matView;
 		Projection* matPro;

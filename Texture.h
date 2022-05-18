@@ -3,7 +3,8 @@
 #include <DirectXMath.h>
 #include <d3d12.h>
 #include <wrl.h>
-#include <vector>
+#include <string>
+#include <array>
 
 #pragma comment(lib,"d3d12.lib") 
 namespace IF
@@ -11,28 +12,40 @@ namespace IF
 	class Texture
 	{
 		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-		template<class T> using vector = std::vector<T>;
 		using TexMetadata = DirectX::TexMetadata;
 		using ScratchImage = DirectX::ScratchImage;
-	private:
-		//WICテクスチャのロード
-		TexMetadata metadata{};
-		ScratchImage scratchImg{};
 
 	public:
-		ComPtr<ID3D12Resource> texbuff = nullptr;
+		struct Tex
+		{
+			ComPtr<ID3D12Resource> texbuff = nullptr;
+			D3D12_CPU_DESCRIPTOR_HANDLE CPUHandle;
+			D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle;
+			std::string texName;
+			bool free = false;
+		};
+
+	private:
+		static const size_t textureMax = 255;
+		unsigned short textureSize = 0;
+		ID3D12Device* device = nullptr;
+
+	public:
 		D3D12_DESCRIPTOR_RANGE descRangeSRV{};
-		ID3D12DescriptorHeap* srvHeap = nullptr;
-		D3D12_CPU_DESCRIPTOR_HANDLE srvHandle;
+		ComPtr < ID3D12DescriptorHeap> srvHeap = nullptr;
+		std::array<Tex, textureMax> tex;
 
 	private:
-		HRESULT TexLoad(const wchar_t* szFile);
-		HRESULT LoadBuffer(ID3D12Device* device);
-		void LoadTransfer(HRESULT result);
-		HRESULT Heap(ID3D12Device* device);
-		void Range();
+		Texture();
+		Texture(const Texture&);
+		Texture& operator=(const Texture&) {}
+		~Texture() {}
 
 	public:
-		HRESULT LoadTexture(const wchar_t* szFile, ID3D12Device* device);
+		static Texture* getInstance();
+		void setDevice(ID3D12Device* device);
+		void Initialize();
+		void setTexture(ID3D12GraphicsCommandList* commandList, unsigned short texHandle);
+		unsigned short LoadTexture(const std::string filename);
 	};
 }

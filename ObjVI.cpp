@@ -1,4 +1,5 @@
 #include "ObjVI.h"
+#include <d3dx12.h>
 
 using namespace DirectX;
 using namespace IF;
@@ -27,7 +28,7 @@ IF::objVI::objVI(vector<Vertex> vertices, int vertexCount, vector<unsigned short
 	}
 }
 
-HRESULT objVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle)
+HRESULT objVI::Initialize(ID3D12Device* device)
 {
 	HRESULT result;
 
@@ -82,7 +83,7 @@ HRESULT objVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_C
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	// 頂点バッファの生成
-	
+
 	result = device->CreateCommittedResource(
 		&heapProp, // ヒープ設定
 		D3D12_HEAP_FLAG_NONE, &resDesc, // リソース設定
@@ -91,31 +92,11 @@ HRESULT objVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_C
 
 #pragma endregion 頂点バッファの確保
 
-	//------------------------
-
-#pragma region シェーダーリソースビュー
-
-//シェーダリソースビュー設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};			//設定構造体
-	//srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;	//RGBA
-	srvDesc.Format = resDesc.Format;					//画像読み込み
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;		//2dテクスチャ
-	srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
-
-	//ヒープの２番目にシェーダーリソースビュー作成
-	device->CreateShaderResourceView(
-		texBuff,		//ビューと関連付けるバッファ
-		&srvDesc,		//テクスチャ設定情報
-		srvHandle);
-
-#pragma endregion シェーダーリソースビュー
-
 	//---------------------------
 
 #pragma region 頂点バッファへのデータ転送
 // GPU上のバッファに対応した仮想メモリを取得
-	Vertex* vertMap = nullptr;
+	Vertex * vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	assert(SUCCEEDED(result));
 

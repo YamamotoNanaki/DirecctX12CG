@@ -15,6 +15,12 @@ Key::Key()
 	}
 }
 
+Key* IF::Key::getInstance()
+{
+	static Key inst;
+	return &inst;
+}
+
 HRESULT IF::Key::Initialize(HINSTANCE& hInstance, HWND& hwnd)
 {
 	HRESULT result = DirectInput8Create(

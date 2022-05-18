@@ -115,11 +115,8 @@ namespace IF
 		Key& operator=(const Key&) {}
 		~Key() {}
 	public:
-		static Key& getInstance()
-		{
-			static Key inst;
-			return inst;
-		}
+		static Key* getInstance();
+		
 		HRESULT Initialize(HINSTANCE& hInstance, HWND& hwnd);
 
 		/// <summary>

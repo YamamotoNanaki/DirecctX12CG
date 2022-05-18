@@ -25,16 +25,21 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 			object3ds[i].position = { 0.0f,0.0f,-8.0f };
 		}
 	}
-	//fire = new Fire({ 0,0,0 });
+	fire = new Fire({ 0,0,0 });
 
-	tex.LoadTexture(L"Resources/texture.png", device);
-
-	//result = fire->Initialize(device, tex.texbuff.Get(), tex.srvHandle);
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
-		object3ds[i].VIInitialize(device, tex.texbuff.Get(), tex.srvHandle);
+		object3ds[i].VIInitialize(device);
 	}
-	result = graph.Initialize(device, tex.descRangeSRV);
+
+	tex->setDevice(device);
+	tex->Initialize();
+	sukai = tex->LoadTexture("Resources/texture.png");
+	efect = tex->LoadTexture("Resources/particle.png");
+
+	result = fire->Initialize(device, tex->tex[efect].texbuff.Get(), tex->tex[efect].CPUHandle);
+	result = graph.Initialize(device, tex->descRangeSRV);
+	result = pgraph.ParticleInitialize(device, tex->descRangeSRV);
 
 	matView.eye = { 0,0,-5.0f };
 }
@@ -46,14 +51,15 @@ IF::Scene::~Scene()
 
 void IF::Scene::Update(ID3D12Device* device)
 {
-	Key::getInstance().Update();
+	Key* key = Key::getInstance();
+	key->Update();
 
-	if (Key::getInstance().Judge(KEY::WASD, KEY::OR))
+	if (key->Judge(KEY::WASD, KEY::OR))
 	{
-		if (Key::getInstance().Down(KEY::D))angleY += XMConvertToRadians(1.0f);
-		if (Key::getInstance().Down(KEY::A))angleY -= XMConvertToRadians(1.0f);
-		if (Key::getInstance().Down(KEY::S))angleX += XMConvertToRadians(1.0f);
-		if (Key::getInstance().Down(KEY::W))angleX -= XMConvertToRadians(1.0f);
+		if (key->Down(KEY::D))angleY += XMConvertToRadians(1.0f);
+		if (key->Down(KEY::A))angleY -= XMConvertToRadians(1.0f);
+		if (key->Down(KEY::S))angleX += XMConvertToRadians(1.0f);
+		if (key->Down(KEY::W))angleX -= XMConvertToRadians(1.0f);
 
 		matView.eye.x = -100 * sinf(angleY);
 		matView.eye.y = -100 * sinf(angleX);
@@ -62,14 +68,14 @@ void IF::Scene::Update(ID3D12Device* device)
 		matView.Update();
 	}
 
-	if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
+	if (key->Judge(KEY::Arrow, KEY::OR))
 	{
 		for (int i = 0; i < _countof(object3ds); i++)
 		{
-			if (Key::getInstance().Down(KEY::RIGHT))	object3ds[i].position.x += 1.0f;
-			if (Key::getInstance().Down(KEY::LEFT))		object3ds[i].position.x -= 1.0f;
-			if (Key::getInstance().Down(KEY::UP))		object3ds[i].position.y += 1.0f;
-			if (Key::getInstance().Down(KEY::DOWN))		object3ds[i].position.y -= 1.0f;
+			if (key->Down(KEY::RIGHT))	object3ds[i].position.x += 1.0f;
+			if (key->Down(KEY::LEFT))		object3ds[i].position.x -= 1.0f;
+			if (key->Down(KEY::UP))		object3ds[i].position.y += 1.0f;
+			if (key->Down(KEY::DOWN))		object3ds[i].position.y -= 1.0f;
 		}
 	}
 
@@ -85,19 +91,20 @@ void IF::Scene::Update(ID3D12Device* device)
 	{
 		object3ds[i].Update(matView.Get(), matPro->Get(), object3ds[0].NOON);
 	}
-	//fire->Update(matView.Get(), matPro->Get(), matView.matBillBoard);
+	fire->Update(matView.Get(), matPro->Get(), matView.matBillBoard);
 }
 
 void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
 {
-	object3ds->DrawBefore(commandList, graph.rootsignature.Get(), tex.srvHeap, cb.GetGPUAddress());
 	graph.DrawBlendMode(commandList);
+	object3ds->DrawBefore(commandList, graph.rootsignature.Get(), tex->srvHeap.Get(), cb.GetGPUAddress());
+	tex->setTexture(commandList, sukai);
 	for (int i = 0; i < _countof(object3ds); i++)
 	{
 		object3ds[i].Draw(commandList, viewport);
 	}
-	/*cb.SetBright(175, 25, 5);
-	graph.DrawBlendMode(commandList, Blend::ADD);
-	fire->particle[0].DrawBefore(commandList, graph.rootsignature.Get(), tex.srvHeap, cb.GetGPUAddress(), D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-	fire->Draw(commandList, viewport);*/
+	pgraph.DrawBlendMode(commandList,Blend::ADD);
+	tex->setTexture(commandList, efect);
+	fire->particle[0].DrawBefore(commandList, pgraph.rootsignature.Get(), tex->srvHeap.Get(), cb.GetGPUAddress(), D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	fire->Draw(commandList, viewport);
 }

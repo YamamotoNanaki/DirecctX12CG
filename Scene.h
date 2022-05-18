@@ -14,13 +14,14 @@ namespace IF
 		template <class T>using vector = std::vector<T>;
 	private:
 		Object object3ds[1];
-		//Fire* fire;
+		Fire* fire;
 		View matView;
 		Projection* matPro;
 	public:
 		ConstBuff cb;
-		Texture tex;
+		Texture* tex = Texture::getInstance();
 		Graphic graph;
+		Graphic pgraph;
 
 	public:
 		Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device);
@@ -32,6 +33,9 @@ namespace IF
 
 		float angleY = 0.0f;
 		float angleX = 0.0f;
+		int sukai = 0;
+		int efect = 0;
+
 		//-----------------------
 
 	public:

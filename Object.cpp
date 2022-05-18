@@ -257,9 +257,9 @@ HRESULT Object::LoadModelInitialize(ID3D12Device* device)
 	return result;
 }
 
-HRESULT Object::VIInitialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle)
+HRESULT Object::VIInitialize(ID3D12Device* device)
 {
-	HRESULT result = vi->Initialize(device, texBuff, srvHandle);
+	HRESULT result = vi->Initialize(device);
 	return result;
 }
 
@@ -268,9 +268,6 @@ void IF::Object::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSi
 	commandList->SetGraphicsRootSignature(root);
 	commandList->IASetPrimitiveTopology(topology);
 	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
-	commandList->SetDescriptorHeaps(1, &srvHeap);
-	D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
-	commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 }
 
 void Object::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode)

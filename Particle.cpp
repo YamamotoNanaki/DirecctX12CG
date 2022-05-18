@@ -68,9 +68,6 @@ void IF::Particle::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12Root
 	commandList->SetGraphicsRootSignature(root);
 	commandList->IASetPrimitiveTopology(topology);
 	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
-	commandList->SetDescriptorHeaps(1, &srvHeap);
-	D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
-	commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 }
 
 void Particle::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)

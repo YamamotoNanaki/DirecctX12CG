@@ -128,7 +128,7 @@ HRESULT Object::LoadModelInitialize(ID3D12Device* device)
 	assert(SUCCEEDED(result));
 
 
-	const string modelname = "test";
+	const string modelname = "obj";
 	const string filename = modelname + ".obj";
 	const string directory = "Resources/" + modelname + "/";
 
@@ -136,7 +136,7 @@ HRESULT Object::LoadModelInitialize(ID3D12Device* device)
 	file.open(directory + filename);
 	if (file.fail())
 	{
-		assert(0 && "ファイルが開けません");
+		assert(0 && "objファイルが開けません");
 	}
 
 	vector<XMFLOAT3> position;
@@ -206,7 +206,7 @@ HRESULT Object::LoadModelInitialize(ID3D12Device* device)
 			line_stream >> mfilename;
 			ifstream mfile;
 			mfile.open(directory + mfilename);
-			if (mfile.fail())assert(0 && "ファイルが開けません");
+			if (mfile.fail())assert(0 && "mtlファイルが開けません");
 
 			string line;
 			while (getline(mfile, line))

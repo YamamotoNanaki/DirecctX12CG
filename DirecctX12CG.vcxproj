@@ -159,6 +159,9 @@
     <ClCompile Include="Ease.cpp" />
     <ClCompile Include="Fire.cpp" />
     <ClCompile Include="DirectX12.cpp" />
+    <ClCompile Include="Float2.cpp" />
+    <ClCompile Include="Float3.cpp" />
+    <ClCompile Include="Float4.cpp" />
     <ClCompile Include="GPipeline.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="Matrix.cpp" />
@@ -251,7 +254,11 @@
     <ClInclude Include="Ease.h" />
     <ClInclude Include="Fire.h" />
     <ClInclude Include="DirectX12.h" />
+    <ClInclude Include="Float2.h" />
+    <ClInclude Include="Float3.h" />
+    <ClInclude Include="Float4.h" />
     <ClInclude Include="GPipeline.h" />
+    <ClInclude Include="IFMath.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Particle.h" />

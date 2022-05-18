@@ -144,6 +144,15 @@
     <ClCompile Include="Graphic.cpp">
       <Filter>ソース ファイル\Graphic</Filter>
     </ClCompile>
+    <ClCompile Include="Float2.cpp">
+      <Filter>ソース ファイル\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Float3.cpp">
+      <Filter>ソース ファイル\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Float4.cpp">
+      <Filter>ソース ファイル\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ModelPS.hlsl">
@@ -231,6 +240,18 @@
     </ClInclude>
     <ClInclude Include="Graphic.h">
       <Filter>ヘッダー ファイル\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Float2.h">
+      <Filter>ヘッダー ファイル\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Float3.h">
+      <Filter>ヘッダー ファイル\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Float4.h">
+      <Filter>ヘッダー ファイル\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="IFMath.h">
+      <Filter>ヘッダー ファイル\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

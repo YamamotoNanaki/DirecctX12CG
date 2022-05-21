@@ -167,6 +167,7 @@
     <ClCompile Include="IFMath.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelVI.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleVI.cpp" />
     <ClCompile Include="Projection.cpp" />
@@ -266,6 +267,7 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelVI.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleVI.h" />
     <ClInclude Include="Projection.h" />
@@ -276,6 +278,7 @@
     <ClInclude Include="ObjVI.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="VI.h" />
     <ClInclude Include="View.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="Key.h" />

@@ -1,23 +1,21 @@
-#include "ObjVI.h"
-#include <d3dx12.h>
+#include "ModelVI.h"
 
-using namespace DirectX;
-using namespace IF;
 using namespace std;
+using namespace DirectX;
 
-void IF::objVI::SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, std::vector<unsigned short> indices, int indexCount)
+void IF::MVI::SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, std::vector<unsigned short> indices, int indexCount)
 {
 	for (int i = 0; i < vertexCount; i++)
 	{
-		this->vertices.emplace_back(vertices[i]);
+		this->vertices.push_back(vertices[i]);
 	}
 	for (int i = 0; i < indexCount; i++)
 	{
-		this->indices.emplace_back(indices[i]);
+		this->indices.push_back(indices[i]);
 	}
 }
 
-HRESULT objVI::Initialize(ID3D12Device* device, NormalFlag flag)
+HRESULT IF::MVI::Initialize(ID3D12Device* device, NormalFlag flag)
 {
 	HRESULT result;
 
@@ -168,17 +166,17 @@ HRESULT objVI::Initialize(ID3D12Device* device, NormalFlag flag)
 	return result;
 }
 
-D3D12_VERTEX_BUFFER_VIEW& IF::objVI::GetVertexView()
+D3D12_VERTEX_BUFFER_VIEW& IF::MVI::GetVertexView()
 {
 	return vbView;
 }
 
-D3D12_INDEX_BUFFER_VIEW& IF::objVI::GetIndexView()
+D3D12_INDEX_BUFFER_VIEW& IF::MVI::GetIndexView()
 {
 	return ibView;
 }
 
-unsigned int IF::objVI::GetSize()
+unsigned int IF::MVI::GetSize()
 {
 	return indices.size();
 }

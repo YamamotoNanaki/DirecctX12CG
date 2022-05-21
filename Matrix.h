@@ -12,8 +12,10 @@ namespace IF
 
 	public:
 		Matrix();
-		void IdentityMatrix();
-		Matrix RotationMatrix(float x, float y, float z, float angle);
+		Matrix(float _1_1,float _1_2,float _1_3,float _1_4,
+			float _2_1,float _2_2,float _2_3,float _2_4,
+			float _3_1,float _3_2,float _3_3,float _3_4,
+			float _4_1,float _4_2,float _4_3,float _4_4);
 		Matrix operator+()const;
 		Matrix operator-()const;
 		Matrix operator+(Matrix m)const;
@@ -27,4 +29,21 @@ namespace IF
 		Matrix& operator*=(float s);
 		Matrix& operator/=(float s);
 	};
+
+	// 単位行列を求める
+	Matrix MatrixIdentity();
+	// 転置行列を求める
+	Matrix MatrixTranspose(const Matrix& m);
+
+	// 拡大縮小行列の作成
+	Matrix MatrixScaling(float sx, float sy, float sz);
+
+	// 回転行列の作成
+	Matrix MatrixRotationX(float angle);
+	Matrix MatrixRotationY(float angle);
+	Matrix MatrixRotationZ(float angle);
+	Matrix MatrixRotation(float x, float y, float z, float angle);
+
+	// 平行移動行列の作成
+	Matrix MatrixTranslation(float tx, float ty, float tz);
 };

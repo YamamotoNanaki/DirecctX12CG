@@ -25,7 +25,7 @@ public:
 	//設定初期化
 	Fire(XMFLOAT3 pos, float scale = 1.0f, unsigned int maxFlame = 100);
 	//パーティクル初期化
-	HRESULT Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle);
+	HRESULT Initialize(ID3D12Device* device);
 	void Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard = DirectX::XMMatrixIdentity());
 	void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport);
 };

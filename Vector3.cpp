@@ -33,7 +33,7 @@ float Vector3::Dot(const Vector3& v) const
 	return x * v.x + y * v.y + z * v.z;
 }
 
-Vector3& Vector3::cross(const Vector3& v) const
+Vector3& Vector3::Cross(const Vector3& v) const
 {
 	Vector3 vec(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
 	return vec;

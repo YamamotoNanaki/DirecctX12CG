@@ -42,7 +42,7 @@ namespace IF
 		};
 
 	private:
-		objVI* vi;
+		VI* vi;
 		Material material;
 
 	public:

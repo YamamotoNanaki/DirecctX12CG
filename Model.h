@@ -4,7 +4,7 @@
 #include <wrl.h>
 #include <vector>
 #include <string>
-#include "ObjVI.h"
+#include "ModelVI.h"
 #include "ConstStruct.h"
 
 #pragma comment(lib,"d3d12.lib") 
@@ -42,7 +42,7 @@ namespace IF
 		};
 
 	private:
-		objVI* vi;
+		VI* vi;
 		Material material;
 
 	public:

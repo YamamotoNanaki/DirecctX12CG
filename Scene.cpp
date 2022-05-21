@@ -37,7 +37,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	sukai = tex->LoadTexture("Resources/texture.png");
 	efect = tex->LoadTexture("Resources/particle.png");
 
-	result = fire->Initialize(device, tex->tex[efect].texbuff.Get(), tex->tex[efect].CPUHandle);
+	result = fire->Initialize(device);
 	result = graph.Initialize(device, tex->descRangeSRV);
 	result = pgraph.ParticleInitialize(device, tex->descRangeSRV);
 

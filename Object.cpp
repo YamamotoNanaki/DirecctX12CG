@@ -89,14 +89,26 @@ HRESULT Object::Initialize(ID3D12Device* device)
 		22,21,23
 	};
 
-	vi = new objVI(vertices, _countof(vertices), indices, _countof(indices));
+	vector<Vertex> v;
+	vector<unsigned short> I;
+	for (int i = 0; i < _countof(vertices); i++)
+	{
+		v.emplace_back(vertices[i]);
+	}
+	for (int i = 0; i < _countof(indices); i++)
+	{
+		I.emplace_back(indices[i]);
+	}
+
+	vi = new objVI;
+	vi->SetVerticleIndex(v, v.size(), I, I.size());
 
 	return result;
 }
 
 HRESULT Object::VIInitialize(ID3D12Device* device)
 {
-	HRESULT result = vi->Initialize(device);
+	HRESULT result = vi->Initialize(device, NTRUE);
 	return result;
 }
 
@@ -141,14 +153,14 @@ void Object::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>
 	{
 		commandList->RSSetViewports(1, &viewport[i]);
 		//頂点バッファの設定
-		commandList->IASetVertexBuffers(0, 1, &vi->vbView);
+		commandList->IASetVertexBuffers(0, 1, &vi->GetVertexView());
 		//インデックスバッファの設定
-		commandList->IASetIndexBuffer(&vi->ibView);
+		commandList->IASetIndexBuffer(&vi->GetIndexView());
 		//定数バッファビューの設定
 		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
 		commandList->SetGraphicsRootConstantBufferView(3, constBuffTransform1->GetGPUVirtualAddress());
 		//描画コマンド
-		commandList->DrawIndexedInstanced(vi->indices.size(), 1, 0, 0, 0);
+		commandList->DrawIndexedInstanced(vi->GetSize(), 1, 0, 0, 0);
 	}
 }
 

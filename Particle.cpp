@@ -28,21 +28,25 @@ HRESULT Particle::Initialize(ID3D12Device* device)
 	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 	assert(SUCCEEDED(result));
 
-	VertexPos vertices[] = {
+	Vertex vertices[] = {
 		// x   y   z        u    v
 		//前
-		{{0, 0, 0}},	//左下
+		{{0, 0, 0},{},{}},	//左下
 	};
 
+	vector<Vertex> v;
+	vector<unsigned short> i;
 
-	vi = new PVI(vertices, _countof(vertices));
+	for (int i = 0; i < _countof(vertices); i++)v.emplace_back(vertices[i]);
+	vi = new PV;
+	vi->SetVerticleIndex(v, v.size(), i, 0);
 
 	return result;
 }
 
-HRESULT Particle::VIInitialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle)
+HRESULT Particle::VIInitialize(ID3D12Device* device)
 {
-	HRESULT result = vi->Initialize(device, texBuff, srvHandle);
+	HRESULT result = vi->Initialize(device);
 	return result;
 }
 
@@ -76,11 +80,11 @@ void Particle::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPOR
 	{
 		commandList->RSSetViewports(1, &viewport[i]);
 		//頂点バッファの設定
-		commandList->IASetVertexBuffers(0, 1, &vi->vbView);
+		commandList->IASetVertexBuffers(0, 1, &vi->GetVertexView());
 		//定数バッファビューの設定
 		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
 		//描画コマンド
-		commandList->DrawInstanced(vi->vertices.size(), 1, 0, 0);
+		commandList->DrawInstanced(vi->GetSize(), 1, 0, 0);
 	}
 }
 

@@ -18,7 +18,7 @@ namespace IF
 		float Length() const;
 		Vector3& Normalize();
 		float Dot(const Vector3& v) const;
-		Vector3& cross(const Vector3& v)const;
+		Vector3& Cross(const Vector3& v)const;
 
 		Vector3 operator+() const;
 		Vector3 operator-() const;

@@ -2,16 +2,18 @@
 
 using namespace DirectX;
 using namespace IF;
+using namespace std;
 
-PVI::PVI(VertexPos* vertices, int vertexCount)
+void IF::PV::SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, std::vector<unsigned short> indices, int indexCount)
 {
 	for (int i = 0; i < vertexCount; i++)
 	{
-		this->vertices.push_back(vertices[i]);
+		VertexPos a = { vertices[i].pos};
+		this->vertices.emplace_back(a);
 	}
 }
 
-HRESULT PVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle)
+HRESULT PV::Initialize(ID3D12Device* device, NormalFlag flag)
 {
 	HRESULT result;
 
@@ -44,22 +46,6 @@ HRESULT PVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU
 
 	//------------------------
 
-//シェーダリソースビュー設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};			//設定構造体
-	//srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;	//RGBA
-	srvDesc.Format = resDesc.Format;					//画像読み込み
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;		//2dテクスチャ
-	srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
-
-	//ヒープの２番目にシェーダーリソースビュー作成
-	device->CreateShaderResourceView(
-		texBuff,		//ビューと関連付けるバッファ
-		&srvDesc,		//テクスチャ設定情報
-		srvHandle);
-
-	//---------------------------
-
 // GPU上のバッファに対応した仮想メモリを取得
 	VertexPos* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
@@ -84,4 +70,21 @@ HRESULT PVI::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU
 
 
 	return result;
+}
+
+D3D12_VERTEX_BUFFER_VIEW& IF::PV::GetVertexView()
+{
+	return vbView;
+}
+
+D3D12_INDEX_BUFFER_VIEW& IF::PV::GetIndexView()
+{
+	D3D12_INDEX_BUFFER_VIEW i;
+	assert(0 && "この関数の呼び出しを行わないでください");
+	return i;
+}
+
+unsigned int IF::PV::GetSize()
+{
+	return vertices.size();
 }

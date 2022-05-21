@@ -7,13 +7,13 @@ using namespace DirectX;
 
 Fire::Fire(XMFLOAT3 pos, float scale, unsigned int maxFlame) :pos(pos), scale(scale), maxFlame(maxFlame) {};
 
-HRESULT Fire::Initialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle)
+HRESULT Fire::Initialize(ID3D12Device* device)
 {
 	HRESULT result;
 	for (int i = 0; i < _countof(particle); i++)
 	{
 		result = particle[i].Initialize(device);
-		result = particle[i].VIInitialize(device, texBuff, srvHandle);
+		result = particle[i].VIInitialize(device);
 	}
 	return result;
 }

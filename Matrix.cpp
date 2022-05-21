@@ -5,42 +5,17 @@ using namespace IF;
 
 IF::Matrix::Matrix()
 {
-	IdentityMatrix();
+	*this = MatrixIdentity();
 }
 
-void IF::Matrix::IdentityMatrix()
-{
-	_1_1 = 1, _1_2 = 0, _1_3 = 0, _1_4 = 0;
-	_2_1 = 0, _2_2 = 1, _2_3 = 0, _2_4 = 0;
-	_3_1 = 0, _3_2 = 0, _3_3 = 1, _3_4 = 0;
-	_4_1 = 0, _4_2 = 0, _4_3 = 0, _4_4 = 1;
-}
-
-Matrix IF::Matrix::RotationMatrix(float x, float y, float z, float angle)
-{
-	float cs = cosf(angle);
-	float si = sinf(angle);
-	Matrix a;
-	a._1_1 = cs + x * x * (1 - cs);
-	a._1_2 = x * y * (1 - cs) - z * si;
-	a._1_3 = z * y * (1 - cs) + x * si;
-	a._2_1 = x * y * (1 - cs) - z * si;
-	a._2_2 = cs + y * y * (1 - cs);
-	a._2_3 = z * y * (1 - cs) - x * si;
-	a._3_1 = z * x * (1 - cs) - y * si;
-	a._3_2 = z * y * (1 - cs) + x * si;
-	a._3_3 = cs + z * z * (1 - cs);
-
-	a._1_4 = 0;
-	a._2_4 = 0;
-	a._3_4 = 0;
-	a._4_1 = 0;
-	a._4_2 = 0;
-	a._4_3 = 0;
-	a._4_4 = 1;
-
-	return a;
-}
+IF::Matrix::Matrix(float _1_1, float _1_2, float _1_3, float _1_4,
+	float _2_1, float _2_2, float _2_3, float _2_4,
+	float _3_1, float _3_2, float _3_3, float _3_4,
+	float _4_1, float _4_2, float _4_3, float _4_4) :
+	_1_1(_1_1), _1_2(_1_2), _1_3(_1_3), _1_4(_1_4),
+	_2_1(_2_1), _2_2(_2_2), _2_3(_2_3), _2_4(_2_4),
+	_3_1(_3_1), _3_2(_3_2), _3_3(_3_3), _3_4(_3_4),
+	_4_1(_4_1), _4_2(_4_2), _4_3(_4_3), _4_4(_4_4) {}
 
 Matrix IF::Matrix::operator+() const
 {
@@ -197,4 +172,65 @@ Matrix& IF::Matrix::operator/=(float s)
 {
 	*this = *this / s;
 	return *this;
+}
+
+Matrix IF::MatrixIdentity()
+{
+	return Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+}
+
+Matrix IF::MatrixTranspose(const Matrix& m)
+{
+	return Matrix();
+}
+
+Matrix IF::MatrixScaling(float sx, float sy, float sz)
+{
+	return Matrix();
+}
+
+Matrix IF::MatrixRotationX(float angle)
+{
+	return Matrix();
+}
+
+Matrix IF::MatrixRotationY(float angle)
+{
+	return Matrix();
+}
+
+Matrix IF::MatrixRotationZ(float angle)
+{
+	return Matrix();
+}
+
+Matrix IF::MatrixRotation(float x, float y, float z, float angle)
+{
+	float cs = cosf(angle);
+	float si = sinf(angle);
+	Matrix a;
+	a._1_1 = cs + x * x * (1 - cs);
+	a._1_2 = x * y * (1 - cs) - z * si;
+	a._1_3 = z * y * (1 - cs) + x * si;
+	a._2_1 = x * y * (1 - cs) - z * si;
+	a._2_2 = cs + y * y * (1 - cs);
+	a._2_3 = z * y * (1 - cs) - x * si;
+	a._3_1 = z * x * (1 - cs) - y * si;
+	a._3_2 = z * y * (1 - cs) + x * si;
+	a._3_3 = cs + z * z * (1 - cs);
+
+	a._1_4 = 0;
+	a._2_4 = 0;
+	a._3_4 = 0;
+	a._4_1 = 0;
+	a._4_2 = 0;
+	a._4_3 = 0;
+	a._4_4 = 1;
+
+	return a;
+}
+
+Matrix IF::MatrixTranslation(float tx, float ty, float tz)
+{
+	return Matrix();
 }

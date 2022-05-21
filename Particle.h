@@ -24,7 +24,7 @@ namespace IF
 		YBOARD
 	};
 	private:
-		PVI* vi;
+		VI* vi;
 
 	public:
 		//定数バッファ
@@ -43,7 +43,7 @@ namespace IF
 
 	public:
 		HRESULT Initialize(ID3D12Device* device);
-		HRESULT VIInitialize(ID3D12Device* device, ID3D12Resource* texBuff, D3D12_CPU_DESCRIPTOR_HANDLE& srvHandle);
+		HRESULT VIInitialize(ID3D12Device* device);
 		void Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard = DirectX::XMMatrixIdentity()); 
 		void DrawBefore(ID3D12GraphicsCommandList* commandList,ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
 			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

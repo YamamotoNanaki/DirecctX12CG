@@ -14,8 +14,9 @@ namespace IF
 	{
 		template <class T>using vector = std::vector<T>;
 	private:
-		Model object3ds[1];
-		Fire* fire;
+		Model skyDome;
+		Model ground;
+		//Fire* fire;
 		View matView;
 		Projection* matPro;
 	public:
@@ -36,6 +37,8 @@ namespace IF
 		float angleX = 0.0f;
 		int sukai = 0;
 		int efect = 0;
+		int sky = 0;
+		int groundTex = 0;
 
 		//-----------------------
 

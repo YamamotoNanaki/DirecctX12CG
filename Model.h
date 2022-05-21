@@ -63,7 +63,7 @@ namespace IF
 		Model* parent = nullptr;
 
 	public:
-		HRESULT Initialize(ID3D12Device* device);
+		HRESULT LoadInitialize(ID3D12Device* device, std::string name);
 		HRESULT VIInitialize(ID3D12Device* device);
 		void DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
 			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

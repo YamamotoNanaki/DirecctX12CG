@@ -9,7 +9,7 @@ using namespace DirectX;
 using namespace IF;
 using namespace std;
 
-HRESULT Model::Initialize(ID3D12Device* device)
+HRESULT Model::LoadInitialize(ID3D12Device* device, string name)
 {
 	HRESULT result;
 	//定数バッファのヒープ設定
@@ -43,7 +43,7 @@ HRESULT Model::Initialize(ID3D12Device* device)
 	assert(SUCCEEDED(result));
 
 
-	const string modelname = "obj";
+	const string modelname = name;
 	const string filename = modelname + ".obj";
 	const string directory = "Resources/" + modelname + "/";
 

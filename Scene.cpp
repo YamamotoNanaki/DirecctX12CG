@@ -13,24 +13,22 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 
 	result = cb.Initialize(device);
 
-	skyDome.LoadModel(device, "skydome");
-	ground.LoadModel(device, "ground");
-
-	Dome.Initialize(device);
-	Dome.SetModel(&skyDome);
-	Ground.Initialize(device);
-	Ground.SetModel(&ground);
-	//fire = new Fire({ 0,0,0 });
-
-	skyDome.VIInitialize(device);
-	ground.VIInitialize(device);
-
 	tex->setDevice(device);
 	tex->Initialize();
+	domeM.LoadModel(device, "skydome");
+	groundM.LoadModel(device, "ground");
+
+	domeObj.Initialize(device);
+	domeObj.SetModel(&domeM);
+	groundObj.Initialize(device);
+	groundObj.SetModel(&groundM);
+	//fire = new Fire({ 0,0,0 });
+
+	domeM.VIInitialize(device);
+	groundM.VIInitialize(device);
+
 	sukai = tex->LoadTexture("Resources/texture.png");
 	efect = tex->LoadTexture("Resources/particle.png");
-	sky = tex->LoadTexture("Resources/Fine_Basin.jpg");
-	groundTex = tex->LoadTexture("Resources/ground.png");
 
 	//result = fire->Initialize(device);
 	result = graph.Initialize(device, tex->descRangeSRV);
@@ -71,21 +69,19 @@ void IF::Scene::Update(ID3D12Device* device)
 		if (Key::getInstance().Down(KEY::DOWN))		fire->pos.y -= 1.0f;
 	}*/
 
-	Dome.Update(matView.Get(), matPro->Get());
-	Ground.Update(matView.Get(), matPro->Get());
+	domeObj.Update(matView.Get(), matPro->Get());
+	groundObj.Update(matView.Get(), matPro->Get());
 	//fire->Update(matView.Get(), matPro->Get(), matView.matBillBoard);
 }
 
 void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
 {
 	graph.DrawBlendMode(commandList);
-	Dome.DrawBefore(commandList, graph.rootsignature.Get(), tex->srvHeap.Get(), cb.GetGPUAddress());
-	tex->setTexture(commandList, sky);
-	Dome.Draw(commandList, viewport);
+	domeObj.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
+	domeObj.Draw(commandList, viewport);
 
-	Ground.DrawBefore(commandList, graph.rootsignature.Get(), tex->srvHeap.Get(), cb.GetGPUAddress());
-	tex->setTexture(commandList, groundTex);
-	Ground.Draw(commandList, viewport);
+	groundObj.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
+	groundObj.Draw(commandList, viewport);
 
 	//pgraph.DrawBlendMode(commandList, Blend::ADD);
 	//tex->setTexture(commandList, efect);

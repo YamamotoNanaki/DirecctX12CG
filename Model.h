@@ -38,6 +38,8 @@ namespace IF
 				specular = { 0.0f,0.0f,0.0f };
 				alpha = 1.0f;
 			}
+			bool tex = false;
+			unsigned short texNum = 0;
 		};
 
 	public:

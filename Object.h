@@ -48,7 +48,7 @@ namespace IF
 	public:
 		HRESULT Initialize(ID3D12Device* device);
 		void SetModel(Model* model);
-		void DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
+		void DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
 			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		void Update(XMMATRIX matView, XMMATRIX matProjection, BillBoard::BillBoardMode mode = BillBoard::NOON);
 		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);

@@ -14,10 +14,10 @@ namespace IF
 	{
 		template <class T>using vector = std::vector<T>;
 	private:
-		Model skyDome;
-		Model ground;
-		Object Dome;
-		Object Ground;
+		Model domeM;
+		Model groundM;
+		Object domeObj;
+		Object groundObj;
 		//Fire* fire;
 		View matView;
 		Projection* matPro;

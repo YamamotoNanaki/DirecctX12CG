@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "View.h"
+#include "Texture.h"
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -124,6 +125,12 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 					line_stream >> material.specular.y;
 					line_stream >> material.specular.z;
 				}
+				if (key == "map_Kd")
+				{
+					line_stream >> material.textureFilename;
+					material.texNum = Texture::getInstance()->LoadTexture(directory + material.textureFilename);
+					material.tex = true;
+				}
 			}
 			mfile.close();
 		}
@@ -177,6 +184,7 @@ void IF::Model::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPO
 {
 	for (int i = 0; i < viewport.size(); i++)
 	{
+		if (material.tex == true)Texture::getInstance()->setTexture(commandList, material.texNum);
 		commandList->RSSetViewports(1, &viewport[i]);
 		//頂点バッファの設定
 		commandList->IASetVertexBuffers(0, 1, &vi->GetVertexView());

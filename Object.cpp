@@ -8,8 +8,21 @@
 using namespace DirectX;
 using namespace IF;
 using namespace std;
+using namespace IF::BillBoard;
 
-HRESULT Object::Initialize(ID3D12Device* device)
+void IF::Object::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
+{
+	commandList->SetGraphicsRootSignature(root);
+	commandList->IASetPrimitiveTopology(topology);
+	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
+}
+
+void IF::Object::SetModel(Model* model)
+{
+	this->model = model;
+}
+
+HRESULT IF::Object::Initialize(ID3D12Device* device)
 {
 	HRESULT result;
 	//定数バッファのヒープ設定
@@ -29,94 +42,13 @@ HRESULT Object::Initialize(ID3D12Device* device)
 		&heapProp, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(&constBuffTransform));
 	assert(SUCCEEDED(result));
+
+
 	//定数バッファのマッピング
 	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 	assert(SUCCEEDED(result));
 
-	Vertex vertices[] = {
-		// x   y   z        u    v
-		//前
-		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{-5, +5, -5},{},{0.0f, 0.0f}},	//左上
-		{{+5, -5, -5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, -5},{},{1.0f, 0.0f}},	//右上
-		//後			
-		{{+5, -5, +5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		{{-5, -5, +5},{},{0.0f, 1.0f}},	//左下
-		{{-5, +5, +5},{},{0.0f, 0.0f}},	//左上
-		//左			
-		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{-5, -5, +5},{},{0.0f, 0.0f}},	//左上
-		{{-5, +5, -5},{},{1.0f, 1.0f}},	//右下
-		{{-5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		//右			
-		{{+5, +5, -5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		{{+5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, -5, +5},{},{0.0f, 0.0f}},	//左上
-		//下			
-		{{-5, +5, +5},{},{1.0f, 1.0f}},	//右下
-		{{+5, +5, +5},{},{1.0f, 0.0f}},	//右上
-		{{-5, +5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, +5, -5},{},{0.0f, 0.0f}},	//左上
-		//上			
-		{{-5, -5, -5},{},{0.0f, 1.0f}},	//左下
-		{{+5, -5, -5},{},{0.0f, 0.0f}},	//左上
-		{{-5, -5, +5},{},{1.0f, 1.0f}},	//右下
-		{{+5, -5, +5},{},{1.0f, 0.0f}},	//右上
-	};
-
-	//インデックスデータ
-	unsigned short indices[] = {
-		//前
-		0,1,2,
-		2,1,3,
-		//後
-		4,5,6,
-		6,5,7,
-		//左
-		8,9,10,
-		10,9,11,
-		//右
-		12,13,14,
-		14,13,15,
-		//下
-		16,17,18,
-		18,17,19,
-		//上
-		20,21,22,
-		22,21,23
-	};
-
-	vector<Vertex> v;
-	vector<unsigned short> I;
-	for (int i = 0; i < _countof(vertices); i++)
-	{
-		v.emplace_back(vertices[i]);
-	}
-	for (int i = 0; i < _countof(indices); i++)
-	{
-		I.emplace_back(indices[i]);
-	}
-
-	vi = new objVI;
-	vi->SetVerticleIndex(v, v.size(), I, I.size());
-
 	return result;
-}
-
-HRESULT Object::VIInitialize(ID3D12Device* device)
-{
-	HRESULT result = vi->Initialize(device, NTRUE);
-	return result;
-}
-
-void IF::Object::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
-{
-	commandList->SetGraphicsRootSignature(root);
-	commandList->IASetPrimitiveTopology(topology);
-	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
 }
 
 void Object::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode)
@@ -149,24 +81,15 @@ void Object::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode
 
 void Object::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)
 {
-	for (int i = 0; i < viewport.size(); i++)
+	if (model == nullptr)
 	{
-		commandList->RSSetViewports(1, &viewport[i]);
-		//頂点バッファの設定
-		commandList->IASetVertexBuffers(0, 1, &vi->GetVertexView());
-		//インデックスバッファの設定
-		commandList->IASetIndexBuffer(&vi->GetIndexView());
-		//定数バッファビューの設定
-		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
-		commandList->SetGraphicsRootConstantBufferView(3, constBuffTransform1->GetGPUVirtualAddress());
-		//描画コマンド
-		commandList->DrawIndexedInstanced(vi->GetSize(), 1, 0, 0, 0);
+		assert(0 && "モデルがセットされていません");
+		return;
 	}
+	model->Draw(commandList, viewport, constBuffTransform.Get());
 }
 
 Object::~Object()
 {
 	constBuffTransform->Unmap(0, nullptr);
-	constBuffTransform1->Unmap(0, nullptr);
-	delete vi;
 }

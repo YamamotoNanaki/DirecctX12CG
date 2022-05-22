@@ -13,11 +13,17 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 
 	result = cb.Initialize(device);
 
-	result = skyDome.LoadInitialize(device, "skydome");
-	result = ground.LoadInitialize(device, "ground");
+	skyDome.LoadModel(device, "skydome");
+	ground.LoadModel(device, "ground");
+
+	Dome.Initialize(device);
+	Dome.SetModel(&skyDome);
+	Ground.Initialize(device);
+	Ground.SetModel(&ground);
 	//fire = new Fire({ 0,0,0 });
 
 	skyDome.VIInitialize(device);
+	ground.VIInitialize(device);
 
 	tex->setDevice(device);
 	tex->Initialize();
@@ -65,21 +71,21 @@ void IF::Scene::Update(ID3D12Device* device)
 		if (Key::getInstance().Down(KEY::DOWN))		fire->pos.y -= 1.0f;
 	}*/
 
-	skyDome.Update(matView.Get(), matPro->Get(), skyDome.NOON);
-	ground.Update(matView.Get(), matPro->Get(), ground.NOON);
+	Dome.Update(matView.Get(), matPro->Get());
+	Ground.Update(matView.Get(), matPro->Get());
 	//fire->Update(matView.Get(), matPro->Get(), matView.matBillBoard);
 }
 
 void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
 {
 	graph.DrawBlendMode(commandList);
-	skyDome.DrawBefore(commandList, graph.rootsignature.Get(), tex->srvHeap.Get(), cb.GetGPUAddress());
+	Dome.DrawBefore(commandList, graph.rootsignature.Get(), tex->srvHeap.Get(), cb.GetGPUAddress());
 	tex->setTexture(commandList, sky);
-	skyDome.Draw(commandList, viewport);
+	Dome.Draw(commandList, viewport);
 
-	ground.DrawBefore(commandList, graph.rootsignature.Get(), tex->srvHeap.Get(), cb.GetGPUAddress());
+	Ground.DrawBefore(commandList, graph.rootsignature.Get(), tex->srvHeap.Get(), cb.GetGPUAddress());
 	tex->setTexture(commandList, groundTex);
-	ground.Draw(commandList, viewport);
+	Ground.Draw(commandList, viewport);
 
 	//pgraph.DrawBlendMode(commandList, Blend::ADD);
 	//tex->setTexture(commandList, efect);

@@ -17,13 +17,12 @@ namespace IF
 		template<class T> using vector = std::vector<T>;
 		using XMFLOAT3 = DirectX::XMFLOAT3;
 		using XMMATRIX = DirectX::XMMATRIX;
+	private:
+		//定数バッファ
+		ComPtr<ID3D12Resource> constBuffTransform1;
+		ConstBufferMaterial* constMapMaterial;
+
 	public:
-		enum BillBoardMode
-		{
-			NOON,
-			BILLBOARD,
-			YBOARD
-		};
 		struct Material
 		{
 			std::string name;
@@ -41,34 +40,12 @@ namespace IF
 			}
 		};
 
-	private:
+	public:
 		VI* vi;
 		Material material;
-
-	public:
-		//定数バッファ
-		ComPtr<ID3D12Resource> constBuffTransform;
-		//定数バッファ
-		ComPtr<ID3D12Resource> constBuffTransform1;
-		//定数バッファマップ
-		ConstBufferDataTransform* constMapTransform;
-		ConstBufferMaterial* constMapMaterial;
-		//アフィン変換情報
-		XMFLOAT3 scale = { 1,1,1 };
-		XMFLOAT3 rotation = { 0,0,0 };
-		XMFLOAT3 position = { 0,0,0 };
-		//ワールド変換行列
-		XMMATRIX matWorld;
-		//親オブジェクトへのポインタ
-		Model* parent = nullptr;
-
-	public:
-		HRESULT LoadInitialize(ID3D12Device* device, std::string name);
+		HRESULT LoadModel(ID3D12Device* device, std::string name);
 		HRESULT VIInitialize(ID3D12Device* device);
-		void DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
-			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		void Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode);
-		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);
+		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport, ID3D12Resource* address);
 		~Model();
 	};
 }

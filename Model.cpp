@@ -9,40 +9,8 @@ using namespace DirectX;
 using namespace IF;
 using namespace std;
 
-HRESULT Model::LoadInitialize(ID3D12Device* device, string name)
+HRESULT Model::LoadModel(ID3D12Device* device, string name)
 {
-	HRESULT result;
-	//定数バッファのヒープ設定
-	D3D12_HEAP_PROPERTIES heapProp{};
-	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
-	//定数バッファのリソース設定
-	D3D12_RESOURCE_DESC resdesc{};
-	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resdesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff;
-	resdesc.Height = 1;
-	resdesc.DepthOrArraySize = 1;
-	resdesc.MipLevels = 1;
-	resdesc.SampleDesc.Count = 1;
-	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	//定数バッファの生成
-	result = device->CreateCommittedResource(
-		&heapProp, D3D12_HEAP_FLAG_NONE, &resdesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-		IID_PPV_ARGS(&constBuffTransform));
-	assert(SUCCEEDED(result));
-
-	resdesc.Width = (sizeof(ConstBufferMaterial) + 0xff) & ~0xff;
-	result = device->CreateCommittedResource(
-		&heapProp, D3D12_HEAP_FLAG_NONE, &resdesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-		IID_PPV_ARGS(&constBuffTransform1));
-	assert(SUCCEEDED(result));
-
-	//定数バッファのマッピング
-	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
-	result = constBuffTransform1->Map(0, nullptr, (void**)&constMapMaterial);
-	assert(SUCCEEDED(result));
-
-
 	const string modelname = name;
 	const string filename = modelname + ".obj";
 	const string directory = "Resources/" + modelname + "/";
@@ -160,15 +128,41 @@ HRESULT Model::LoadInitialize(ID3D12Device* device, string name)
 			mfile.close();
 		}
 	}
-	constMapMaterial->ambient = material.ambient;
-	constMapMaterial->diffuse = material.diffuse;
-	constMapMaterial->specular = material.specular;
-	constMapMaterial->alpha = material.alpha;
 
 	file.close();
 
 	vi = new MVI;
 	vi->SetVerticleIndex(vertices, vertices.size(), indices, indices.size());
+
+	//定数バッファのヒープ設定
+	D3D12_HEAP_PROPERTIES heapProp{};
+	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+	//定数バッファのリソース設定
+	D3D12_RESOURCE_DESC resdesc{};
+	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resdesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff;
+	resdesc.Height = 1;
+	resdesc.DepthOrArraySize = 1;
+	resdesc.MipLevels = 1;
+	resdesc.SampleDesc.Count = 1;
+	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	resdesc.Width = (sizeof(ConstBufferMaterial) + 0xff) & ~0xff;
+
+	HRESULT result = device->CreateCommittedResource(
+		&heapProp, D3D12_HEAP_FLAG_NONE, &resdesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+		IID_PPV_ARGS(&constBuffTransform1));
+	assert(SUCCEEDED(result));
+
+	result = constBuffTransform1->Map(0, nullptr, (void**)&constMapMaterial);
+	assert(SUCCEEDED(result));
+
+	constMapMaterial->ambient = material.ambient;
+	constMapMaterial->diffuse = material.diffuse;
+	constMapMaterial->specular = material.specular;
+	constMapMaterial->alpha = material.alpha;
+
+	constBuffTransform1->Unmap(0, nullptr);
 
 	return result;
 }
@@ -179,42 +173,7 @@ HRESULT Model::VIInitialize(ID3D12Device* device)
 	return result;
 }
 
-void IF::Model::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
-{
-	commandList->SetGraphicsRootSignature(root);
-	commandList->IASetPrimitiveTopology(topology);
-	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
-}
-
-void Model::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode)
-{
-	XMMATRIX matScale, matRot, matTrams;
-
-	//スケール、回転、平行移動
-	matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationZ(rotation.z);
-	matRot *= XMMatrixRotationZ(rotation.x);
-	matRot *= XMMatrixRotationZ(rotation.y);
-	matTrams = XMMatrixTranslation(position.x, position.y, position.z);
-	//ワールド行列の合成
-	matWorld = XMMatrixIdentity();
-	if (mode == BILLBOARD)matWorld *= View::matBillBoard;
-	else if (mode == YBOARD)matWorld *= View::matBillBoardY;
-	matWorld *= matScale;
-	matWorld *= matRot;
-	matWorld *= matTrams;
-	//親オブジェクトがあれば
-	if (parent != nullptr)
-	{
-		matWorld *= parent->matWorld;
-	}
-
-	//定数バッファへのデータ転送
-	constMapTransform->mat = matWorld * matView * matProjection;
-}
-
-void Model::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)
+void IF::Model::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport, ID3D12Resource* address)
 {
 	for (int i = 0; i < viewport.size(); i++)
 	{
@@ -224,7 +183,7 @@ void Model::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> 
 		//インデックスバッファの設定
 		commandList->IASetIndexBuffer(&vi->GetIndexView());
 		//定数バッファビューの設定
-		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
+		commandList->SetGraphicsRootConstantBufferView(2, address->GetGPUVirtualAddress());
 		commandList->SetGraphicsRootConstantBufferView(3, constBuffTransform1->GetGPUVirtualAddress());
 		//描画コマンド
 		commandList->DrawIndexedInstanced(vi->GetSize(), 1, 0, 0, 0);
@@ -233,7 +192,5 @@ void Model::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> 
 
 Model::~Model()
 {
-	constBuffTransform->Unmap(0, nullptr);
-	constBuffTransform1->Unmap(0, nullptr);
 	delete vi;
 }

@@ -16,6 +16,8 @@ namespace IF
 	private:
 		Model skyDome;
 		Model ground;
+		Object Dome;
+		Object Ground;
 		//Fire* fire;
 		View matView;
 		Projection* matPro;

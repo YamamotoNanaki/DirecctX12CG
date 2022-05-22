@@ -22,7 +22,7 @@ void IF::Object::SetModel(Model* model)
 	this->model = model;
 }
 
-HRESULT IF::Object::Initialize(ID3D12Device* device)
+HRESULT IF::Object::Initialize(ID3D12Device* device, Model* model)
 {
 	HRESULT result;
 	//定数バッファのヒープ設定
@@ -47,6 +47,8 @@ HRESULT IF::Object::Initialize(ID3D12Device* device)
 	//定数バッファのマッピング
 	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 	assert(SUCCEEDED(result));
+
+	this->model = model;
 
 	return result;
 }

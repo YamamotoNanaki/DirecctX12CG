@@ -14,24 +14,6 @@ namespace IF
 	{
 		template <class T>using vector = std::vector<T>;
 	private:
-		Model domeM;
-		Model groundM;
-		Object domeObj;
-		Object groundObj;
-		//Fire* fire;
-		View matView;
-		Projection* matPro;
-	public:
-		ConstBuff cb;
-		Texture* tex = Texture::getInstance();
-		Graphic graph;
-		Graphic pgraph;
-
-	public:
-		Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device);
-		~Scene();
-
-	private:
 		//ïœêîêÈåæ
 		//-----------------------
 
@@ -41,8 +23,28 @@ namespace IF
 		int efect = 0;
 		int sky = 0;
 		int groundTex = 0;
+		Model sphereM;
+		Object sphereO;
 
 		//-----------------------
+
+		//ínñ Ç∆ãÛ
+		Model domeM;
+		Model groundM;
+		Object domeObj;
+		Object groundObj;
+		//ÉJÉÅÉâ
+		View matView;
+		Projection* matPro;
+
+	public:
+		ConstBuff cb;
+		Texture* tex = Texture::getInstance();
+		Graphic graph;
+
+	public:
+		Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device);
+		~Scene();
 
 	public:
 		void Update(ID3D12Device* device);

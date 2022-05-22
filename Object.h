@@ -46,7 +46,7 @@ namespace IF
 		Object* parent = nullptr;
 
 	public:
-		HRESULT Initialize(ID3D12Device* device);
+		HRESULT Initialize(ID3D12Device* device, Model* model);
 		void SetModel(Model* model);
 		void DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
 			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

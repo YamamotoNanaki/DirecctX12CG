@@ -7,34 +7,29 @@ using namespace DirectX;
 
 IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device)
 {
-	matPro = new Projection(45.0f, winWidth, winHeight);
-
-	Rand::Initialize();
-
+	//定数バッファの初期化
 	result = cb.Initialize(device);
-
+	//画像関連初期化
 	tex->setDevice(device);
 	tex->Initialize();
+	result = graph.Initialize(device, tex->descRangeSRV);
+	//モデルの読み込みとオブジェクトとの紐付け(空と地面)
 	domeM.LoadModel(device, "skydome");
 	groundM.LoadModel(device, "ground");
-
-	domeObj.Initialize(device);
-	domeObj.SetModel(&domeM);
-	groundObj.Initialize(device);
-	groundObj.SetModel(&groundM);
-	//fire = new Fire({ 0,0,0 });
-
-	domeM.VIInitialize(device);
-	groundM.VIInitialize(device);
-
-	sukai = tex->LoadTexture("Resources/texture.png");
-	efect = tex->LoadTexture("Resources/particle.png");
-
-	//result = fire->Initialize(device);
-	result = graph.Initialize(device, tex->descRangeSRV);
-	//result = pgraph.ParticleInitialize(device, tex->descRangeSRV);
-
+	domeObj.Initialize(device, &domeM);
+	groundObj.Initialize(device, &groundM);
+	groundObj.position = { 0,-2,0 };
+	//カメラ関連初期化
+	matPro = new Projection(45.0f, winWidth, winHeight);
 	matView.eye = { 0,0,-5.0f };
+
+	//そのほかの初期化
+	Rand::Initialize();
+
+	sphereM.LoadModel(device, "sphere");
+	sphereO.Initialize(device, &sphereM);
+
+	sphereO.position = { 0,1,0 };
 }
 
 IF::Scene::~Scene()
@@ -47,31 +42,10 @@ void IF::Scene::Update(ID3D12Device* device)
 	Key* key = Key::getInstance();
 	key->Update();
 
-	if (key->Judge(KEY::WASD, KEY::OR))
-	{
-		if (key->Down(KEY::D))angleY += XMConvertToRadians(1.0f);
-		if (key->Down(KEY::A))angleY -= XMConvertToRadians(1.0f);
-		if (key->Down(KEY::S))angleX += XMConvertToRadians(1.0f);
-		if (key->Down(KEY::W))angleX -= XMConvertToRadians(1.0f);
-
-		matView.eye.x = -100 * sinf(angleY);
-		matView.eye.y = -100 * sinf(angleX);
-		matView.eye.z = -100 * cosf(angleY + angleX);
-
-		matView.Update();
-	}
-
-	/*if (Key::getInstance().Judge(KEY::Arrow, KEY::OR))
-	{
-		if (Key::getInstance().Down(KEY::RIGHT))	fire->pos.x += 1.0f;
-		if (Key::getInstance().Down(KEY::LEFT))		fire->pos.x -= 1.0f;
-		if (Key::getInstance().Down(KEY::UP))		fire->pos.y += 1.0f;
-		if (Key::getInstance().Down(KEY::DOWN))		fire->pos.y -= 1.0f;
-	}*/
 
 	domeObj.Update(matView.Get(), matPro->Get());
 	groundObj.Update(matView.Get(), matPro->Get());
-	//fire->Update(matView.Get(), matPro->Get(), matView.matBillBoard);
+	sphereO.Update(matView.Get(), matPro->Get());
 }
 
 void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
@@ -82,6 +56,9 @@ void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPO
 
 	groundObj.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
 	groundObj.Draw(commandList, viewport);
+
+	sphereO.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
+	sphereO.Draw(commandList, viewport);
 
 	//pgraph.DrawBlendMode(commandList, Blend::ADD);
 	//tex->setTexture(commandList, efect);

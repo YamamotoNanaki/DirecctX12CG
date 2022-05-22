@@ -171,6 +171,8 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 
 	constBuffTransform1->Unmap(0, nullptr);
 
+	result = VIInitialize(device);
+
 	return result;
 }
 

@@ -96,7 +96,7 @@
     <ClCompile Include="Window.cpp">
       <Filter>ソース ファイル\Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Key.cpp">
+    <ClCompile Include="Input.cpp">
       <Filter>ソース ファイル\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
@@ -205,7 +205,7 @@
     <ClInclude Include="DirectX12.h">
       <Filter>ヘッダー ファイル\Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Key.h">
+    <ClInclude Include="Input.h">
       <Filter>ヘッダー ファイル\Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="Rand.h">

@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "Key.h"
+#include "Input.h"
 #include <DirectXMath.h>
 #include "Rand.h"
 
@@ -30,6 +30,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	sphereO.Initialize(device, &sphereM);
 
 	sphereO.position = { 0,1,0 };
+	matView.Update();
 }
 
 IF::Scene::~Scene()
@@ -39,8 +40,8 @@ IF::Scene::~Scene()
 
 void IF::Scene::Update(ID3D12Device* device)
 {
-	Key* key = Key::getInstance();
-	key->Update();
+	Input* input = Input::getInstance();
+	input->Update();
 
 
 	domeObj.Update(matView.Get(), matPro->Get());

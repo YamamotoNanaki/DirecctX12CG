@@ -181,7 +181,7 @@
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="View.cpp" />
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="Key.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -281,7 +281,7 @@
     <ClInclude Include="VI.h" />
     <ClInclude Include="View.h" />
     <ClInclude Include="Window.h" />
-    <ClInclude Include="Key.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Rand.h" />
     <ClInclude Include="Timer.h" />

@@ -1,6 +1,7 @@
 #pragma once
 #include <dinput.h>
 #include "Window.h"
+#include "wrl.h"
 
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
@@ -98,25 +99,40 @@ namespace IF
 		const KeyCode WASD[4] = { W,A,S,D };
 	}
 
-	class Key
+	namespace MOUSE
+	{
+		struct Mouse
+		{
+			LONG X;
+			LONG Y;
+			LONG Z;
+		};
+	}
+
+	class Input
 	{
 		using KeyCode = KEY::KeyCode;
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
 	private:
 		char key[256], oldkey[256];
-		IDirectInput8* directInput = nullptr;
-		IDirectInputDevice8* keyboard = nullptr;
+		ComPtr < IDirectInput8> directInput = nullptr;
+		ComPtr < IDirectInputDevice8> keyboard = nullptr;
+		ComPtr < IDirectInputDevice8> devMouse;
+		DIMOUSESTATE2 mouse = {};
+		DIMOUSESTATE2 oldmouse = {};
 	private:
 		/// <summary>
 		/// コンストラクタ
 		/// キーボード入力の初期化
 		/// </summary>
-		Key();
-		Key(const Key&);
-		Key& operator=(const Key&) {}
-		~Key() {}
+		Input();
+		Input(const Input&);
+		Input& operator=(const Input&) {}
+		~Input() {}
 	public:
-		static Key* getInstance();
-		
+		static Input* getInstance();
+
 		HRESULT Initialize(HINSTANCE& hInstance, HWND& hwnd);
 
 		/// <summary>
@@ -130,19 +146,31 @@ namespace IF
 		/// </summary>
 		/// <param name="keyCode">判定を取りたいキーのマクロ</param>
 		/// <returns></returns>
-		bool Triggere(KeyCode keyCode);
+		bool KTriggere(KeyCode keyCode);
 		/// <summary>
 		/// 入力判定
 		/// </summary>
 		/// <param name="keyCode">判定を取りたいキーのマクロ</param>
 		/// <returns></returns>
-		bool Down(KeyCode keyCode);
+		bool KDown(KeyCode keyCode);
 		/// <summary>
 		/// リリース判定
 		/// </summary>
 		/// <param name="keyCode">判定を取りたいキーのマクロ</param>
 		/// <returns></returns>
-		bool Release(KeyCode keyCode);
+		bool KRelease(KeyCode keyCode);
+
+		bool MLPush();
+		bool MRPush();
+		bool MMPush();
+		bool MLTriggere();
+		bool MRTriggere();
+		bool MMTriggere();
+		bool MLRelease();
+		bool MRRelease();
+		bool MMRelease();
+
+		MOUSE::Mouse GetMouse3D();
 
 		bool Judge(const KeyCode a[], int Type);
 	};

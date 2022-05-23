@@ -1,6 +1,6 @@
 #include "Window.h"
 #include "DirectX12.h"
-#include "Key.h"
+#include "Input.h"
 #include "Scene.h"
 #include "Util.h"
 
@@ -19,11 +19,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	HRESULT result;
 	DirectX12* dx12 = new DirectX12(result, win->hwnd, winWidth, winHeight);
-	result = Key::getInstance()->Initialize(win->w.hInstance, win->hwnd);
+	result = Input::getInstance()->Initialize(win->w.hInstance, win->hwnd);
 	Scene scene(winWidth, winHeight, result, dx12->device.Get());
 	dx12->SetClearColor(0, 0, 0);
 
-	while (!Key::getInstance()->Down(KEY::ESC))
+	while (!Input::getInstance()->KDown(KEY::ESC))
 	{
 		//メッセージ
 		if (win->Message())break;

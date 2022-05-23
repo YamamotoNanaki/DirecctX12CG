@@ -30,6 +30,8 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 	vector<Vertex> vertices;
 	vector<unsigned short> indices;
 
+	short indexCount = 0;
+
 	string line;
 	while (getline(file, line))
 	{
@@ -64,6 +66,7 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 		}
 		if (key == "f")
 		{
+			int indexCount2 = 0;
 			string index_string;
 			while (getline(line_stream, index_string, ' '))
 			{
@@ -81,7 +84,18 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 				vertex.uv = texcode[inT - 1];
 				vertices.emplace_back(vertex);
 
-				indices.emplace_back((unsigned short)indices.size());
+				//ŽlŠpŒ`ƒ|ƒŠƒSƒ“
+				if (indexCount2 >= 3) {
+					indices.emplace_back(indexCount - 1);
+					indices.emplace_back(indexCount);
+					indices.emplace_back(indexCount - 3);
+				}
+				else
+				{
+					indices.emplace_back(indexCount);
+				}
+				indexCount++;
+				indexCount2++;
 			}
 		}
 		if (key == "mtllib")

@@ -1,7 +1,7 @@
 #include "Texture.h"
 #include <d3dx12.h>
 #include <d3d12.h>
-#include "Key.h"
+#include "Input.h"
 
 using namespace DirectX;
 using namespace IF;

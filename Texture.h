@@ -1,6 +1,5 @@
 #pragma once
 #include <DirectXTex.h>
-#include <DirectXMath.h>
 #include <d3d12.h>
 #include <wrl.h>
 #include <string>

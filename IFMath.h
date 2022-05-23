@@ -9,29 +9,22 @@
 
 namespace IF
 {
-#define PI = 3.141592654f;
+	const float IFPI = 3.141592654f;
+	const float IF2PI = 6.283185307f;
+	const float IF1DIVPI = 0.318309886f;
+	const float IF1DIV2PI = 0.159154943f;
+	const float IFPIDIV2 = 1.570796327f;
+	const float IFPIDIV4 = 0.785398163f;
 
-	Float4 SetFloat4(Float3 f, float z = 0);
-	Float4 SetFloat4(Float2 f, float z = 0, float w = 0);
-	Float3 SetFloat3(Float2 f, float z = 0);
-	Float4 SetFloat4(Vector3 v, float w = 0);
+	Float4 SetFloat4ToFloat3(Float3 f, float z = 0);
+	Float4 SetFloat4ToFoat2(Float2 f, float z = 0, float w = 0);
+	Float3 SetFloat3ToFloat2(Float2 f, float z = 0);
+	Float4 SetFloat4ToVector3(Vector3 v, float w = 0);
 	Float3 SetFloat3(Vector3 v);
-	Float2 SetFloat3(Vector2 v);
+	Float2 SetFloat3ToVector2(Vector2 v);
 	Vector3 SetVector3(Float3 f);
-	Vector3 SetVector3(Float2 f, float z = 0);
+	Vector3 SetVector3ToFloat2(Float2 f, float z = 0);
 	Vector2 SetVector2(Float2 f);
-	Matrix SetMatrixX(Float4 f);
-	Matrix SetMatrixY(Float4 f);
-	Matrix SetMatrixZ(Float4 f);
-	Matrix SetMatrixW(Float4 f);
-	Matrix SetMatrixX(Float3 f, float w = 0);
-	Matrix SetMatrixY(Float3 f, float w = 0);
-	Matrix SetMatrixZ(Float3 f, float w = 0);
-	Matrix SetMatrixW(Float3 f, float w = 1);
-	Matrix SetMatrixX(Vector3 v, float w = 0);
-	Matrix SetMatrixY(Vector3 v, float w = 0);
-	Matrix SetMatrixZ(Vector3 v, float w = 0);
-	Matrix SetMatrixW(Vector3 v, float w = 1);
 
 
 	// 零ベクトルを返す
@@ -62,8 +55,10 @@ namespace IF
 	// ベクトル変換
 	Vector3 Vector3TransformNormal(const Vector3& v, const Matrix& m);
 
-	// 2項演算子オーバーロード
-	Matrix operator*(const Matrix& m1, const Matrix& m2);
-	Vector3 operator*(const Vector3& v, const Matrix& m);
+	Vector3 VectorNegate(Vector3 m);
 
+	Matrix MatrixPerspectiveFovLH(float FovAngleY, float AspectRatio, float NearZ, float FarZ);
+	bool NearEqual(float S1, float S2, float Epsilon);
+	void ScalarSinCos(float* pSin, float* pCos, float  Value);
+	float ConvertToRadians(float fDegrees);
 };

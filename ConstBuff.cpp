@@ -1,5 +1,7 @@
 #include "ConstBuff.h"
 #include "Util.h"
+#include "IFMath.h"
+#include <cassert>
 
 HRESULT IF::ConstBuff::Initialize(ID3D12Device* device)
 {
@@ -29,7 +31,7 @@ HRESULT IF::ConstBuff::Initialize(ID3D12Device* device)
 
 	result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);	//マッピング
 	assert(SUCCEEDED(result));
-	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1);					//RGBAで半透明の赤
+	constMapMaterial->color = DirectX::XMFLOAT4(1, 1, 1, 1);					//RGBAで半透明の赤
 	constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
 
 	R = 255, G = 255, B = 255, A = 255;
@@ -49,7 +51,7 @@ HRESULT IF::ConstBuff::SetBright(int red, int green, int blue)
 	if (green != G)g = TypeConversionColor(green);
 	if (blue != B)b = TypeConversionColor(blue);
 	R = red, G = green, B = blue;
-	constMapMaterial->color = XMFLOAT4(r, g, b, a);					//RGBAで半透明の赤
+	constMapMaterial->color = DirectX::XMFLOAT4(r, g, b, a);					//RGBAで半透明の赤
 	return S_OK;
 }
 
@@ -58,7 +60,7 @@ HRESULT IF::ConstBuff::SetAlpha(int alpha)
 	if (alpha == A)return S_OK;
 	a = TypeConversionColor(alpha);
 	A = alpha;
-	constMapMaterial->color = XMFLOAT4(r, g, b, a);					//RGBAで半透明の赤
+	constMapMaterial->color = DirectX::XMFLOAT4(r, g, b, a);					//RGBAで半透明の赤
 	return S_OK;
 }
 
@@ -70,6 +72,6 @@ HRESULT IF::ConstBuff::SetColor(int red, int green, int blue, int alpha)
 	if (blue != B)b = TypeConversionColor(blue);
 	if (alpha != A)a = TypeConversionColor(alpha);
 	R = red, G = green, B = blue, A = alpha;
-	constMapMaterial->color = XMFLOAT4(r, g, b, a);					//RGBAで半透明の赤
+	constMapMaterial->color = DirectX::XMFLOAT4(r, g, b, a);					//RGBAで半透明の赤
 	return S_OK;
 }

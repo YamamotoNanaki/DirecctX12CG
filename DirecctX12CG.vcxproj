@@ -165,6 +165,7 @@
     <ClCompile Include="GPipeline.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="IFMath.cpp" />
+    <ClCompile Include="MathConvert.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelVI.cpp" />
@@ -176,7 +177,6 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Util.cpp" />
-    <ClCompile Include="ObjVI.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="View.cpp" />
@@ -264,6 +264,7 @@
     <ClInclude Include="Float4.h" />
     <ClInclude Include="GPipeline.h" />
     <ClInclude Include="IFMath.h" />
+    <ClInclude Include="MathConvert.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Model.h" />
@@ -275,7 +276,6 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Util.h" />
-    <ClInclude Include="ObjVI.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="VI.h" />

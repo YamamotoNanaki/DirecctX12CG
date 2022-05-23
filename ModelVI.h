@@ -1,5 +1,4 @@
 #pragma once
-#include <DirectXMath.h>
 #include <vector>
 #include <wrl.h>
 #include "VI.h"

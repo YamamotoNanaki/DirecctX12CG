@@ -1,7 +1,8 @@
 #include "ModelVI.h"
+#include "IFMath.h"
+#include <cassert>
 
 using namespace std;
-using namespace DirectX;
 
 void IF::MVI::SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, std::vector<unsigned short> indices, int indexCount)
 {
@@ -37,20 +38,20 @@ HRESULT IF::MVI::Initialize(ID3D12Device* device, NormalFlag flag)
 			unsigned short index1 = indices[i * 3 + 1];
 			unsigned short index2 = indices[i * 3 + 2];
 
-			XMVECTOR p0 = XMLoadFloat3(&vertices[index0].pos);
-			XMVECTOR p1 = XMLoadFloat3(&vertices[index1].pos);
-			XMVECTOR p2 = XMLoadFloat3(&vertices[index2].pos);
+			Vector3 p0 = SetVector3(vertices[index0].pos);
+			Vector3 p1 = SetVector3(vertices[index1].pos);
+			Vector3 p2 = SetVector3(vertices[index2].pos);
 
-			XMVECTOR v1 = XMVectorSubtract(p1, p0);
-			XMVECTOR v2 = XMVectorSubtract(p2, p0);
+			Vector3 v1 = VectorSubtract(p1, p0);
+			Vector3 v2 = VectorSubtract(p2, p0);
 
-			XMVECTOR normal = XMVector3Cross(v1, v2);
+			Vector3 normal = Vector3Cross(v1, v2);
 
-			normal = XMVector3Normalize(normal);
+			normal.Normalize();
 
-			XMStoreFloat3(&vertices[index0].normal, normal);
-			XMStoreFloat3(&vertices[index1].normal, normal);
-			XMStoreFloat3(&vertices[index2].normal, normal);
+			vertices[index0].normal = SetFloat3(normal);
+			vertices[index1].normal = SetFloat3(normal);
+			vertices[index2].normal = SetFloat3(normal);
 		}
 	}
 

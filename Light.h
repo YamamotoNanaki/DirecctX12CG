@@ -29,6 +29,7 @@ namespace IF
 		bool dirty = false;
 
 	public:
+		~Light();
 		static void SetDevice(ID3D12Device* device);
 		void Initialize();
 		void TransferConstBuffer();

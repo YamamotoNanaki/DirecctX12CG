@@ -6,9 +6,9 @@ VSOutput main(float4 pos : POSITION, float3 normal : NORMAL, float2 uv : TEXCOOR
 	float4 wpos = mul(world, pos);
 
 	float3 amb = ambient;
-	float3 diff = dot(lightv, wnormal.xyz) * diffuse;
 	const float shininess = 4.0f;
 	float3 eyedir = normalize(cameraPos - wpos.xyz);
+	float3 diff = dot(lightv, wnormal.xyz) * diffuse;
 	float3 reflect = normalize(-lightv + 2 * dot(lightv, wnormal.xyz) * wnormal.xyz);
 	float3 spe = pow(saturate(dot(reflect, eyedir)), shininess) * specular;
 	VSOutput output;//ピクセルシェーダーに渡す値

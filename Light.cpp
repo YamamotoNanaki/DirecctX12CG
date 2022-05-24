@@ -5,6 +5,11 @@ using namespace IF;
 
 ID3D12Device* IF::Light::device = nullptr;
 
+IF::Light::~Light()
+{
+	constBuff->Unmap(0, nullptr);
+}
+
 void IF::Light::SetDevice(ID3D12Device* device)
 {
 	assert(!Light::device);
@@ -34,10 +39,9 @@ void IF::Light::TransferConstBuffer()
 	assert(SUCCEEDED(result));
 	constMap->lightv = -lightDir;
 	constMap->lightcolor = lightColor;
-	constBuff->Unmap(0, nullptr);
 }
 
-void IF::Light::SetLightDir(const XMVECTOR& lightdir)
+void IF::Light::SetLightDir(const XMVECTOR& lightDir)
 {
 	this->lightDir = XMVector3Normalize(lightDir);
 	dirty = true;

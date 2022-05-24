@@ -98,11 +98,11 @@ void IF::Scene::Update(ID3D12Device* device)
 void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
 {
 	graph.DrawBlendMode(commandList);
-	/*domeObj.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
+	domeObj.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
 	domeObj.Draw(commandList, viewport);
 
 	groundObj.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
-	groundObj.Draw(commandList, viewport);*/
+	groundObj.Draw(commandList, viewport);
 
 	sphereO.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
 	sphereO.Draw(commandList, viewport);

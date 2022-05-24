@@ -92,7 +92,7 @@ void Object::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>
 		return;
 	}
 
-	light->Draw(commandList, 3);
+	light->Draw(commandList, 4);
 
 	model->Draw(commandList, viewport, constBuffTransform.Get());
 }

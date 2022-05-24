@@ -15,7 +15,7 @@ void IF::MVI::SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, st
 	}
 }
 
-HRESULT IF::MVI::Initialize(ID3D12Device* device, NormalFlag flag)
+HRESULT IF::MVI::Initialize(ID3D12Device* device, bool smoothing, NormalFlag flag)
 {
 	HRESULT result;
 
@@ -28,6 +28,26 @@ HRESULT IF::MVI::Initialize(ID3D12Device* device, NormalFlag flag)
 	//---------------------------
 
 #pragma region 法線ベクトルの計算
+
+	if (smoothing)
+	{
+		auto itr = smoothData.begin();
+		for (; itr != smoothData.end(); ++itr)
+		{
+			vector<unsigned short>& v = itr->second;
+
+			XMVECTOR normal = {};
+			for (unsigned short index : v)
+			{
+				normal += XMVectorSet(vertices[index].normal.x, vertices[index].normal.y, vertices[index].normal.z, 0);
+			}
+			normal = XMVector3Normalize(normal / (float)v.size());
+			for (unsigned short index : v)
+			{
+				vertices[index].normal = { normal.m128_f32[0],normal.m128_f32[1],normal.m128_f32[2] };
+			}
+		}
+	}
 
 	if (!indices.size() == 0 && flag == NTRUE)
 	{
@@ -179,4 +199,9 @@ D3D12_INDEX_BUFFER_VIEW& IF::MVI::GetIndexView()
 unsigned int IF::MVI::GetSize()
 {
 	return indices.size();
+}
+
+void IF::MVI::AddSmoothData(unsigned short indexPos, unsigned short indexVer)
+{
+	smoothData[indexPos].emplace_back(indexVer);
 }

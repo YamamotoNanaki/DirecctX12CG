@@ -28,18 +28,13 @@ HRESULT Particle::Initialize(ID3D12Device* device)
 	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 	assert(SUCCEEDED(result));
 
-	Vertex vertices[] = {
+	VertexPos vertices[] = {
 		// x   y   z        u    v
 		//ëO
-		{{0, 0, 0},{},{}},	//ç∂â∫
+		{{0, 0, 0}},	//ç∂â∫
 	};
 
-	vector<Vertex> v;
-	vector<unsigned short> i;
-
-	for (int i = 0; i < _countof(vertices); i++)v.emplace_back(vertices[i]);
-	vi = new PV;
-	vi->SetVerticleIndex(v, v.size(), i, 0);
+	vi->SetVerticleIndex(vertices, _countof(vertices));
 
 	return result;
 }

@@ -24,7 +24,7 @@ namespace IF
 		YBOARD
 	};
 	private:
-		VI* vi;
+		PV* vi;
 
 	public:
 		//定数バッファ

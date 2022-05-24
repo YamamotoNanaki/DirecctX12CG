@@ -61,8 +61,8 @@ void Object::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode
 	matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
 	matRot = XMMatrixIdentity();
 	matRot *= XMMatrixRotationZ(rotation.z);
-	matRot *= XMMatrixRotationZ(rotation.x);
-	matRot *= XMMatrixRotationZ(rotation.y);
+	matRot *= XMMatrixRotationX(rotation.x);
+	matRot *= XMMatrixRotationY(rotation.y);
 	matTrams = XMMatrixTranslation(position.x, position.y, position.z);
 	//ÉèÅ[ÉãÉhçsóÒÇÃçáê¨
 	matWorld = XMMatrixIdentity();

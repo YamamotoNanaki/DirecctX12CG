@@ -19,9 +19,6 @@
     <Filter Include="ヘッダー ファイル\Engine">
       <UniqueIdentifier>{875951f9-4cfe-4217-b0cf-0f42703fe74f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Engine\Other">
-      <UniqueIdentifier>{c3b71481-bdd1-4867-8d93-07aaefa26514}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Engine\Math">
       <UniqueIdentifier>{9819064d-8cdf-4341-9dc4-3c0680a261f3}</UniqueIdentifier>
     </Filter>
@@ -52,9 +49,6 @@
     <Filter Include="ソース ファイル\Engine">
       <UniqueIdentifier>{d0a545a4-5f13-48dc-bd54-8862d43a94cb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Engine\Other">
-      <UniqueIdentifier>{fc1745ef-42d6-4f03-85ea-41eacf78f00f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Engine\Math">
       <UniqueIdentifier>{783d637d-96fe-420e-8f61-cc213de42eb9}</UniqueIdentifier>
     </Filter>
@@ -82,6 +76,12 @@
     <Filter Include="ソース ファイル\Engine\3D\Model">
       <UniqueIdentifier>{1ab4b3ee-bfdb-459a-ab9c-8393635fdddf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Other">
+      <UniqueIdentifier>{fc1745ef-42d6-4f03-85ea-41eacf78f00f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Other">
+      <UniqueIdentifier>{c3b71481-bdd1-4867-8d93-07aaefa26514}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -100,7 +100,7 @@
       <Filter>ソース ファイル\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>ソース ファイル\Engine\Other</Filter>
+      <Filter>ソース ファイル\Other</Filter>
     </ClCompile>
     <ClCompile Include="View.cpp">
       <Filter>ソース ファイル\Engine\3D\Matrix</Filter>
@@ -121,7 +121,7 @@
       <Filter>ソース ファイル\Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Util.cpp">
-      <Filter>ソース ファイル\Engine\Other</Filter>
+      <Filter>ソース ファイル\Other</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>ソース ファイル</Filter>
@@ -132,9 +132,6 @@
     <ClCompile Include="Object.cpp">
       <Filter>ソース ファイル\Engine\3D\Obj</Filter>
     </ClCompile>
-    <ClCompile Include="ObjVI.cpp">
-      <Filter>ソース ファイル\Engine\3D\Obj</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleVI.cpp">
       <Filter>ソース ファイル\Engine\3D\Effect</Filter>
     </ClCompile>
@@ -142,10 +139,10 @@
       <Filter>ソース ファイル\Engine\3D\Effect</Filter>
     </ClCompile>
     <ClCompile Include="Rand.cpp">
-      <Filter>ソース ファイル\Engine\Other</Filter>
+      <Filter>ソース ファイル\Other</Filter>
     </ClCompile>
     <ClCompile Include="Ease.cpp">
-      <Filter>ソース ファイル\Engine\Other</Filter>
+      <Filter>ソース ファイル\Other</Filter>
     </ClCompile>
     <ClCompile Include="Graphic.cpp">
       <Filter>ソース ファイル\Engine\Graphic</Filter>
@@ -209,10 +206,10 @@
       <Filter>ヘッダー ファイル\Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="Rand.h">
-      <Filter>ヘッダー ファイル\Engine\Other</Filter>
+      <Filter>ヘッダー ファイル\Other</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>ヘッダー ファイル\Engine\Other</Filter>
+      <Filter>ヘッダー ファイル\Other</Filter>
     </ClInclude>
     <ClInclude Include="View.h">
       <Filter>ヘッダー ファイル\Engine\3D\Matrix</Filter>
@@ -236,7 +233,7 @@
       <Filter>ヘッダー ファイル\Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Util.h">
-      <Filter>ヘッダー ファイル\Engine\Other</Filter>
+      <Filter>ヘッダー ファイル\Other</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>ヘッダー ファイル</Filter>
@@ -247,9 +244,6 @@
     <ClInclude Include="Object.h">
       <Filter>ヘッダー ファイル\Engine\3D\Obj</Filter>
     </ClInclude>
-    <ClInclude Include="ObjVI.h">
-      <Filter>ヘッダー ファイル\Engine\3D\Obj</Filter>
-    </ClInclude>
     <ClInclude Include="ParticleVI.h">
       <Filter>ヘッダー ファイル\Engine\3D\Effect</Filter>
     </ClInclude>
@@ -257,7 +251,7 @@
       <Filter>ヘッダー ファイル\Engine\3D\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Ease.h">
-      <Filter>ヘッダー ファイル\Engine\Other</Filter>
+      <Filter>ヘッダー ファイル\Other</Filter>
     </ClInclude>
     <ClInclude Include="Graphic.h">
       <Filter>ヘッダー ファイル\Engine\Graphic</Filter>

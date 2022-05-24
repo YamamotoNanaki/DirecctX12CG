@@ -2,11 +2,15 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <wrl.h>
-#include "VI.h"
+#include <d3d12.h>
 
 namespace IF
 {
-	class PV :public VI
+	struct VertexPos
+	{
+		DirectX::XMFLOAT3 pos;			//XYZç¿ïW
+	};
+	class PV
 	{
 	private:
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff = nullptr;
@@ -16,12 +20,9 @@ namespace IF
 		D3D12_VERTEX_BUFFER_VIEW vbView{};
 
 	public:
-		void SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, std::vector<unsigned short> indices, int indexCount)override;
-		HRESULT Initialize(ID3D12Device* device, NormalFlag flag)override;
-		virtual D3D12_VERTEX_BUFFER_VIEW& GetVertexView()override;
-		virtual unsigned int GetSize()override;
-
-	private:
-		virtual D3D12_INDEX_BUFFER_VIEW& GetIndexView()override;
+		void SetVerticleIndex(VertexPos* vertices, int vertexCount);
+		HRESULT Initialize(ID3D12Device* device);
+		D3D12_VERTEX_BUFFER_VIEW& GetVertexView();
+		unsigned int GetSize();
 	};
 }

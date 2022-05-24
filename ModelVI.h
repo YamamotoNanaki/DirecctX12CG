@@ -2,16 +2,29 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <wrl.h>
-#include "VI.h"
+#include <d3d12.h>
+#include <unordered_map>
 
 namespace IF
 {
-	class MVI : public VI
+	struct Vertex
+	{
+		DirectX::XMFLOAT3 pos;			//XYZ座標
+		DirectX::XMFLOAT3 normal;		//法線ベクトル
+		DirectX::XMFLOAT2 uv;			//UV座標
+	};
+	enum NormalFlag
+	{
+		NFALSE = false,
+		NTRUE = true
+	};
+	class MVI
 	{
 	private:
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12Resource> indexBuff = nullptr;
 		std::vector<Vertex> vertices;
+		std::unordered_map<unsigned short, std::vector<unsigned short>>smoothData;
 
 	public:
 		std::vector<unsigned short> indices;
@@ -19,10 +32,11 @@ namespace IF
 		D3D12_INDEX_BUFFER_VIEW ibView{};
 
 	public:
-		void SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, std::vector<unsigned short> indices, int indexCount)override;
-		HRESULT Initialize(ID3D12Device* device, NormalFlag flag)override;
-		virtual D3D12_VERTEX_BUFFER_VIEW& GetVertexView()override;
-		virtual D3D12_INDEX_BUFFER_VIEW& GetIndexView()override;
-		virtual unsigned int GetSize()override;
+		void SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, std::vector<unsigned short> indices, int indexCount);
+		HRESULT Initialize(ID3D12Device* device, bool smoothing, NormalFlag flag = NFALSE);
+		D3D12_VERTEX_BUFFER_VIEW& GetVertexView();
+		D3D12_INDEX_BUFFER_VIEW& GetIndexView();
+		unsigned int GetSize();
+		void AddSmoothData(unsigned short indexPos, unsigned short indexVer);
 	};
 }

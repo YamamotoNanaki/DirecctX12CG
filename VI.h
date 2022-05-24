@@ -1,26 +1,9 @@
 #pragma once
-#include <d3d12.h>
-#include <vector>
 
 namespace IF
 {
-	struct Vertex
-	{
-		DirectX::XMFLOAT3 pos;			//XYZ座標
-		DirectX::XMFLOAT3 normal;		//法線ベクトル
-		DirectX::XMFLOAT2 uv;			//UV座標
-	};
 
-	struct VertexPos
-	{
-		DirectX::XMFLOAT3 pos;			//XYZ座標
-	};
 
-	enum NormalFlag
-	{
-		NFALSE = false,
-		NTRUE = true
-	};
 
 	class VI
 	{

@@ -4,16 +4,15 @@ using namespace DirectX;
 using namespace IF;
 using namespace std;
 
-void IF::PV::SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, std::vector<unsigned short> indices, int indexCount)
+void IF::PV::SetVerticleIndex(VertexPos* vertices, int vertexCount)
 {
 	for (int i = 0; i < vertexCount; i++)
 	{
-		VertexPos a = { vertices[i].pos};
-		this->vertices.emplace_back(a);
+		this->vertices.emplace_back(vertices[i]);
 	}
 }
 
-HRESULT PV::Initialize(ID3D12Device* device, NormalFlag flag)
+HRESULT PV::Initialize(ID3D12Device* device)
 {
 	HRESULT result;
 
@@ -75,13 +74,6 @@ HRESULT PV::Initialize(ID3D12Device* device, NormalFlag flag)
 D3D12_VERTEX_BUFFER_VIEW& IF::PV::GetVertexView()
 {
 	return vbView;
-}
-
-D3D12_INDEX_BUFFER_VIEW& IF::PV::GetIndexView()
-{
-	D3D12_INDEX_BUFFER_VIEW i;
-	assert(0 && "Ç±ÇÃä÷êîÇÃåƒÇ—èoÇµÇçsÇÌÇ»Ç¢Ç≈Ç≠ÇæÇ≥Ç¢");
-	return i;
 }
 
 unsigned int IF::PV::GetSize()

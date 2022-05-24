@@ -10,8 +10,9 @@ using namespace DirectX;
 using namespace IF;
 using namespace std;
 
-HRESULT Model::LoadModel(ID3D12Device* device, string name)
+HRESULT Model::LoadModel(ID3D12Device* device, string name, bool smoothing)
 {
+	vi = new MVI;
 	const string modelname = name;
 	const string filename = modelname + ".obj";
 	const string directory = "Resources/" + modelname + "/";
@@ -84,6 +85,11 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 				vertex.uv = texcode[inT - 1];
 				vertices.emplace_back(vertex);
 
+				if (smoothing)
+				{
+					vi->AddSmoothData(inP, (unsigned short)vertices.size() - 1);
+				}
+
 				//四角形ポリゴン
 				if (indexCount2 >= 3) {
 					indices.emplace_back(indexCount - 1);
@@ -152,7 +158,6 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 
 	file.close();
 
-	vi = new MVI;
 	vi->SetVerticleIndex(vertices, vertices.size(), indices, indices.size());
 
 	//定数バッファのヒープ設定
@@ -185,14 +190,14 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 
 	constBuffTransform1->Unmap(0, nullptr);
 
-	result = VIInitialize(device);
+	result = VIInitialize(device, smoothing);
 
 	return result;
 }
 
-HRESULT Model::VIInitialize(ID3D12Device* device)
+HRESULT Model::VIInitialize(ID3D12Device* device, bool smoothing)
 {
-	HRESULT result = vi->Initialize(device);
+	HRESULT result = vi->Initialize(device, smoothing);
 	return result;
 }
 

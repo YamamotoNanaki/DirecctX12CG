@@ -43,10 +43,10 @@ namespace IF
 		};
 
 	public:
-		VI* vi;
+		MVI* vi;
 		Material material;
-		HRESULT LoadModel(ID3D12Device* device, std::string name);
-		HRESULT VIInitialize(ID3D12Device* device);
+		HRESULT LoadModel(ID3D12Device* device, std::string name, bool smoothing = false);
+		HRESULT VIInitialize(ID3D12Device* device, bool smoothing);
 		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport, ID3D12Resource* address);
 		~Model();
 	};

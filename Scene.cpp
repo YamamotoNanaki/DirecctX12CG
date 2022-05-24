@@ -26,7 +26,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	//‚»‚Ì‚Ù‚©‚Ì‰Šú‰»
 	Rand::Initialize();
 
-	sphereM.LoadModel(device, "sphere");
+	sphereM.LoadModel(device, "sphere", true);
 	sphereO.Initialize(device, &sphereM);
 
 	sphereO.position = { 0,0,0 };
@@ -47,25 +47,29 @@ void IF::Scene::Update(ID3D12Device* device)
 	{
 		if (input->KDown(KEY::UP))
 		{
-			matView.eye.z++;
-			matView.target.z++;
+			matView.eye.z += 0.5f;
+			matView.target.z += 0.5f;
 		}
 		if (input->KDown(KEY::DOWN))
 		{
-			matView.eye.z--;
-			matView.target.z--;
+			matView.eye.z -= 0.5f;
+			matView.target.z -= 0.5f;
 		}
 		if (input->KDown(KEY::RIGHT))
 		{
-			matView.eye.x++;
-			matView.target.x++;
+			matView.eye.x += 0.5f;
+			matView.target.x += 0.5f;
 		}
 		if (input->KDown(KEY::LEFT))
 		{
-			matView.eye.x--;
-			matView.target.x--;
+			matView.eye.x -= 0.5f;
+			matView.target.x -= 0.5f;
 		}
 	}
+
+	XMFLOAT3 rot = sphereO.rotation;
+	rot.y += 0.05f;
+	sphereO.rotation = rot;
 
 	matView.Update();
 

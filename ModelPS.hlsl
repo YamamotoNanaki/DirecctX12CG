@@ -5,12 +5,16 @@ SamplerState smp : register(s0);
 
 float4 main(GSOutput input) : SV_TARGET
 {
-	/*float3 light = normalize(float3(1,-1,1));
-	float Ldiffuse = saturate(dot(-light, input.normal));
-	float3 shade_color;
-	shade_color = ambient;
-	shade_color += diffuse * Ldiffuse;*/
 	float4 texcolor = float4(tex.Sample(smp, input.uv));
-	return input.color * texcolor;
-	//return float4(texcolor.rgb * shade_color, texcolor.a * alpha) * color;
+	float4 shadecolor;
+	const float shininess = 4.0f;
+	float3 eyedir = normalize(cameraPos - input.worldpos.xyz);
+	float3 dotlightnormal = dot(lightv, input.normal);
+	float3 reflect = normalize(-lightv + 2 * dotlightnormal * input.normal);
+	float3 amb = ambient;
+	float3 diff = dotlightnormal * diffuse;
+	float3 spe = pow(saturate(dot(reflect, eyedir)), shininess) * specular;
+	shadecolor.rgb = (amb + diff + spe) * lightcolor;
+	shadecolor.a = alpha;
+	return shadecolor * texcolor;
 }

@@ -11,7 +11,8 @@ void main(
 	{
 		GSOutput element;
 		element.svpos = input[i].svpos;
-		element.color = input[i].color;
+		element.worldpos = input[i].worldpos;
+		element.normal = input[i].normal;
 		element.uv = input[i].uv;
 		output.Append(element);
 	}

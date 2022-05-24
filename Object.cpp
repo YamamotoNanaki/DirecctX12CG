@@ -3,15 +3,12 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <cassert>
-#include "MathConvert.h"
-#include <DirectXMath.h>
 
 
+using namespace DirectX;
 using namespace IF;
 using namespace std;
 using namespace IF::BillBoard;
-using namespace DirectX;
 
 void IF::Object::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
 {
@@ -56,33 +53,32 @@ HRESULT IF::Object::Initialize(ID3D12Device* device, Model* model)
 	return result;
 }
 
-void Object::Update(Matrix matView, Matrix matProjection, BillBoardMode mode)
+void Object::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode)
 {
-	XMMATRIX matScale, matRot, matTrams, matWorld;
+	XMMATRIX matScale, matRot, matTrams;
 
 	//スケール、回転、平行移動
 	matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
 	matRot = XMMatrixIdentity();
 	matRot *= XMMatrixRotationZ(rotation.z);
-	matRot *= XMMatrixRotationX(rotation.x);
-	matRot *= XMMatrixRotationY(rotation.y);
+	matRot *= XMMatrixRotationZ(rotation.x);
+	matRot *= XMMatrixRotationZ(rotation.y);
 	matTrams = XMMatrixTranslation(position.x, position.y, position.z);
 	//ワールド行列の合成
 	matWorld = XMMatrixIdentity();
-	/*if (mode == BILLBOARD)matWorld *= View::matBillBoard;
-	else if (mode == YBOARD)matWorld *= View::matBillBoardY;*/
+	if (mode == BILLBOARD)matWorld *= View::matBillBoard;
+	else if (mode == YBOARD)matWorld *= View::matBillBoardY;
 	matWorld *= matScale;
 	matWorld *= matRot;
 	matWorld *= matTrams;
 	//親オブジェクトがあれば
 	if (parent != nullptr)
 	{
-		//matWorld *= parent->matWorld;
+		matWorld *= parent->matWorld;
 	}
 
-
 	//定数バッファへのデータ転送
-	constMapTransform->mat = matWorld * MatrixConvert(matView * matProjection);
+	constMapTransform->mat = matWorld * matView * matProjection;
 }
 
 void Object::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)

@@ -1,8 +1,7 @@
 #include "Particle.h"
 #include "View.h"
-#include "MathConvert.h"
-#include <cassert>
 
+using namespace DirectX;
 using namespace IF;
 
 HRESULT Particle::Initialize(ID3D12Device* device)
@@ -51,21 +50,21 @@ HRESULT Particle::VIInitialize(ID3D12Device* device)
 	return result;
 }
 
-void Particle::Update(Matrix matView, Matrix matProjection, Matrix matBillBoard)
+void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard)
 {
-	Matrix matScale, matTrams;
+	XMMATRIX matScale, matTrams;
 
 	//スケール、回転、平行移動
-	matScale = MatrixScaling(scale, scale, scale);
-	matTrams = MatrixTranslation(position.x, position.y, position.z);
+	matScale = XMMatrixScaling(scale, scale, scale);
+	matTrams = XMMatrixTranslation(position.x, position.y, position.z);
 	//ワールド行列の合成
-	matWorld = MatrixIdentity();
+	matWorld = XMMatrixIdentity();
 	matWorld *= matScale;
 	matWorld *= matTrams;
 
 	//定数バッファへのデータ転送
-	constMapTransform->mat = MatrixConvert(matWorld * matView * matProjection);
-	constMapTransform->matBillboard = MatrixConvert(matBillBoard);
+	constMapTransform->mat = matWorld * matView * matProjection;
+	constMapTransform->matBillboard = matBillBoard;
 }
 
 void IF::Particle::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)

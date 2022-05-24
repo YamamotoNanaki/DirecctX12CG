@@ -1,20 +1,19 @@
 #pragma once
 #include <d3d12.h>
 #include <vector>
-#include "IFMath.h"
 
 namespace IF
 {
 	struct Vertex
 	{
-		Float3 pos;			//XYZ座標
-		Float3 normal;		//法線ベクトル
-		Float2 uv;			//UV座標
+		DirectX::XMFLOAT3 pos;			//XYZ座標
+		DirectX::XMFLOAT3 normal;		//法線ベクトル
+		DirectX::XMFLOAT2 uv;			//UV座標
 	};
 
 	struct VertexPos
 	{
-		Float3 pos;			//XYZ座標
+		DirectX::XMFLOAT3 pos;			//XYZ座標
 	};
 
 	enum NormalFlag

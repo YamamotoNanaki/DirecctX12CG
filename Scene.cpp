@@ -1,7 +1,9 @@
 #include "Scene.h"
 #include "Input.h"
+#include <DirectXMath.h>
 #include "Rand.h"
-#include "IFMath.h"
+
+using namespace DirectX;
 
 IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device)
 {

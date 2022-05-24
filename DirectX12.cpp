@@ -1,8 +1,8 @@
 #include "DirectX12.h"
-#include <cassert>
 
 using namespace Microsoft::WRL;
 using namespace std;
+using namespace DirectX;
 using namespace IF;
 
 HRESULT DirectX12::Adapter()
@@ -299,7 +299,7 @@ void IF::DirectX12::SetScissorrect(float left, float right, float top, float bot
 	scissorrect.bottom = scissorrect.top + bottom;
 }
 
-void DirectX12::SetClearColor(Float4 color)
+void DirectX12::SetClearColor(XMFLOAT4 color)
 {
 	clearColor[0] = color.x;
 	clearColor[1] = color.y;

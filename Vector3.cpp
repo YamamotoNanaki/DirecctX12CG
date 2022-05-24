@@ -118,8 +118,3 @@ const Vector3 operator/(const Vector3& v, float s)
 	Vector3 temp(v);
 	return temp /= s;
 }
-
-Vector3 IF::VectorSubtract(Vector3 v1, Vector3 v2)
-{
-	return Vector3(v1 - v2);
-}

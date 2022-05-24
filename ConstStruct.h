@@ -1,6 +1,6 @@
 #pragma once
-#include "IFMath.h"
 #include <DirectXMath.h>
+
 
 namespace IF
 {

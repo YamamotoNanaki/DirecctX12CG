@@ -1,8 +1,6 @@
 #include "Projection.h"
-#include "MathConvert.h"
-
-using namespace IF;
 using namespace DirectX;
+using namespace IF;
 
 Projection::Projection(float radian, float winWidth, float winHeight, float nearZ, float farZ)
 {
@@ -11,11 +9,11 @@ Projection::Projection(float radian, float winWidth, float winHeight, float near
 
 void Projection::Inisialize(float radian, float winWidth, float winHeight, float nearZ, float farZ)
 {
-	XMMATRIX m = XMMatrixPerspectiveFovLH(ConvertToRadians(radian), (float)winWidth / winHeight, nearZ, farZ);
-	matProjection = MatrixConvert(m);
+	matProjection = XMMatrixPerspectiveFovLH(
+		XMConvertToRadians(radian), (float)winWidth / winHeight, nearZ, farZ);
 }
 
-Matrix Projection::Get() const
+XMMATRIX Projection::Get() const
 {
 	return matProjection;
 }

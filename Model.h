@@ -1,11 +1,11 @@
 #pragma once
 #include <d3d12.h>
+#include <DirectXMath.h>
 #include <wrl.h>
 #include <vector>
 #include <string>
 #include "ModelVI.h"
 #include "ConstStruct.h"
-#include "IFMath.h"
 
 #pragma comment(lib,"d3d12.lib") 
 
@@ -15,6 +15,8 @@ namespace IF
 	{
 		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 		template<class T> using vector = std::vector<T>;
+		using XMFLOAT3 = DirectX::XMFLOAT3;
+		using XMMATRIX = DirectX::XMMATRIX;
 	private:
 		//定数バッファ
 		ComPtr<ID3D12Resource> constBuffTransform1;
@@ -24,9 +26,9 @@ namespace IF
 		struct Material
 		{
 			std::string name;
-			DirectX::XMFLOAT3 ambient;
-			DirectX::XMFLOAT3 diffuse;
-			DirectX::XMFLOAT3 specular;
+			XMFLOAT3 ambient;
+			XMFLOAT3 diffuse;
+			XMFLOAT3 specular;
 			float alpha;
 			std::string textureFilename;
 			Material()

@@ -132,6 +132,9 @@
     <ClCompile Include="Object.cpp">
       <Filter>ソース ファイル\Engine\3D\Obj</Filter>
     </ClCompile>
+    <ClCompile Include="ObjVI.cpp">
+      <Filter>ソース ファイル\Engine\3D\Obj</Filter>
+    </ClCompile>
     <ClCompile Include="ParticleVI.cpp">
       <Filter>ソース ファイル\Engine\3D\Effect</Filter>
     </ClCompile>
@@ -170,9 +173,6 @@
     </ClCompile>
     <ClCompile Include="ModelVI.cpp">
       <Filter>ソース ファイル\Engine\3D\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="MathConvert.cpp">
-      <Filter>ソース ファイル\Engine\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +247,9 @@
     <ClInclude Include="Object.h">
       <Filter>ヘッダー ファイル\Engine\3D\Obj</Filter>
     </ClInclude>
+    <ClInclude Include="ObjVI.h">
+      <Filter>ヘッダー ファイル\Engine\3D\Obj</Filter>
+    </ClInclude>
     <ClInclude Include="ParticleVI.h">
       <Filter>ヘッダー ファイル\Engine\3D\Effect</Filter>
     </ClInclude>
@@ -285,9 +288,6 @@
     </ClInclude>
     <ClInclude Include="ModelVI.h">
       <Filter>ヘッダー ファイル\Engine\3D\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="MathConvert.h">
-      <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

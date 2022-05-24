@@ -3,8 +3,9 @@
 #include "Ease.h"
 
 using namespace IF;
+using namespace DirectX;
 
-Fire::Fire(Float3 pos, float scale, unsigned int maxFlame) :pos(pos), scale(scale), maxFlame(maxFlame) {};
+Fire::Fire(XMFLOAT3 pos, float scale, unsigned int maxFlame) :pos(pos), scale(scale), maxFlame(maxFlame) {};
 
 HRESULT Fire::Initialize(ID3D12Device* device)
 {
@@ -36,7 +37,7 @@ void Fire::AddParticle()
 	}
 }
 
-void Fire::Update(Matrix matView, Matrix matProjection, Matrix matBillBoard)
+void Fire::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard)
 {
 	int offset = 100;
 	if (moveOffset == false)

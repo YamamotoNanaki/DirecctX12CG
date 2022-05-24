@@ -6,6 +6,7 @@
 #include <string>
 
 
+using namespace DirectX;
 using namespace IF;
 using namespace std;
 
@@ -22,9 +23,9 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 		assert(0 && "objファイルが開けません");
 	}
 
-	vector<Float3> position;
-	vector<Float3> normal;
-	vector<Float2> texcode;
+	vector<XMFLOAT3> position;
+	vector<XMFLOAT3> normal;
+	vector<XMFLOAT2> texcode;
 
 	vector<Vertex> vertices;
 	vector<unsigned short> indices;
@@ -41,7 +42,7 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 
 		if (key == "v")
 		{
-			Float3 pos{};
+			XMFLOAT3 pos{};
 			line_stream >> pos.x;
 			line_stream >> pos.y;
 			line_stream >> pos.z;
@@ -49,7 +50,7 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 		}
 		if (key == "vn")
 		{
-			Float3 nor{};
+			XMFLOAT3 nor{};
 			line_stream >> nor.x;
 			line_stream >> nor.y;
 			line_stream >> nor.z;
@@ -57,7 +58,7 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name)
 		}
 		if (key == "vt")
 		{
-			Float2 tex{};
+			XMFLOAT2 tex{};
 			line_stream >> tex.x;
 			line_stream >> tex.y;
 			tex.y = 1 - tex.y;

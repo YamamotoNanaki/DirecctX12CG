@@ -6,14 +6,12 @@
 
 namespace IF
 {
-	class MVI : public VI
+	class objVI : public VI
 	{
 	private:
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff = nullptr;
 		Microsoft::WRL::ComPtr<ID3D12Resource> indexBuff = nullptr;
 		std::vector<Vertex> vertices;
-
-	public:
 		std::vector<unsigned short> indices;
 		D3D12_VERTEX_BUFFER_VIEW vbView{};
 		D3D12_INDEX_BUFFER_VIEW ibView{};

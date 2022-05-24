@@ -1,6 +1,6 @@
 #include "ParticleVI.h"
-#include <cassert>
 
+using namespace DirectX;
 using namespace IF;
 using namespace std;
 

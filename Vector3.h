@@ -29,6 +29,4 @@ namespace IF
 		Vector3& operator=(const Float3 f);
 
 	};
-
-	Vector3 VectorSubtract(Vector3 v1, Vector3 v2);
 };

@@ -4,11 +4,12 @@
 #include <sstream>
 #include <string>
 
-
 using namespace DirectX;
 using namespace IF;
 using namespace std;
 using namespace IF::BillBoard;
+
+Light* Object::light = nullptr;
 
 void IF::Object::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
 {
@@ -53,7 +54,7 @@ HRESULT IF::Object::Initialize(ID3D12Device* device, Model* model)
 	return result;
 }
 
-void Object::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode)
+void Object::Update(XMMATRIX matView, XMMATRIX matProjection, XMFLOAT3 cameraPos, BillBoardMode mode)
 {
 	XMMATRIX matScale, matRot, matTrams;
 
@@ -78,7 +79,9 @@ void Object::Update(XMMATRIX matView, XMMATRIX matProjection, BillBoardMode mode
 	}
 
 	//定数バッファへのデータ転送
-	constMapTransform->mat = matWorld * matView * matProjection;
+	constMapTransform->viewPro = matView * matProjection;
+	constMapTransform->world = matWorld;
+	constMapTransform->cameraPos = cameraPos;
 }
 
 void Object::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)
@@ -88,6 +91,9 @@ void Object::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>
 		assert(0 && "モデルがセットされていません");
 		return;
 	}
+
+	light->Draw(commandList, 3);
+
 	model->Draw(commandList, viewport, constBuffTransform.Get());
 }
 

@@ -4,6 +4,7 @@
 #include <wrl.h>
 #include <vector>
 #include <string>
+#include "Light.h"
 #include "ModelVI.h"
 #include "ConstStruct.h"
 #include "Model.h"
@@ -30,6 +31,7 @@ namespace IF
 		using XMMATRIX = DirectX::XMMATRIX;
 	private:
 		Model* model;
+		static Light* light;
 
 	public:
 		//定数バッファ
@@ -50,8 +52,12 @@ namespace IF
 		void SetModel(Model* model);
 		void DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
 			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		void Update(XMMATRIX matView, XMMATRIX matProjection, BillBoard::BillBoardMode mode = BillBoard::NOON);
+		void Update(XMMATRIX matView, XMMATRIX matProjection, XMFLOAT3 comeraPos, BillBoard::BillBoardMode mode = BillBoard::NOON);
 		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);
 		~Object();
+		static void SetLight(Light* light)
+		{
+			Object::light = light;
+		}
 	};
 }

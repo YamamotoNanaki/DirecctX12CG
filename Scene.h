@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "Graphic.h"
 #include "Fire.h"
+#include "Light.h"
 
 namespace IF
 {
@@ -36,6 +37,8 @@ namespace IF
 		//ƒJƒƒ‰
 		View matView;
 		Projection* matPro;
+		//ŒõŒ¹
+		Light* light = nullptr;
 
 	public:
 		ConstBuff cb;

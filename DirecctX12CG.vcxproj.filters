@@ -82,6 +82,12 @@
     <Filter Include="ヘッダー ファイル\Other">
       <UniqueIdentifier>{c3b71481-bdd1-4867-8d93-07aaefa26514}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Engine\Light">
+      <UniqueIdentifier>{0de0eca1-1d57-4c60-9910-0b702517de20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\Light">
+      <UniqueIdentifier>{d644087d-9414-4ec0-83b0-976523e8c7d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -170,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="ModelVI.cpp">
       <Filter>ソース ファイル\Engine\3D\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>ソース ファイル\Engine\Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -282,6 +291,9 @@
     </ClInclude>
     <ClInclude Include="ModelVI.h">
       <Filter>ヘッダー ファイル\Engine\3D\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>ヘッダー ファイル\Engine\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

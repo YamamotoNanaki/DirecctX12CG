@@ -11,7 +11,9 @@ namespace IF
 
 	struct ConstBufferDataTransform
 	{
-		DirectX::XMMATRIX mat;
+		DirectX::XMMATRIX viewPro;
+		DirectX::XMMATRIX world;
+		DirectX::XMFLOAT3 cameraPos;
 	};
 
 	struct ConstBufferBillboard

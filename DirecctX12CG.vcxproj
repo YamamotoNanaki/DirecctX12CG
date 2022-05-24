@@ -165,6 +165,7 @@
     <ClCompile Include="GPipeline.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="IFMath.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelVI.cpp" />
@@ -263,6 +264,7 @@
     <ClInclude Include="Float4.h" />
     <ClInclude Include="GPipeline.h" />
     <ClInclude Include="IFMath.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Model.h" />

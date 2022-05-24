@@ -5,7 +5,9 @@ cbuffer cbuff0:register(b0)
 
 cbuffer ConstBufferDataTransform : register(b1)
 {
-	matrix mat;		//3D•ÏŠ·s—ñ
+	matrix viewPro;		//3D•ÏŠ·s—ñ
+	matrix world;
+	float3 cameraPos;
 };
 
 cbuffer Material : register(b2)
@@ -14,6 +16,12 @@ cbuffer Material : register(b2)
 	float3 diffuse : packoffset(c1);
 	float3 specular : packoffset(c2);
 	float alpha : packoffset(c2.w);
+};
+
+cbuffer LightBuff : register(b3)
+{
+	float3 lightv;
+	float3 lightcolor;
 };
 
 struct VSOutput

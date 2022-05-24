@@ -33,4 +33,5 @@ RootParam::RootParam(D3D12_DESCRIPTOR_RANGE& descRangeSRV, int texMax)
 	TexRoot(descRangeSRV, texMax);
 	ConstRoot(1);
 	ConstRoot(2);
+	ConstRoot(3);
 }

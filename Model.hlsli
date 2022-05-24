@@ -19,13 +19,13 @@ cbuffer Material : register(b2)
 struct VSOutput
 {
 	float4 svpos : SV_POSITION;
-	float3 normal :NORMAL;
+	float4 color :COLOR;
 	float2 uv :TEXCOORD;
 };
 
 struct GSOutput
 {
 	float4 svpos : SV_POSITION;
-	float3 normal :NORMAL;
+	float4 color :COLOR;
 	float2 uv :TEXCOORD;
 };

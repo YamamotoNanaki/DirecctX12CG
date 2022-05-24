@@ -29,7 +29,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	sphereM.LoadModel(device, "sphere");
 	sphereO.Initialize(device, &sphereM);
 
-	sphereO.position = { 0,1,0 };
+	sphereO.position = { 0,0,0 };
 	matView.Update();
 }
 
@@ -43,6 +43,31 @@ void IF::Scene::Update(ID3D12Device* device)
 	Input* input = Input::getInstance();
 	input->Update();
 
+	if (input->Judge(KEY::Arrow, KEY::OR))
+	{
+		if (input->KDown(KEY::UP))
+		{
+			matView.eye.z++;
+			matView.target.z++;
+		}
+		if (input->KDown(KEY::DOWN))
+		{
+			matView.eye.z--;
+			matView.target.z--;
+		}
+		if (input->KDown(KEY::RIGHT))
+		{
+			matView.eye.x++;
+			matView.target.x++;
+		}
+		if (input->KDown(KEY::LEFT))
+		{
+			matView.eye.x--;
+			matView.target.x--;
+		}
+	}
+
+	matView.Update();
 
 	domeObj.Update(matView.Get(), matPro->Get());
 	groundObj.Update(matView.Get(), matPro->Get());

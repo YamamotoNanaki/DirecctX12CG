@@ -67,7 +67,7 @@ float4 main(GSOutput input) : SV_TARGET
 	// 丸影
 	for (i = 0; i < CSHADOW_NUM; i++) {
 		if (cShadows[i].active) {
-			// ライトへの方向ベクトル
+			// オブジェクト表面からキャスターへのベクトル
 			float3 casterv = cShadows[i].casterpos - input.worldpos.xyz;
 			float d = dot(casterv,cShadows[i].shadowv);
 
@@ -80,7 +80,7 @@ float4 main(GSOutput input) : SV_TARGET
 			float angleatten = smoothstep(cShadows[i].shadowFactorAngleCos.y,cShadows[i].shadowFactorAngleCos.x, cos);
 			atten *= angleatten;
 
-			// 全て加算する
+			// 全て減算する
 			shadecolor.rgb -= atten;
 		}
 	}

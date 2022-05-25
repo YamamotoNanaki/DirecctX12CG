@@ -20,7 +20,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 		light->SetSpotLightActive(i, false);
 	}
 	light->SetCircleShadowActive(0, true);
-	light->SetAmbientColor({ 0.6, 0.6, 0.6 });
+	light->SetAmbientColor({ 1, 1, 1 });
 	Object::SetLight(light);
 	//定数バッファの初期化
 	result = cb.Initialize(device);
@@ -70,13 +70,10 @@ void IF::Scene::Update(ID3D12Device* device)
 	//if (input->KDown(KEY::A))lightDir.m128_f32[0] -= 1.0f;
 
 	light->SetCircleShadowDir(0, { csDir.x,csDir.y,csDir.z,0 });
-	light->SetCircleShadowCasterPos(0, spherePos);
 	light->SetCircleShadowAtten(0, csAtten);
 	light->SetCircleShadowFactorAngle(0, csAngle);
 
 	for (int i = 0; i < 3; i++)light->SetDirLightColor(i, dlColor);
-
-	light->Update();
 
 	//カメラ
 	if (input->KDown(KEY::UP))
@@ -100,12 +97,17 @@ void IF::Scene::Update(ID3D12Device* device)
 		matView.target.x -= 0.5f;
 	}
 
+	if (input->KDown(KEY::W))spherePos.y += 0.5f;
+	if (input->KDown(KEY::S))spherePos.y -= 0.5f;
+
 	XMFLOAT3 rot = sphereO.rotation;
 	rot.y += 0.05f;
 	sphereO.rotation = rot;
 	sphereO.position = spherePos;
+	light->SetCircleShadowCasterPos(0, spherePos);
 
 	matView.Update();
+	light->Update();
 
 	domeObj.Update(matView.Get(), matPro->Get(), matView.eye);
 	groundObj.Update(matView.Get(), matPro->Get(), matView.eye);

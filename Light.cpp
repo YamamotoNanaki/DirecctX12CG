@@ -211,14 +211,14 @@ void IF::LightManager::SetSpotLightFactorAngle(int index, const XMFLOAT2& lightF
 
 void IF::LightManager::SetCircleShadowActive(int index, bool active)
 {
-	assert(0 <= index && index < SLightNum);
+	assert(0 <= index && index < CShadowNum);
 
 	cShadow[index].SetActive(active);
 }
 
 void IF::LightManager::SetCircleShadowDir(int index, const XMVECTOR& lightdir)
 {
-	assert(0 <= index && index < SLightNum);
+	assert(0 <= index && index < CShadowNum);
 
 	cShadow[index].SetShadowDir(lightdir);
 	dirty = true;
@@ -226,7 +226,7 @@ void IF::LightManager::SetCircleShadowDir(int index, const XMVECTOR& lightdir)
 
 void IF::LightManager::SetCircleShadowCasterPos(int index, const XMFLOAT3& lightpos)
 {
-	assert(0 <= index && index < SLightNum);
+	assert(0 <= index && index < CShadowNum);
 
 	cShadow[index].SetCasterPos(lightpos);
 	dirty = true;
@@ -234,7 +234,7 @@ void IF::LightManager::SetCircleShadowCasterPos(int index, const XMFLOAT3& light
 
 void IF::LightManager::SetCircleShadowDistanceCasterLight(int index, float distanceCasterLight)
 {
-	assert(0 <= index && index < SLightNum);
+	assert(0 <= index && index < CShadowNum);
 
 	cShadow[index].SetDistanceCasterLight(distanceCasterLight);
 	dirty = true;
@@ -242,7 +242,7 @@ void IF::LightManager::SetCircleShadowDistanceCasterLight(int index, float dista
 
 void IF::LightManager::SetCircleShadowAtten(int index, const XMFLOAT3& lightAtten)
 {
-	assert(0 <= index && index < SLightNum);
+	assert(0 <= index && index < CShadowNum);
 
 	cShadow[index].SetShadowAtten(lightAtten);
 	dirty = true;
@@ -250,7 +250,7 @@ void IF::LightManager::SetCircleShadowAtten(int index, const XMFLOAT3& lightAtte
 
 void IF::LightManager::SetCircleShadowFactorAngle(int index, const XMFLOAT2& lightFactorAngle)
 {
-	assert(0 <= index && index < SLightNum);
+	assert(0 <= index && index < CShadowNum);
 
 	cShadow[index].SetShadowFactorAngle(lightFactorAngle);
 	dirty = true;

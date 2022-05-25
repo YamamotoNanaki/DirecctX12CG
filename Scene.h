@@ -33,7 +33,7 @@ namespace IF
 		DirectX::XMFLOAT2 slAngle{ 20,30 };
 		DirectX::XMFLOAT3 csDir{ 0,-1,0 };
 		DirectX::XMFLOAT3 csAtten{ 0.5,0.6,0 };
-		DirectX::XMFLOAT2 csAngle{ 0,5 };
+		DirectX::XMFLOAT2 csAngle{ 0,0.7 };
 
 		//-----------------------
 

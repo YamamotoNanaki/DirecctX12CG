@@ -31,7 +31,7 @@ namespace IF
 		using XMMATRIX = DirectX::XMMATRIX;
 	private:
 		Model* model;
-		static Light* light;
+		static LightManager* light;
 
 	public:
 		//定数バッファ
@@ -55,7 +55,7 @@ namespace IF
 		void Update(XMMATRIX matView, XMMATRIX matProjection, XMFLOAT3 comeraPos, BillBoard::BillBoardMode mode = BillBoard::NOON);
 		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);
 		~Object();
-		static void SetLight(Light* light)
+		static void SetLight(LightManager* light)
 		{
 			Object::light = light;
 		}

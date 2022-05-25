@@ -9,7 +9,7 @@ using namespace IF;
 using namespace std;
 using namespace IF::BillBoard;
 
-Light* Object::light = nullptr;
+LightManager* Object::light = nullptr;
 
 void IF::Object::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
 {

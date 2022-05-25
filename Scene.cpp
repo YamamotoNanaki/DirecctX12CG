@@ -9,9 +9,18 @@ using namespace std;
 
 IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device)
 {
-	light = Light::GetInstance();
+	//光源設定
+	light = LightManager::GetInstance();
 	light->Initialize();
-	light->SetLightColor({ 1, 1, 1 });
+	light->DefaultLightSetting();
+	for (int i = 0; i < 3; i++)
+	{
+		light->SetDirLightActive(i, true);
+		light->SetPointLightActive(i, false);
+		light->SetSpotLightActive(i, false);
+	}
+	light->SetCircleShadowActive(0, true);
+	light->SetAmbientColor({ 0.6, 0.6, 0.6 });
 	Object::SetLight(light);
 	//定数バッファの初期化
 	result = cb.Initialize(device);
@@ -27,7 +36,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	groundObj.position = { 0,-2,0 };
 	//カメラ関連初期化
 	matPro = new Projection(45.0f, winWidth, winHeight);
-	matView.eye = { 0,0,-5.0f };
+	matView.eye = { 1,1,-5.0f };
 
 	//そのほかの初期化
 	Rand::Initialize();
@@ -35,7 +44,8 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	sphereM.LoadModel(device, "sphere", true);
 	sphereO.Initialize(device, &sphereM);
 
-	sphereO.position = { 0,0,0 };
+	sphereO.position = { -1,0,0 };
+	sphereO.scale = { 0.5,0.5,0.5 };
 	matView.Update();
 }
 
@@ -51,14 +61,20 @@ void IF::Scene::Update(ID3D12Device* device)
 	input->Update();
 
 	//光源
-	static XMVECTOR lightDir = { 0,1,5,0 };
+	static XMFLOAT3 dlColor = { 1,1,1 };
+	static XMFLOAT3 spherePos = { -1,0,0 };
 
-	if (input->KDown(KEY::W))lightDir.m128_f32[1] += 1.0f;
-	if (input->KDown(KEY::S))lightDir.m128_f32[1] -= 1.0f;
-	if (input->KDown(KEY::D))lightDir.m128_f32[0] += 1.0f;
-	if (input->KDown(KEY::A))lightDir.m128_f32[0] -= 1.0f;
+	//if (input->KDown(KEY::W))lightDir.m128_f32[1] += 1.0f;
+	//if (input->KDown(KEY::S))lightDir.m128_f32[1] -= 1.0f;
+	//if (input->KDown(KEY::D))lightDir.m128_f32[0] += 1.0f;
+	//if (input->KDown(KEY::A))lightDir.m128_f32[0] -= 1.0f;
 
-	light->SetLightDir(lightDir);
+	light->SetCircleShadowDir(0, { csDir.x,csDir.y,csDir.z,0 });
+	light->SetCircleShadowCasterPos(0, spherePos);
+	light->SetCircleShadowAtten(0, csAtten);
+	light->SetCircleShadowFactorAngle(0, csAngle);
+
+	for (int i = 0; i < 3; i++)light->SetDirLightColor(i, dlColor);
 
 	light->Update();
 
@@ -87,6 +103,7 @@ void IF::Scene::Update(ID3D12Device* device)
 	XMFLOAT3 rot = sphereO.rotation;
 	rot.y += 0.05f;
 	sphereO.rotation = rot;
+	sphereO.position = spherePos;
 
 	matView.Update();
 

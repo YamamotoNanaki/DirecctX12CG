@@ -295,6 +295,18 @@
     <ClInclude Include="Light.h">
       <Filter>ヘッダー ファイル\Engine\Light</Filter>
     </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>ヘッダー ファイル\Engine\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>ヘッダー ファイル\Engine\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLight.h">
+      <Filter>ヘッダー ファイル\Engine\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="CircleShadow.h">
+      <Filter>ヘッダー ファイル\Engine\Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Model.hlsli">

@@ -26,6 +26,14 @@ namespace IF
 		int groundTex = 0;
 		Model sphereM;
 		Object sphereO;
+		DirectX::XMFLOAT3 slDir{ 0,-1,0 };
+		DirectX::XMFLOAT3 slPos{ 0,5,0 };
+		DirectX::XMFLOAT3 slColor{ 1,1,1 };
+		DirectX::XMFLOAT3 slAtten{ 0,0,0 };
+		DirectX::XMFLOAT2 slAngle{ 20,30 };
+		DirectX::XMFLOAT3 csDir{ 0,-1,0 };
+		DirectX::XMFLOAT3 csAtten{ 0.5,0.6,0 };
+		DirectX::XMFLOAT2 csAngle{ 0,5 };
 
 		//-----------------------
 
@@ -38,7 +46,7 @@ namespace IF
 		View matView;
 		Projection* matPro;
 		//ŒõŒ¹
-		Light* light = nullptr;
+		LightManager* light = nullptr;
 
 	public:
 		ConstBuff cb;

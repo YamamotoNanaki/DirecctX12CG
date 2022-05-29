@@ -28,9 +28,6 @@
     <Filter Include="ヘッダー ファイル\Engine\Graphic">
       <UniqueIdentifier>{e397ec9f-89d2-4b4e-85ca-61d57c8c6ec2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Engine\Base">
-      <UniqueIdentifier>{b27b0c63-a02d-4da6-9808-757fd3726209}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Engine\3D">
       <UniqueIdentifier>{c18177b7-dbb4-4de6-b968-b08f803e8e41}</UniqueIdentifier>
     </Filter>
@@ -87,6 +84,15 @@
     </Filter>
     <Filter Include="ソース ファイル\Engine\Light">
       <UniqueIdentifier>{d644087d-9414-4ec0-83b0-976523e8c7d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Engine\Base">
+      <UniqueIdentifier>{b27b0c63-a02d-4da6-9808-757fd3726209}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Engine\2D">
+      <UniqueIdentifier>{f6fc9a72-602c-4cb2-a942-70423a320b16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\2D">
+      <UniqueIdentifier>{2bfa72b3-a537-45b2-81a2-bc2bfb4f6f79}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +186,12 @@
     <ClCompile Include="Light.cpp">
       <Filter>ソース ファイル\Engine\Light</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteVI.cpp">
+      <Filter>ソース ファイル\Engine\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>ソース ファイル\Engine\2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ModelPS.hlsl">
@@ -198,6 +210,12 @@
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
     <FxCompile Include="ParticleVS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="SpriteVS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="SpritePS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
   </ItemGroup>
@@ -286,9 +304,6 @@
     <ClInclude Include="Vector3.h">
       <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="VI.h">
-      <Filter>ヘッダー ファイル\Engine\Base</Filter>
-    </ClInclude>
     <ClInclude Include="ModelVI.h">
       <Filter>ヘッダー ファイル\Engine\3D\Model</Filter>
     </ClInclude>
@@ -307,12 +322,21 @@
     <ClInclude Include="CircleShadow.h">
       <Filter>ヘッダー ファイル\Engine\Light</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteVI.h">
+      <Filter>ヘッダー ファイル\Engine\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>ヘッダー ファイル\Engine\2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Model.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
     <None Include="Particle.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Sprite.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
   </ItemGroup>

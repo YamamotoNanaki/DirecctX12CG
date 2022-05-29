@@ -29,6 +29,17 @@ namespace IF
 			gs,		  //3
 		};
 	}
+	namespace ShaderCompile
+	{
+		enum ShaderCompile
+		{
+			vs = 0b001,
+			ps = 0b010,
+			gs = 0b100,
+			vsps = 0b011,
+			all = 0b111,
+		};
+	}
 
 	class Graphic
 	{
@@ -42,9 +53,10 @@ namespace IF
 
 	public:
 		HRESULT CompillerArray(LPCWSTR fillname, int num);
-		HRESULT Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs);
+		HRESULT Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs, char Compile = ShaderCompile::all);
 		HRESULT Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV);
 		HRESULT Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps, LPCWSTR gs);
+		HRESULT Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps);
 		HRESULT ParticleInitialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV);
 		void DrawBlendMode(ID3D12GraphicsCommandList* commandList, Blend::Blend blend = Blend::NORMAL);
 	};

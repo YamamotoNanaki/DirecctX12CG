@@ -182,6 +182,8 @@
     <ClCompile Include="Rand.cpp" />
     <ClCompile Include="RootParam.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteVI.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="Vector2.cpp" />
@@ -254,6 +256,18 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="SpritePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SpriteVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -285,11 +299,12 @@
     <ClInclude Include="RootParam.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SpotLight.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteVI.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
-    <ClInclude Include="VI.h" />
     <ClInclude Include="View.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="Input.h" />
@@ -300,6 +315,7 @@
   <ItemGroup>
     <None Include="Model.hlsli" />
     <None Include="Particle.hlsli" />
+    <None Include="Sprite.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

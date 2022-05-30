@@ -3,14 +3,17 @@
 
 using namespace IF;
 
-GPipeline::GPipeline(ID3DBlob* vsBlob,ID3DBlob* psBlob, ID3DBlob* gsBlob, D3D12_INPUT_ELEMENT_DESC* inputLayout, int layoutCount)
+GPipeline::GPipeline(ID3DBlob* vsBlob, ID3DBlob* psBlob, ID3DBlob* gsBlob, D3D12_INPUT_ELEMENT_DESC* inputLayout, int layoutCount)
 {
 	for (int i = 0; i < _countof(pipelineDesc); i++)
 	{
 		pipelineDesc[i].VS.pShaderBytecode = vsBlob->GetBufferPointer();
 		pipelineDesc[i].VS.BytecodeLength = vsBlob->GetBufferSize();
-		pipelineDesc[i].GS.pShaderBytecode = gsBlob->GetBufferPointer();
-		pipelineDesc[i].GS.BytecodeLength = gsBlob->GetBufferSize();
+		if (gsBlob != nullptr)
+		{
+			pipelineDesc[i].GS.pShaderBytecode = gsBlob->GetBufferPointer();
+			pipelineDesc[i].GS.BytecodeLength = gsBlob->GetBufferSize();
+		}
 		pipelineDesc[i].PS.pShaderBytecode = psBlob->GetBufferPointer();
 		pipelineDesc[i].PS.BytecodeLength = psBlob->GetBufferSize();
 		//デプスステンシルステートの設定
@@ -31,21 +34,21 @@ GPipeline::GPipeline(ID3DBlob* vsBlob,ID3DBlob* psBlob, ID3DBlob* gsBlob, D3D12_
 		blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;			//ソースの値を100%使う
 		blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;			//デストの値を  0%使う
 
-		if (i == 1)
+		if (i % 4 == 1)
 		{
 			blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
 			blenddesc.SrcBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
 			blenddesc.DestBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
 			pipelineDesc[i].DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		}
-		else if (i == 2)
+		else if (i % 4 == 2)
 		{
 			blenddesc.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;		//デストからソースを減算
 			blenddesc.SrcBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
 			blenddesc.DestBlend = D3D12_BLEND_ONE;				//ソースの値を100%使う
 			pipelineDesc[i].DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		}
-		else if (i == 3)
+		else if (i % 4 == 3)
 		{
 			blenddesc.BlendOp = D3D12_BLEND_OP_ADD;				//加算
 			blenddesc.SrcBlend = D3D12_BLEND_INV_DEST_COLOR;		//1.0f-デストカラーの値
@@ -68,7 +71,13 @@ GPipeline::GPipeline(ID3DBlob* vsBlob,ID3DBlob* psBlob, ID3DBlob* gsBlob, D3D12_
 		pipelineDesc[i].NumRenderTargets = 1; // 描画対象は1つ
 		pipelineDesc[i].RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 0～255指定のRGBA
 		pipelineDesc[i].SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
-		
+
+		if (i > 3 && i < 8)
+		{
+			pipelineDesc[i].DepthStencilState.DepthEnable = false;		//深度テストを行わない
+			pipelineDesc[i].RasterizerState.CullMode = D3D12_CULL_MODE_NONE;  // 背面をカリングしない
+		}
+		if (i > 7)pipelineDesc[i].PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 	}
 }
 

@@ -20,11 +20,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	HRESULT result;
 	DirectX12* dx12 = new DirectX12(result, win->hwnd, winWidth, winHeight);
 	result = Input::getInstance()->Initialize(win->w.hInstance, win->hwnd);
-	//ŒõŒ¹
-	LightManager* light = LightManager::GetInstance();
-	light->SetDevice(dx12->device.Get());
-	Scene scene(winWidth, winHeight, result, dx12->device.Get());
-	dx12->SetClearColor(0.25, 0.5, 1);
+	LightManager::GetInstance()->SetDevice(dx12->device.Get());
+	Scene scene(winWidth, winHeight, result, dx12->device.Get(), dx12->commandList.Get());
+	dx12->SetClearColor(0, 0, 0);
 
 
 	while (!Input::getInstance()->KDown(KEY::ESC))

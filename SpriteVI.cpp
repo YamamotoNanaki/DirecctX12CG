@@ -56,3 +56,21 @@ void IF::SV::Initialize(ID3D12Device* device)
 	vbView.StrideInBytes = sizeof(vertices[0]);
 
 }
+
+D3D12_VERTEX_BUFFER_VIEW& IF::SV::GetVertexView()
+{
+	return vbView;
+}
+
+void IF::SV::SetVerticle(Vertex2D* vertices)
+{
+	for (int i = 0; i < _countof(this->vertices); i++)
+	{
+		this->vertices[i] = vertices[i];
+	}
+}
+
+unsigned int IF::SV::GetSize()
+{
+	return _countof(vertices);
+}

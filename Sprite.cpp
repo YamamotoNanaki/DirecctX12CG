@@ -1,5 +1,6 @@
 #include "Sprite.h"
 #include <cassert>
+#include "Texture.h"
 
 using namespace IF;
 
@@ -19,6 +20,18 @@ void IF::Sprite::SetDeviceCommand(ID3D12Device* device, ID3D12GraphicsCommandLis
 
 void IF::Sprite::Initialize()
 {
+	vi = new SV;
+
+	Vertex2D vertices[]
+	{
+		{{-5.0f,+5.0f,0.0f},{0.0f,1.0f}},
+		{{-5.0f,-5.0f,0.0f},{0.0f,0.0f}},
+		{{+5.0f,-5.0f,0.0f},{1.0f,0.0f}}
+	};
+
+	vi->SetVerticle(vertices);
+	vi->Initialize(Sprite::device);
+
 	HRESULT result;
 	//定数バッファのヒープ設定
 	D3D12_HEAP_PROPERTIES heapProp{};
@@ -51,12 +64,38 @@ void IF::Sprite::DrawBefore(ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS
 	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
 }
 
-void IF::Sprite::Update(Matrix matView, Matrix matProjection, Float3 comeraPos)
+void IF::Sprite::Update()
 {
+	Matrix matScale, matRot, matTrams;
 
+	//スケール、回転、平行移動
+	matScale = MatrixScaling(scale.x, scale.y, scale.z);
+	matRot = MatrixIdentity();
+	matRot *= MatrixRotationZ(rotation.z);
+	matRot *= MatrixRotationX(rotation.x);
+	matRot *= MatrixRotationY(rotation.y);
+	matTrams = MatrixTranslation(position.x, position.y, position.z);
+	//ワールド行列の合成
+	matWorld = MatrixIdentity();
+	matWorld *= matScale;
+	matWorld *= matRot;
+	matWorld *= matTrams;
+
+	//定数バッファへのデータ転送
+	constMapTransform->mat = matWorld;
 }
 
-void IF::Sprite::Draw(std::vector<D3D12_VIEWPORT> viewport)
+void IF::Sprite::Draw(std::vector<D3D12_VIEWPORT> viewport,unsigned int texNum)
 {
-
+	for (int i = 0; i < viewport.size(); i++)
+	{
+		Texture::getInstance()->setTexture(commandList, texNum);
+		commandList->RSSetViewports(1, &viewport[i]);
+		//頂点バッファの設定
+		commandList->IASetVertexBuffers(0, 1, &vi->GetVertexView());
+		//定数バッファビューの設定
+		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
+		//描画コマンド
+		commandList->DrawInstanced(vi->GetSize(), 1, 0, 0);
+	}
 }

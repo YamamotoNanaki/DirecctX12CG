@@ -3,11 +3,12 @@
 #include <DirectXMath.h>
 #include "Rand.h"
 #include "Light.h"
+#include "MathConvert.h"
 
 using namespace DirectX;
 using namespace std;
 
-IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device)
+IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
 {
 	//光源設定
 	light = LightManager::GetInstance();
@@ -27,7 +28,8 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	//画像関連初期化
 	tex->setDevice(device);
 	tex->Initialize();
-	result = graph.Initialize(device, tex->descRangeSRV);
+	result = graph.Initialize(device, tex->descRangeSRV, L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
+	result = graph.Initialize2D(device, tex->descRangeSRV, L"SpriteVS.hlsl", L"SpritePS.hlsl");
 	//モデルの読み込みとオブジェクトとの紐付け(空と地面)
 	domeM.LoadModel(device, "skydome");
 	groundM.LoadModel(device, "ground");
@@ -47,6 +49,12 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	sphereO.position = { -1,0,0 };
 	sphereO.scale = { 0.5,0.5,0.5 };
 	matView.Update();
+
+
+	//2D関連
+	sprite.SetDeviceCommand(device, commandList);
+	sprite.Initialize();
+	SGraph = tex->LoadTexture("Resources/texture.png");
 }
 
 IF::Scene::~Scene()
@@ -112,6 +120,8 @@ void IF::Scene::Update(ID3D12Device* device)
 	domeObj.Update(matView.Get(), matPro->Get(), matView.eye);
 	groundObj.Update(matView.Get(), matPro->Get(), matView.eye);
 	sphereO.Update(matView.Get(), matPro->Get(), matView.eye);
+
+	sprite.Update();
 }
 
 void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
@@ -130,4 +140,7 @@ void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPO
 	//tex->setTexture(commandList, efect);
 	//fire->particle[0].DrawBefore(commandList, pgraph.rootsignature.Get(), tex->srvHeap.Get(), cb.GetGPUAddress(), D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	//fire->Draw(commandList, viewport);
+	graph.DrawBlendMode(commandList, Blend::NORMAL2D);
+	sprite.DrawBefore(graph.rootsignature.Get(), cb.GetGPUAddress());
+	sprite.Draw(viewport, SGraph);
 }

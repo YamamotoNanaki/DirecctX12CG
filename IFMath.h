@@ -31,7 +31,7 @@ namespace IF
 	const Vector3 Vector3Zero();
 	// 2ƒxƒNƒgƒ‹‚ªˆê’v‚µ‚Ä‚¢‚é‚©’²‚×‚é
 	bool Vector3Equal(const Vector3& v1, const Vector3& v2);
-	// ƒmƒ‹ƒ€(’·‚³)‚ğ‹‚ß‚é
+	// ’·‚³‚ğ‹‚ß‚é
 	float Vector3Length(const Vector3& v);
 	// ³‹K‰»‚·‚é
 	Vector3& Vector3Normalize(Vector3& v);

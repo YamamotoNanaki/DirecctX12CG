@@ -63,7 +63,11 @@ unsigned short Texture::LoadTexture(const std::string filename)
 	unsigned short num;
 	for (int i = 0; i < textureMax; i++)
 	{
-		if (tex[i].free == false)num = i;
+		if (tex[i].free == false)
+		{
+			num = i;
+			break;
+		}
 	}
 
 	Tex newtex;

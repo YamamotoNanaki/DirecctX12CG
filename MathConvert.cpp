@@ -16,3 +16,13 @@ Matrix IF::MatrixConvert(DirectX::XMMATRIX xm)
 		xm.r[2].m128_f32[0],xm.r[2].m128_f32[1],xm.r[2].m128_f32[2],xm.r[2].m128_f32[3],
 		xm.r[3].m128_f32[0],xm.r[3].m128_f32[1],xm.r[3].m128_f32[2],xm.r[3].m128_f32[3]);
 }
+
+DirectX::XMFLOAT3 IF::Float3Convert(Float3 m)
+{
+	return XMFLOAT3(m.x, m.y, m.z);
+}
+
+Float3 IF::Float3Convert(DirectX::XMFLOAT3 xm)
+{
+	return Float3(xm.x, xm.y, xm.z);
+}

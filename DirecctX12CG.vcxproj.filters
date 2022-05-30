@@ -192,6 +192,9 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>ソース ファイル\Engine\2D</Filter>
     </ClCompile>
+    <ClCompile Include="MathConvert.cpp">
+      <Filter>ソース ファイル\Engine\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ModelPS.hlsl">
@@ -327,6 +330,9 @@
     </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>ヘッダー ファイル\Engine\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="MathConvert.h">
+      <Filter>ヘッダー ファイル\Engine\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

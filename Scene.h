@@ -8,6 +8,7 @@
 #include "Graphic.h"
 #include "Fire.h"
 #include "Light.h"
+#include "Sprite.h"
 
 namespace IF
 {
@@ -34,6 +35,8 @@ namespace IF
 		DirectX::XMFLOAT3 csDir{ 0,-1,0 };
 		DirectX::XMFLOAT3 csAtten{ 0.5,0.6,0 };
 		DirectX::XMFLOAT2 csAngle{ 0,0.7 };
+		Sprite sprite;
+		unsigned int SGraph = 0;
 
 		//-----------------------
 
@@ -54,7 +57,7 @@ namespace IF
 		Graphic graph;
 
 	public:
-		Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device);
+		Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 		~Scene();
 
 	public:

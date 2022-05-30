@@ -17,7 +17,7 @@ HRESULT IF::Graphic::CompillerArray(LPCWSTR fillname, int num)
 		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", s[num], // エントリーポイント名、シェーダーモデル	指定
 		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
-		0, &Blobs[num + 1], &Blobs[ShaderCode::error]);
+		0, &Blobs[Blobs.size() - 1], &Blobs[ShaderCode::error]);
 
 	//-------------------------
 
@@ -48,7 +48,7 @@ HRESULT Graphic::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs, char compile)
 		s.emplace_back(ps);
 	if (compile & ShaderCompile::gs)
 		s.emplace_back(gs);
-	Blobs.emplace_back(nullptr);
+	if (Blobs.size() == 0)Blobs.emplace_back(nullptr);
 	for (int i = 0; i < s.size(); i++)
 	{
 		result = CompillerArray(s[i], i);
@@ -57,66 +57,66 @@ HRESULT Graphic::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs, char compile)
 	return result;
 }
 
-HRESULT Graphic::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV)
-{
-	HRESULT result;
-
-	RootParam root(descRangeSRV, 1);
-
-	result = Compiller(L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
-
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{// xyz座標
-			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{// 法線ベクトル
-			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-		{// uv座標
-			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-		},
-	};
-	GPipeline pipeline(Blobs[ShaderCode::vs].Get(), Blobs[ShaderCode::ps].Get(), Blobs[ShaderCode::gs].Get(), inputLayout, _countof(inputLayout));
-
-	D3D12_STATIC_SAMPLER_DESC samplerDesc{};
-	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//横繰り返し
-	samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//縦繰り返し
-	samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//奥行繰り返し
-	samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;	//ボーダーの時は黒
-	samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;					//リニア補完
-	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;									//ミップマップ最大値
-	samplerDesc.MinLOD = 0.0f;												//ミップマップ最小値
-	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-	samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;			//ピクセルシェーダーからのみ可視
-
-	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
-	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	rootSignatureDesc.pParameters = &root.rootParams.front();
-	rootSignatureDesc.NumParameters = root.rootParams.size();
-	//テクスチャ追加
-	rootSignatureDesc.pStaticSamplers = &samplerDesc;
-	rootSignatureDesc.NumStaticSamplers = 1;
-
-	ID3DBlob* rootSigBlob = nullptr;
-	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &Blobs[ShaderCode::error]);
-	assert(SUCCEEDED(result));
-	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
-	assert(SUCCEEDED(result));
-	rootSigBlob->Release();
-
-	pipeline.RootSignature(*rootsignature.Get());
-
-	for (int i = 0; i < _countof(pipelinestate); i++)
-	{
-		int j = i;
-		if (j > 3)j = 0;
-		result = device->CreateGraphicsPipelineState(&pipeline.pipelineDesc[j], IID_PPV_ARGS(&pipelinestate[j]));
-	}
-	assert(SUCCEEDED(result));
-
-	return result;
-
-}
+//HRESULT Graphic::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV)
+//{
+//	HRESULT result;
+//
+//	RootParam root(descRangeSRV, 1);
+//
+//	result = Compiller(L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
+//
+//	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
+//		{// xyz座標
+//			"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+//		},
+//		{// 法線ベクトル
+//			"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+//		},
+//		{// uv座標
+//			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+//		},
+//	};
+//	GPipeline pipeline(Blobs[ShaderCode::vs].Get(), Blobs[ShaderCode::ps].Get(), Blobs[ShaderCode::gs].Get(), inputLayout, _countof(inputLayout));
+//
+//	D3D12_STATIC_SAMPLER_DESC samplerDesc{};
+//	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//横繰り返し
+//	samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//縦繰り返し
+//	samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//奥行繰り返し
+//	samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;	//ボーダーの時は黒
+//	samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;					//リニア補完
+//	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;									//ミップマップ最大値
+//	samplerDesc.MinLOD = 0.0f;												//ミップマップ最小値
+//	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+//	samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;			//ピクセルシェーダーからのみ可視
+//
+//	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
+//	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+//	rootSignatureDesc.pParameters = &root.rootParams.front();
+//	rootSignatureDesc.NumParameters = root.rootParams.size();
+//	//テクスチャ追加
+//	rootSignatureDesc.pStaticSamplers = &samplerDesc;
+//	rootSignatureDesc.NumStaticSamplers = 1;
+//
+//	ID3DBlob* rootSigBlob = nullptr;
+//	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &Blobs[ShaderCode::error]);
+//	assert(SUCCEEDED(result));
+//	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
+//	assert(SUCCEEDED(result));
+//	rootSigBlob->Release();
+//
+//	pipeline.RootSignature(*rootsignature.Get());
+//
+//	for (int i = 0; i < _countof(pipelinestate); i++)
+//	{
+//		int j = i;
+//		if (j > 3)j = 0;
+//		result = device->CreateGraphicsPipelineState(&pipeline.pipelineDesc[j], IID_PPV_ARGS(&pipelinestate[j]));
+//	}
+//	assert(SUCCEEDED(result));
+//
+//	return result;
+//
+//}
 
 HRESULT IF::Graphic::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps, LPCWSTR gs)
 {
@@ -167,10 +167,9 @@ HRESULT IF::Graphic::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& de
 
 	pipeline.RootSignature(*rootsignature.Get());
 
-	for (int i = 0; i < _countof(pipelinestate); i++)
+	for (int i = 0; i < 4; i++)
 	{
 		int j = i;
-		if (j > 3)j = 0;
 		result = device->CreateGraphicsPipelineState(&pipeline.pipelineDesc[j], IID_PPV_ARGS(&pipelinestate[j]));
 	}
 	assert(SUCCEEDED(result));
@@ -194,7 +193,7 @@ HRESULT IF::Graphic::Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& 
 			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
 	};
-	GPipeline pipeline(Blobs[ShaderCode::vs].Get(), Blobs[ShaderCode::ps].Get(), Blobs[ShaderCode::gs].Get(), inputLayout, _countof(inputLayout));
+	GPipeline pipeline(Blobs[ShaderCode::vs2d].Get(), Blobs[ShaderCode::ps2d].Get(), nullptr, inputLayout, _countof(inputLayout));
 
 	D3D12_STATIC_SAMPLER_DESC samplerDesc{};
 	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//横繰り返し
@@ -224,10 +223,9 @@ HRESULT IF::Graphic::Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& 
 
 	pipeline.RootSignature(*rootsignature.Get());
 
-	for (int i = 0; i < _countof(pipelinestate); i++)
+	for (int i = 4; i < 8; i++)
 	{
 		int j = i;
-		if (j > 3)j = 0;
 		result = device->CreateGraphicsPipelineState(&pipeline.pipelineDesc[j], IID_PPV_ARGS(&pipelinestate[j]));
 	}
 	assert(SUCCEEDED(result));
@@ -235,7 +233,7 @@ HRESULT IF::Graphic::Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& 
 	return result;
 }
 
-HRESULT IF::Graphic::ParticleInitialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV)
+HRESULT IF::Graphic::InitializeParticle(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV)
 {
 	HRESULT result;
 
@@ -250,10 +248,6 @@ HRESULT IF::Graphic::ParticleInitialize(ID3D12Device* device, D3D12_DESCRIPTOR_R
 	};
 
 	GPipeline pipeline(Blobs[ShaderCode::vs].Get(), Blobs[ShaderCode::ps].Get(), Blobs[ShaderCode::gs].Get(), inputLayout, _countof(inputLayout));
-	for (int i = 0; i < _countof(pipeline.pipelineDesc); i++)
-	{
-		pipeline.pipelineDesc[i].PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
-	}
 
 	D3D12_STATIC_SAMPLER_DESC samplerDesc{};
 	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;					//横繰り返し
@@ -283,10 +277,9 @@ HRESULT IF::Graphic::ParticleInitialize(ID3D12Device* device, D3D12_DESCRIPTOR_R
 
 	pipeline.RootSignature(*rootsignature.Get());
 
-	for (int i = 0; i < _countof(pipelinestate); i++)
+	for (int i = 8; i < 12; i++)
 	{
 		int j = i;
-		if (j > 3)j = 0;
 		result = device->CreateGraphicsPipelineState(&pipeline.pipelineDesc[j], IID_PPV_ARGS(&pipelinestate[j]));
 	}
 	assert(SUCCEEDED(result));

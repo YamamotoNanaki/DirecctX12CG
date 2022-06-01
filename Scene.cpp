@@ -136,11 +136,7 @@ void IF::Scene::Update()
 
 	//デバッグ用
 #ifdef _DEBUG
-	dText.Print(100,100, 2, " !#$%&'()*+,-./0123456789:;");
-	dText.Print(100,130, 2, "<=>?`ABCDEFGHIJKLMNOPQRSTUVW");
-	dText.Print(100,160, 2, "XYZ[\\]^_`abcdefghijklmnopqrs");
-	dText.Print(100,190, 2, "tuvwxyz{|}~");
-	//dText.Print(100,190, 2, "- ; I W e s ~");
+	dText.Print(100,100, 2, "matView.eye.x : %f",matView.eye.x);
 #endif // _DEBUG
 }
 

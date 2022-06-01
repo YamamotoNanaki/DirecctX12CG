@@ -8,17 +8,21 @@ void IF::DebugText::Initialize(unsigned int texNum)
 	}
 }
 
-void IF::DebugText::Print(float x, float y, float scale, const std::string& text, ...)
+void IF::DebugText::Print(float x, float y, float scale, const char* text, ...)
 {
 	posX = x;
 	posY = y;
 	size = scale;
 
-	for (int i = 0; i < text.size(); i++)
+	va_list args;
+	va_start(args, text);
+	int w = vsnprintf(buffer, bufferSize - 1, text, args);
+
+	for (int i = 0; i < w; i++)
 	{
 		if (spriteIndex >= maxCharCount)break;
 
-		const unsigned char& character = text[i];
+		const unsigned char& character = buffer[i];
 
 		int fontIndex = character - 32;
 		if (character >= 0x7f)fontIndex = 0;

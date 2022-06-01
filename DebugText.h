@@ -11,6 +11,8 @@ namespace IF
 		static const int fontWidth = 9;
 		static const int fontHeight = 18;
 		static const int fontLineCount = 14;
+		static const int bufferSize = 256;
+		char buffer[bufferSize];
 
 	private:
 		Sprite sprites[maxCharCount];
@@ -22,7 +24,7 @@ namespace IF
 
 	public:
 		void Initialize(unsigned int texNum);
-		void Print(float x, float y, float scale, const std::string& text, ...);
+		void Print(float x, float y, float scale, const char* text, ...);
 		void Draw(std::vector<D3D12_VIEWPORT>viewport);
 	};
 }

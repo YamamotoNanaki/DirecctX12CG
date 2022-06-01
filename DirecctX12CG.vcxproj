@@ -169,6 +169,7 @@
     <ClCompile Include="Float2.cpp" />
     <ClCompile Include="Float3.cpp" />
     <ClCompile Include="Float4.cpp" />
+    <ClCompile Include="FPS.cpp" />
     <ClCompile Include="GPipeline.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="IFMath.cpp" />
@@ -286,6 +287,7 @@
     <ClInclude Include="Float2.h" />
     <ClInclude Include="Float3.h" />
     <ClInclude Include="Float4.h" />
+    <ClInclude Include="FPS.h" />
     <ClInclude Include="GPipeline.h" />
     <ClInclude Include="IFMath.h" />
     <ClInclude Include="IScene.h" />

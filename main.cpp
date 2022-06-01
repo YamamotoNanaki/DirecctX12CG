@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Scene.h"
 #include "Util.h"
+#include "FPS.h"
 
 using namespace IF;
 
@@ -24,6 +25,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	Scene scene(winWidth, winHeight, dx12->device.Get(), dx12->commandList.Get(), dx12->viewport);
 	dx12->SetClearColor(0, 0, 0);
 	scene.Initialize();
+	FPS fps;
+	fps.Initialize(60);
 
 	while (!Input::getInstance()->KDown(KEY::ESC))
 	{
@@ -35,6 +38,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		dx12->DrawBefore();
 		scene.Draw();
 		dx12->DrawAfter();
+		fps.FPSFixed();
 	}
 	delete dx12;
 	delete win;

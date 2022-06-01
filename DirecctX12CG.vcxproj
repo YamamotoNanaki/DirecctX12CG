@@ -288,6 +288,7 @@
     <ClInclude Include="Float4.h" />
     <ClInclude Include="GPipeline.h" />
     <ClInclude Include="IFMath.h" />
+    <ClInclude Include="IScene.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="MathConvert.h" />
     <ClInclude Include="Matrix.h" />

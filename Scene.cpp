@@ -8,7 +8,16 @@
 using namespace DirectX;
 using namespace std;
 
-IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
+IF::Scene::Scene(int winWidth, int winHeight, ID3D12Device* device, ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)
+:width(winWidth),height(winHeight),device(device),commandList(commandList),viewport(viewport) {}
+
+IF::Scene::~Scene()
+{
+	delete matPro;
+	delete light;
+}
+
+void IF::Scene::Initialize()
 {
 	//光源設定
 	light = LightManager::GetInstance();
@@ -24,7 +33,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	light->SetAmbientColor({ 1, 1, 1 });
 	Object::SetLight(light);
 	//定数バッファの初期化
-	result = cb.Initialize(device);
+	HRESULT result = cb.Initialize(device);
 	//画像関連初期化
 	tex->setDevice(device);
 	tex->Initialize();
@@ -37,7 +46,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	groundObj.Initialize(device, &groundM);
 	groundObj.position = { 0,-2,0 };
 	//カメラ関連初期化
-	matPro = new Projection(45.0f, winWidth, winHeight);
+	matPro = new Projection(45.0f, width, height);
 	matView.eye = { 1,1,-5.0f };
 
 	//そのほかの初期化
@@ -57,13 +66,7 @@ IF::Scene::Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* 
 	SGraph = tex->LoadTexture("Resources/texture.png");
 }
 
-IF::Scene::~Scene()
-{
-	delete matPro;
-	delete light;
-}
-
-void IF::Scene::Update(ID3D12Device* device)
+void IF::Scene::Update()
 {
 	Input* input = Input::getInstance();
 	input->Update();
@@ -124,7 +127,7 @@ void IF::Scene::Update(ID3D12Device* device)
 	sprite.Update();
 }
 
-void IF::Scene::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport)
+void IF::Scene::Draw()
 {
 	graph.DrawBlendMode(commandList);
 	domeObj.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());

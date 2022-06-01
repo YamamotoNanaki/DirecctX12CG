@@ -94,6 +94,12 @@
     <Filter Include="ソース ファイル\Engine\2D">
       <UniqueIdentifier>{2bfa72b3-a537-45b2-81a2-bc2bfb4f6f79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Scene">
+      <UniqueIdentifier>{f1ab15ae-b796-47b5-97f6-5618e85135b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Scene">
+      <UniqueIdentifier>{ba09e446-8ac3-45ed-a421-452c50bc27a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -134,9 +140,6 @@
     </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>ソース ファイル\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Particle.cpp">
       <Filter>ソース ファイル\Engine\3D\Effect</Filter>
@@ -194,6 +197,9 @@
     </ClCompile>
     <ClCompile Include="MathConvert.cpp">
       <Filter>ソース ファイル\Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -265,9 +271,6 @@
     <ClInclude Include="Util.h">
       <Filter>ヘッダー ファイル\Other</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Particle.h">
       <Filter>ヘッダー ファイル\Engine\3D\Effect</Filter>
     </ClInclude>
@@ -333,6 +336,12 @@
     </ClInclude>
     <ClInclude Include="MathConvert.h">
       <Filter>ヘッダー ファイル\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="IScene.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

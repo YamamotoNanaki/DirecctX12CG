@@ -9,10 +9,11 @@
 #include "Fire.h"
 #include "Light.h"
 #include "Sprite.h"
+#include "IScene.h"
 
 namespace IF
 {
-	class Scene
+	class Scene :public IScene
 	{
 		template <class T>using vector = std::vector<T>;
 	private:
@@ -56,12 +57,19 @@ namespace IF
 		Texture* tex = Texture::getInstance();
 		Graphic graph;
 
-	public:
-		Scene(float winWidth, float winHeight, HRESULT result, ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
-		~Scene();
+	private:
+		int width;
+		int height;
+		ID3D12Device* device;
+		ID3D12GraphicsCommandList* commandList;
+		vector<D3D12_VIEWPORT> viewport;
 
 	public:
-		void Update(ID3D12Device* device);
-		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>viewport);
+		Scene(int winWidth, int winHeight, ID3D12Device* device, ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);
+		~Scene();
+
+		void Initialize();
+		void Update();
+		void Draw();
 	};
 }

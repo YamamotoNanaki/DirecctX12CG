@@ -21,19 +21,19 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	DirectX12* dx12 = new DirectX12(result, win->hwnd, winWidth, winHeight);
 	result = Input::getInstance()->Initialize(win->w.hInstance, win->hwnd);
 	LightManager::GetInstance()->SetDevice(dx12->device.Get());
-	Scene scene(winWidth, winHeight, result, dx12->device.Get(), dx12->commandList.Get());
+	Scene scene(winWidth, winHeight, dx12->device.Get(), dx12->commandList.Get(), dx12->viewport);
 	dx12->SetClearColor(0, 0, 0);
-
+	scene.Initialize();
 
 	while (!Input::getInstance()->KDown(KEY::ESC))
 	{
 		//メッセージ
 		if (win->Message())break;
 
-		scene.Update(dx12->device.Get());
+		scene.Update();
 
 		dx12->DrawBefore();
-		scene.Draw(dx12->commandList.Get(), dx12->viewport);
+		scene.Draw();
 		dx12->DrawAfter();
 	}
 	delete dx12;

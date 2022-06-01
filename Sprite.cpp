@@ -7,7 +7,14 @@ using namespace IF;
 SV* Sprite::vi = nullptr;
 ID3D12GraphicsCommandList* Sprite::commandList = nullptr;
 ID3D12Device* Sprite::device = nullptr;
+Matrix Sprite::matPro;
 
+void IF::Sprite::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, float winWidth, float winHeight)
+{
+	SetDeviceCommand(device, commandList);
+
+	Sprite::matPro = MatrixOrthoGraphicProjection(0, winWidth, winHeight, 0, 0, 1);
+}
 
 void IF::Sprite::SetDeviceCommand(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
 {
@@ -18,16 +25,46 @@ void IF::Sprite::SetDeviceCommand(ID3D12Device* device, ID3D12GraphicsCommandLis
 	Sprite::commandList = commandList;
 }
 
-void IF::Sprite::Initialize()
+void IF::Sprite::Initialize(unsigned int texNum, Float2 size, bool flipX, bool flipY)
 {
 	vi = new SV;
 
-	Vertex2D vertices[]
+	this->texNum = texNum;
+
+	Vector2 s(size.x, size.y);
+	s.Normalize();
+
+	enum { LB, LT, RB, RT };
+	Vertex2D vertices[4];
+
+	float left = -0.5f * size.x;
+	float right = 0.5f * size.x;
+	float top = -0.5f * size.y;
+	float bottom = 0.5f * size.y;
+	if (flipX)
 	{
-		{{-5.0f,+5.0f,0.0f},{0.0f,1.0f}},
-		{{-5.0f,-5.0f,0.0f},{0.0f,0.0f}},
-		{{+5.0f,-5.0f,0.0f},{1.0f,0.0f}}
-	};
+		left = -left;
+		right = -right;
+	}
+
+	if (flipY)
+	{
+		top = -top;
+		bottom = -bottom;
+	}
+
+	vertices[LB].pos = { left,	bottom,	0.0f };
+	vertices[LT].pos = { left,	top,	0.0f };
+	vertices[RB].pos = { right,	bottom,	0.0f };
+	vertices[RT].pos = { right,	top,	0.0f };
+	float tex_left = 0;
+	float tex_right = 1;
+	float tex_top = 1;
+	float tex_bottom = 0;
+	vertices[LB].uv = { tex_left,	tex_bottom };
+	vertices[LT].uv = { tex_left,	tex_top };
+	vertices[RB].uv = { tex_right,	tex_bottom };
+	vertices[RT].uv = { tex_right,	tex_top }; // 右上
 
 	vi->SetVerticle(vertices);
 	vi->Initialize(Sprite::device);
@@ -82,10 +119,10 @@ void IF::Sprite::Update()
 	matWorld *= matTrams;
 
 	//定数バッファへのデータ転送
-	constMapTransform->mat = matWorld;
+	constMapTransform->mat = matWorld * matPro;
 }
 
-void IF::Sprite::Draw(std::vector<D3D12_VIEWPORT> viewport,unsigned int texNum)
+void IF::Sprite::Draw(std::vector<D3D12_VIEWPORT> viewport)
 {
 	for (int i = 0; i < viewport.size(); i++)
 	{

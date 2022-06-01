@@ -54,6 +54,8 @@ namespace IF
 	// •½sˆÚ“®s—ñ‚Ìì¬
 	Matrix MatrixTranslation(float tx, float ty, float tz);
 
+	Matrix MatrixOrthoGraphicProjection(float left, float right, float top, float bottom, float near, float far);
+
 	Matrix operator+(Matrix m1, Matrix m2);
 	Matrix operator-(Matrix m1, Matrix m2);
 	Matrix operator*(Matrix m1, Matrix m2);

@@ -9,7 +9,7 @@ using namespace DirectX;
 using namespace std;
 
 IF::Scene::Scene(int winWidth, int winHeight, ID3D12Device* device, ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)
-:width(winWidth),height(winHeight),device(device),commandList(commandList),viewport(viewport) {}
+:winWidth(winWidth),winHeight(winHeight),device(device),commandList(commandList),viewport(viewport) {}
 
 IF::Scene::~Scene()
 {
@@ -46,7 +46,7 @@ void IF::Scene::Initialize()
 	groundObj.Initialize(device, &groundM);
 	groundObj.position = { 0,-2,0 };
 	//ƒJƒƒ‰ŠÖ˜A‰Šú‰»
-	matPro = new Projection(45.0f, width, height);
+	matPro = new Projection(45.0f, winWidth, winHeight);
 	matView.eye = { 1,1,-5.0f };
 
 	//‚»‚Ì‚Ù‚©‚Ì‰Šú‰»
@@ -61,9 +61,9 @@ void IF::Scene::Initialize()
 
 
 	//2DŠÖ˜A
-	sprite.SetDeviceCommand(device, commandList);
-	sprite.Initialize();
+	sprite.StaticInitialize(device, commandList, winWidth, winHeight);
 	SGraph = tex->LoadTexture("Resources/texture.png");
+	sprite.Initialize(SGraph,{300,300});
 }
 
 void IF::Scene::Update()
@@ -145,5 +145,5 @@ void IF::Scene::Draw()
 	//fire->Draw(commandList, viewport);
 	graph.DrawBlendMode(commandList, Blend::NORMAL2D);
 	sprite.DrawBefore(graph.rootsignature.Get(), cb.GetGPUAddress());
-	sprite.Draw(viewport, SGraph);
+	sprite.Draw(viewport);
 }

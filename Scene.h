@@ -48,7 +48,7 @@ namespace IF
 		Object groundObj;
 		//ÉJÉÅÉâ
 		View matView;
-		Projection* matPro;
+		Projection* matPro = nullptr;
 		//åıåπ
 		LightManager* light = nullptr;
 
@@ -58,8 +58,8 @@ namespace IF
 		Graphic graph;
 
 	private:
-		int width;
-		int height;
+		int winWidth;
+		int winHeight;
 		ID3D12Device* device;
 		ID3D12GraphicsCommandList* commandList;
 		vector<D3D12_VIEWPORT> viewport;

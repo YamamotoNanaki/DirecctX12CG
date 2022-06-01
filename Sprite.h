@@ -23,6 +23,10 @@ namespace IF
 		static SV* vi;
 		static ID3D12GraphicsCommandList* commandList;
 		static ID3D12Device* device;
+		static Matrix matPro;
+
+	private:
+		unsigned int texNum;
 
 	public:
 		//定数バッファ
@@ -37,10 +41,11 @@ namespace IF
 		Matrix matWorld;
 
 	public:
+		static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, float winWidth, float winHeight);
 		static void SetDeviceCommand(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
-		void Initialize();
-		void DrawBefore(ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		void Initialize(unsigned int texNum, Float2 size = { 100,100 }, bool flipX = false, bool flipY = false);
+		void DrawBefore(ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		void Update();
-		void Draw(std::vector<D3D12_VIEWPORT> viewport, unsigned int texNum);
+		void Draw(std::vector<D3D12_VIEWPORT> viewport);
 	};
 }

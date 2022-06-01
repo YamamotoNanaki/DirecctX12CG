@@ -26,7 +26,7 @@ namespace IF
 		};
 
 	private:
-		static const size_t textureMax = 255;
+		static const short textureMax = 256;
 		unsigned short textureSize = 0;
 		ID3D12Device* device = nullptr;
 

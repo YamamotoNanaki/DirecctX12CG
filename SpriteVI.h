@@ -19,7 +19,7 @@ namespace IF
 		ComPtr<ID3D12Resource> vertBuff;
 		// 頂点バッファビュー
 		D3D12_VERTEX_BUFFER_VIEW vbView{};
-		Vertex2D vertices[3];
+		Vertex2D vertices[4];
 
 	public:
 		void Initialize(ID3D12Device* device);

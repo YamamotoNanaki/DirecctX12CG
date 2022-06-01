@@ -23,10 +23,10 @@ void IF::DebugText::Print(float x, float y, float scale, const std::string& text
 		int fontIndex = character - 32;
 		if (character >= 0x7f)fontIndex = 0;
 
-		int fontIndexY = (fontIndex - 1) / fontLineCount;
-		int fontIndexX = (fontIndex - 1) % fontLineCount;
+		int fontIndexY = fontIndex / fontLineCount;
+		int fontIndexX = fontIndex % fontLineCount;
 		sprites[spriteIndex].SetPosition({ posX + fontWidth * size * i,posY });
-		sprites[spriteIndex].SetTextureRect({ (float)fontIndex * fontWidth,(float)fontIndexY * fontHeight },
+		sprites[spriteIndex].SetTextureRect({ (float)fontIndexX * fontWidth,(float)fontIndexY * fontHeight },
 			{ (float)fontWidth,(float)fontHeight });
 		sprites[spriteIndex].SetSize({ fontWidth * size,fontHeight * size });
 		spriteIndex++;

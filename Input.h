@@ -131,7 +131,7 @@ namespace IF
 		Input& operator=(const Input&) {}
 		~Input() {}
 	public:
-		static Input* getInstance();
+		static Input* getInstance(); 
 
 		HRESULT Initialize(HINSTANCE& hInstance, HWND& hwnd);
 

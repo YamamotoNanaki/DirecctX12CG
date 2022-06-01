@@ -15,10 +15,17 @@ IF::Scene::~Scene()
 {
 	delete matPro;
 	delete light;
+	delete sound;
+	sound->SoundUnLoad(&testSound);
 }
 
 void IF::Scene::Initialize()
 {
+	//音源
+	sound = new Sound;
+	sound->Initialize();
+	testSound = sound->LoadWave("Resources/Alarm01.wav");
+
 	//光源設定
 	light = LightManager::GetInstance();
 	light->Initialize();
@@ -34,9 +41,11 @@ void IF::Scene::Initialize()
 	Object::SetLight(light);
 	//定数バッファの初期化
 	HRESULT result = cb.Initialize(device);
+
 	//画像関連初期化
 	result = graph.Initialize(device, tex->descRangeSRV, L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
 	result = graph.Initialize2D(device, tex->descRangeSRV, L"SpriteVS.hlsl", L"SpritePS.hlsl");
+
 	//モデルの読み込みとオブジェクトとの紐付け(空と地面)
 	tex->setDevice(device);
 	tex->Initialize();
@@ -45,6 +54,7 @@ void IF::Scene::Initialize()
 	domeObj.Initialize(device, &domeM);
 	groundObj.Initialize(device, &groundM);
 	groundObj.position = { 0,-2,0 };
+
 	//カメラ関連初期化
 	matPro = new Projection(45.0f, winWidth, winHeight);
 	matView.eye = { 1,1,-5.0f };
@@ -65,6 +75,7 @@ void IF::Scene::Initialize()
 	SGraph = tex->LoadTexture("Resources/kakuninn.png");
 	sprite.Initialize(SGraph,{300,300});
 
+	sound->SoundPlay(testSound);
 
 	//デバッグ用
 #ifdef _DEBUG
@@ -136,7 +147,7 @@ void IF::Scene::Update()
 
 	//デバッグ用
 #ifdef _DEBUG
-	dText.Print(100,100, 2, "matView.eye.x : %f",matView.eye.x);
+	//dText.Print(100,100, 2, "matView.eye.x : %f",matView.eye.x);
 #endif // _DEBUG
 }
 
@@ -158,11 +169,11 @@ void IF::Scene::Draw()
 	//fire->Draw(commandList, viewport);
 	graph.DrawBlendMode(commandList, Blend::NORMAL2D);
 	sprite.DrawBefore(graph.rootsignature.Get(), cb.GetGPUAddress());
-	sprite.Draw(viewport);
+	//sprite.Draw(viewport);
 
 	//デバッグ用
 #ifdef _DEBUG
-	dText.Draw(viewport);
+	//dText.Draw(viewport);
 
 #endif // _DEBUG
 }

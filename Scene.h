@@ -10,7 +10,13 @@
 #include "Light.h"
 #include "Sprite.h"
 #include "IScene.h"
+#include "Sound.h"
+
+#ifdef _DEBUG
 #include "DebugText.h"
+
+#endif // _DEBUG
+
 
 namespace IF
 {
@@ -39,6 +45,7 @@ namespace IF
 		DirectX::XMFLOAT2 csAngle{ 0,0.7 };
 		Sprite sprite;
 		unsigned int SGraph = 0;
+		soundwave::SoundData testSound;
 
 		//-----------------------
 
@@ -52,6 +59,8 @@ namespace IF
 		Projection* matPro = nullptr;
 		//ŒõŒ¹
 		LightManager* light = nullptr;
+		//‰¹Œ¹
+		Sound* sound;
 
 	public:
 		ConstBuff cb;

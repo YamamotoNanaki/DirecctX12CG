@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Util.h"
 #include "FPS.h"
+#include "Sound.h"
 
 using namespace IF;
 

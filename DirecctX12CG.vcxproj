@@ -184,6 +184,7 @@
     <ClCompile Include="Rand.cpp" />
     <ClCompile Include="RootParam.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteVI.cpp" />
     <ClCompile Include="DebugText.cpp" />
@@ -304,6 +305,7 @@
     <ClInclude Include="Projection.h" />
     <ClInclude Include="RootParam.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Sound.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteVI.h" />

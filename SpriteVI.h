@@ -26,5 +26,7 @@ namespace IF
 		D3D12_VERTEX_BUFFER_VIEW& GetVertexView();
 		void SetVerticle(Vertex2D* vertices);
 		unsigned int GetSize();
+		void Transfer();
+		~SV();
 	};
 }

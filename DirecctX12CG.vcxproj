@@ -186,6 +186,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteVI.cpp" />
+    <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="Vector2.cpp" />
@@ -306,6 +307,7 @@
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteVI.h" />
+    <ClInclude Include="DebugText.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="Vector2.h" />

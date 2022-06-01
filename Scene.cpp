@@ -35,11 +35,11 @@ void IF::Scene::Initialize()
 	//定数バッファの初期化
 	HRESULT result = cb.Initialize(device);
 	//画像関連初期化
-	tex->setDevice(device);
-	tex->Initialize();
 	result = graph.Initialize(device, tex->descRangeSRV, L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
 	result = graph.Initialize2D(device, tex->descRangeSRV, L"SpriteVS.hlsl", L"SpritePS.hlsl");
 	//モデルの読み込みとオブジェクトとの紐付け(空と地面)
+	tex->setDevice(device);
+	tex->Initialize();
 	domeM.LoadModel(device, "skydome");
 	groundM.LoadModel(device, "ground");
 	domeObj.Initialize(device, &domeM);
@@ -62,8 +62,15 @@ void IF::Scene::Initialize()
 
 	//2D関連
 	sprite.StaticInitialize(device, commandList, winWidth, winHeight);
-	SGraph = tex->LoadTexture("Resources/texture.png");
+	SGraph = tex->LoadTexture("Resources/kakuninn.png");
 	sprite.Initialize(SGraph,{300,300});
+
+
+	//デバッグ用
+#ifdef _DEBUG
+	dText.Initialize(tex->LoadTexture("Resources/debugfont.png"));
+
+#endif // _DEBUG
 }
 
 void IF::Scene::Update()
@@ -124,7 +131,17 @@ void IF::Scene::Update()
 	groundObj.Update(matView.Get(), matPro->Get(), matView.eye);
 	sphereO.Update(matView.Get(), matPro->Get(), matView.eye);
 
+	sprite.position = { 540,500 };
 	sprite.Update();
+
+	//デバッグ用
+#ifdef _DEBUG
+	/*dText.Print(100,100, 2, " !#$%&'()*+,-./0123456789:;");
+	dText.Print(100,130, 2, "<=>?`ABCDEFGHIJKLMNOPQRSTUVW");
+	dText.Print(100,160, 2, "XYZ[\\]^_`abcdefghijklmnopqrs");
+	dText.Print(100,190, 2, "tuvwxyz{|}~");*/
+	dText.Print(100,190, 2, "- ; I W e s ~");
+#endif // _DEBUG
 }
 
 void IF::Scene::Draw()
@@ -146,4 +163,10 @@ void IF::Scene::Draw()
 	graph.DrawBlendMode(commandList, Blend::NORMAL2D);
 	sprite.DrawBefore(graph.rootsignature.Get(), cb.GetGPUAddress());
 	sprite.Draw(viewport);
+
+	//デバッグ用
+#ifdef _DEBUG
+	dText.Draw(viewport);
+
+#endif // _DEBUG
 }

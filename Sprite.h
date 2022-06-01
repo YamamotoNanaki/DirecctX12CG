@@ -20,12 +20,12 @@ namespace IF
 	{
 		template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 	private:
-		static SV* vi;
 		static ID3D12GraphicsCommandList* commandList;
 		static ID3D12Device* device;
 		static Matrix matPro;
 
 	private:
+		SV* vi;
 		unsigned int texNum;
 
 	public:
@@ -34,18 +34,28 @@ namespace IF
 		//定数バッファマップ
 		ConstBufferMatrix* constMapTransform;
 		//アフィン変換情報
-		Float3 scale = { 1,1,1 };
-		Float3 rotation = { 0,0,0 };
-		Float3 position = { 0,0,0 };
+		Float2 scale = { 1,1 };
+		float rotation = 0;
+		Float2 position = { 0,0 };
+		Float2 size = { 100,100 };
 		//ワールド変換行列
 		Matrix matWorld;
+		Float2 texBase = { 0,0 };
+		Float2 texSize = { 100,100 };
+		Float2 anchorpoint = { 0.5,0.5 };
+		bool flipX = false;
+		bool flipY = false;
 
 	public:
 		static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, float winWidth, float winHeight);
 		static void SetDeviceCommand(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 		void Initialize(unsigned int texNum, Float2 size = { 100,100 }, bool flipX = false, bool flipY = false);
+		void TransferVertex();
 		void DrawBefore(ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		void Update();
 		void Draw(std::vector<D3D12_VIEWPORT> viewport);
+		void SetPosition(Float2 position);
+		void SetSize(Float2 size);
+		void SetTextureRect(Float2 texBase, Float2 texSize);
 	};
 }

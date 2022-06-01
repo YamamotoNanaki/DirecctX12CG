@@ -44,9 +44,6 @@ void IF::SV::Initialize(ID3D12Device* device)
 		vertMap[i] = vertices[i];   // 座標をコピー
 	}
 
-	// マップを解除
-	vertBuff->Unmap(0, nullptr);
-
 	//-----------------------------
 
 	// 頂点バッファビューの作成
@@ -73,4 +70,23 @@ void IF::SV::SetVerticle(Vertex2D* vertices)
 unsigned int IF::SV::GetSize()
 {
 	return _countof(vertices);
+}
+
+void IF::SV::Transfer()
+{
+	Vertex2D* vertMap = nullptr;
+	HRESULT result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	assert(SUCCEEDED(result));
+
+	// 全頂点に対して
+	for (int i = 0; i < _countof(vertices); i++)
+	{
+		vertMap[i] = vertices[i];   // 座標をコピー
+	}
+}
+
+IF::SV::~SV()
+{
+	// マップを解除
+	vertBuff->Unmap(0, nullptr);
 }

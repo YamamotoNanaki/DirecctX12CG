@@ -4,7 +4,6 @@
 
 using namespace IF;
 
-SV* Sprite::vi = nullptr;
 ID3D12GraphicsCommandList* Sprite::commandList = nullptr;
 ID3D12Device* Sprite::device = nullptr;
 Matrix Sprite::matPro;
@@ -13,7 +12,7 @@ void IF::Sprite::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandLis
 {
 	SetDeviceCommand(device, commandList);
 
-	Sprite::matPro = MatrixOrthoGraphicProjection(0, winWidth, winHeight, 0, 0, 1);
+	Sprite::matPro = MatrixOrthoGraphicProjection(0, winWidth, 0, winHeight, 0, 1);
 }
 
 void IF::Sprite::SetDeviceCommand(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
@@ -31,16 +30,13 @@ void IF::Sprite::Initialize(unsigned int texNum, Float2 size, bool flipX, bool f
 
 	this->texNum = texNum;
 
-	Vector2 s(size.x, size.y);
-	s.Normalize();
-
 	enum { LB, LT, RB, RT };
 	Vertex2D vertices[4];
 
-	float left = -0.5f * size.x;
-	float right = 0.5f * size.x;
-	float top = -0.5f * size.y;
-	float bottom = 0.5f * size.y;
+	float left = (0.0f - anchorpoint.x) * size.x;
+	float right = (1.0f - anchorpoint.x) * size.x;
+	float top = (0.0f - anchorpoint.y) * size.y;
+	float bottom = (1.0f - anchorpoint.y) * size.y;
 	if (flipX)
 	{
 		left = -left;
@@ -59,15 +55,15 @@ void IF::Sprite::Initialize(unsigned int texNum, Float2 size, bool flipX, bool f
 	vertices[RT].pos = { right,	top,	0.0f };
 	float tex_left = 0;
 	float tex_right = 1;
-	float tex_top = 1;
-	float tex_bottom = 0;
+	float tex_top = 0;
+	float tex_bottom = 1;
 	vertices[LB].uv = { tex_left,	tex_bottom };
 	vertices[LT].uv = { tex_left,	tex_top };
 	vertices[RB].uv = { tex_right,	tex_bottom };
-	vertices[RT].uv = { tex_right,	tex_top }; // 右上
+	vertices[RT].uv = { tex_right,	tex_top };
 
 	vi->SetVerticle(vertices);
-	vi->Initialize(Sprite::device);
+	vi->Initialize(device);
 
 	HRESULT result;
 	//定数バッファのヒープ設定
@@ -103,20 +99,9 @@ void IF::Sprite::DrawBefore(ID3D12RootSignature* root, D3D12_GPU_VIRTUAL_ADDRESS
 
 void IF::Sprite::Update()
 {
-	Matrix matScale, matRot, matTrams;
-
-	//スケール、回転、平行移動
-	matScale = MatrixScaling(scale.x, scale.y, scale.z);
-	matRot = MatrixIdentity();
-	matRot *= MatrixRotationZ(rotation.z);
-	matRot *= MatrixRotationX(rotation.x);
-	matRot *= MatrixRotationY(rotation.y);
-	matTrams = MatrixTranslation(position.x, position.y, position.z);
-	//ワールド行列の合成
 	matWorld = MatrixIdentity();
-	matWorld *= matScale;
-	matWorld *= matRot;
-	matWorld *= matTrams;
+	matWorld *= MatrixRotationZ(ConvertToRadians(rotation));
+	matWorld *= MatrixTranslation(position.x, position.y, 0);
 
 	//定数バッファへのデータ転送
 	constMapTransform->mat = matWorld * matPro;
@@ -135,4 +120,78 @@ void IF::Sprite::Draw(std::vector<D3D12_VIEWPORT> viewport)
 		//描画コマンド
 		commandList->DrawInstanced(vi->GetSize(), 1, 0, 0);
 	}
+}
+
+void Sprite::SetPosition(Float2 position)
+{
+	this->position = position;
+}
+
+void Sprite::SetSize(Float2 size)
+{
+	this->size = size;
+}
+
+void Sprite::SetTextureRect(Float2 texBase, Float2 texSize)
+{
+	this->texBase = texBase;
+	this->texSize = texSize;
+
+	// 頂点バッファへのデータ転送
+	TransferVertex();
+}
+
+void Sprite::TransferVertex()
+{
+	enum { LB, LT, RB, RT };
+	Vertex2D vertices[4];
+
+	float left = (0.0f - anchorpoint.x) * size.x;
+	float right = (1.0f - anchorpoint.x) * size.x;
+	float top = (0.0f - anchorpoint.y) * size.y;
+	float bottom = (1.0f - anchorpoint.y) * size.y;
+	if (flipX)
+	{
+		left = -left;
+		right = -right;
+	}
+
+	if (flipY)
+	{
+		top = -top;
+		bottom = -bottom;
+	}
+
+	vertices[LB].pos = { left,	bottom,	0.0f };
+	vertices[LT].pos = { left,	top,	0.0f };
+	vertices[RB].pos = { right,	bottom,	0.0f };
+	vertices[RT].pos = { right,	top,	0.0f };
+	float tex_left = 0;
+	float tex_right = 1;
+	float tex_top = 1;
+	float tex_bottom = 0;
+	vertices[LB].uv = { tex_left,	tex_bottom };
+	vertices[LT].uv = { tex_left,	tex_top };
+	vertices[RB].uv = { tex_right,	tex_bottom };
+	vertices[RT].uv = { tex_right,	tex_top };
+
+	ID3D12Resource* texBuff = Texture::getInstance()->tex[texNum].texbuff.Get();
+
+	if (texBuff)
+	{
+		D3D12_RESOURCE_DESC resDesc = texBuff->GetDesc();
+
+		float tex_left = texBase.x / resDesc.Width;
+		float tex_right = (texBase.x + texSize.x) / resDesc.Width;
+		float tex_top = texBase.y / resDesc.Height;
+		float tex_bottom = (texBase.y + texSize.y) / resDesc.Height;
+
+		vertices[LB].uv = { tex_left,	tex_bottom }; // 左下
+		vertices[LT].uv = { tex_left,	tex_top }; // 左上
+		vertices[RB].uv = { tex_right,	tex_bottom }; // 右下
+		vertices[RT].uv = { tex_right,	tex_top }; // 右上
+	}
+
+	vi->SetVerticle(vertices);
+	vi->Transfer();
 }

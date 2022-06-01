@@ -100,6 +100,12 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{ba09e446-8ac3-45ed-a421-452c50bc27a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Engine\Debug">
+      <UniqueIdentifier>{85c180e9-830e-4939-81e9-2387bc4f83d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\Debug">
+      <UniqueIdentifier>{89c0ef75-a20b-4635-b466-fdfd8dac15f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -203,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="FPS.cpp">
       <Filter>ソース ファイル\Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugText.cpp">
+      <Filter>ソース ファイル\Engine\Debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -348,6 +357,9 @@
     </ClInclude>
     <ClInclude Include="FPS.h">
       <Filter>ヘッダー ファイル\Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugText.h">
+      <Filter>ヘッダー ファイル\Engine\Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

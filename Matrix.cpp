@@ -238,10 +238,10 @@ Matrix IF::MatrixTranslation(float tx, float ty, float tz)
 
 Matrix IF::MatrixOrthoGraphicProjection(float left, float right, float top, float bottom, float near, float far)
 {
-	float width = 1.0f / (right - left);
-	float height = 1.0f / (top - bottom);
+	float width = 2.0f / (right - left);
+	float height = -2.0f / (bottom - top);
 	float zRange = 1.0f / (far - near);
-	return Matrix(width, 0, 0, 0, 0, height, 0, 0, 0, 0, zRange, 0, 0, 0, 0, 1);
+	return Matrix(width, 0, 0, 0, 0, height, 0, 0, 0, 0, zRange, 0, -1, 1, 0, 1);
 }
 
 Matrix IF::operator+(Matrix m1, Matrix m2)

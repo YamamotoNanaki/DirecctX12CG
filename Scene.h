@@ -10,6 +10,7 @@
 #include "Light.h"
 #include "Sprite.h"
 #include "IScene.h"
+#include "DebugText.h"
 
 namespace IF
 {
@@ -63,6 +64,13 @@ namespace IF
 		ID3D12Device* device;
 		ID3D12GraphicsCommandList* commandList;
 		vector<D3D12_VIEWPORT> viewport;
+
+		//デバッグ用
+#ifdef _DEBUG
+		DebugText dText;
+
+#endif // _DEBUG
+
 
 	public:
 		Scene(int winWidth, int winHeight, ID3D12Device* device, ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);

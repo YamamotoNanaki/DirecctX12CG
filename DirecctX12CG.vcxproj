@@ -163,6 +163,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConstBuff.cpp" />
+    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Ease.cpp" />
     <ClCompile Include="Fire.cpp" />
     <ClCompile Include="DirectX12.cpp" />
@@ -320,6 +321,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="Rand.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Debug.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Model.hlsli" />

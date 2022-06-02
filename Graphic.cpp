@@ -6,7 +6,7 @@
 using namespace std;
 using namespace IF;
 
-HRESULT IF::Graphic::CompillerArray(LPCWSTR fillname, int num)
+void IF::Graphic::CompillerArray(LPCWSTR fillname, int num)
 {
 	HRESULT result;
 	Blobs.emplace_back(nullptr);
@@ -34,11 +34,9 @@ HRESULT IF::Graphic::CompillerArray(LPCWSTR fillname, int num)
 		OutputDebugStringA(error.c_str());
 		assert(0);
 	}
-
-	return result;
 }
 
-HRESULT Graphic::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs, char compile)
+void Graphic::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs, char compile)
 {
 	HRESULT result = S_OK;
 	vector<LPCWSTR> s;
@@ -51,10 +49,8 @@ HRESULT Graphic::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs, char compile)
 	if (Blobs.size() == 0)Blobs.emplace_back(nullptr);
 	for (int i = 0; i < s.size(); i++)
 	{
-		result = CompillerArray(s[i], i);
+		CompillerArray(s[i], i);
 	}
-
-	return result;
 }
 
 //HRESULT Graphic::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV)
@@ -118,13 +114,13 @@ HRESULT Graphic::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs, char compile)
 //
 //}
 
-HRESULT IF::Graphic::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps, LPCWSTR gs)
+void IF::Graphic::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps, LPCWSTR gs)
 {
 	HRESULT result;
 
 	RootParam root(descRangeSRV, 1);
 
-	result = Compiller(vs, ps, gs);
+	Compiller(vs, ps, gs);
 
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{// xyzÀ•W
@@ -173,17 +169,15 @@ HRESULT IF::Graphic::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& de
 		result = device->CreateGraphicsPipelineState(&pipeline.pipelineDesc[j], IID_PPV_ARGS(&pipelinestate[j]));
 	}
 	assert(SUCCEEDED(result));
-
-	return result;
 }
 
-HRESULT IF::Graphic::Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps)
+void IF::Graphic::Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps)
 {
 	HRESULT result;
 
 	RootParam root(descRangeSRV, 1);
 
-	result = Compiller(vs, ps, 0, ShaderCompile::vsps);
+	Compiller(vs, ps, 0, ShaderCompile::vsps);
 
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{// xyzÀ•W
@@ -229,17 +223,15 @@ HRESULT IF::Graphic::Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& 
 		result = device->CreateGraphicsPipelineState(&pipeline.pipelineDesc[j], IID_PPV_ARGS(&pipelinestate[j]));
 	}
 	assert(SUCCEEDED(result));
-
-	return result;
 }
 
-HRESULT IF::Graphic::InitializeParticle(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV)
+void IF::Graphic::InitializeParticle(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV)
 {
 	HRESULT result;
 
 	RootParam root(descRangeSRV, 1);
 
-	result = Compiller(L"ParticleVS.hlsl", L"ParticlePS.hlsl", L"ParticleGS.hlsl");
+	Compiller(L"ParticleVS.hlsl", L"ParticlePS.hlsl", L"ParticleGS.hlsl");
 
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{// xyzÀ•W
@@ -283,8 +275,6 @@ HRESULT IF::Graphic::InitializeParticle(ID3D12Device* device, D3D12_DESCRIPTOR_R
 		result = device->CreateGraphicsPipelineState(&pipeline.pipelineDesc[j], IID_PPV_ARGS(&pipelinestate[j]));
 	}
 	assert(SUCCEEDED(result));
-
-	return result;
 }
 
 void IF::Graphic::DrawBlendMode(ID3D12GraphicsCommandList* commandList, Blend::Blend blend)

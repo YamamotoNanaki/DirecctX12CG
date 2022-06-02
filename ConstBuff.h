@@ -14,16 +14,16 @@ namespace IF
 		ComPtr<ID3D12Resource> constBuffMaterial = nullptr;
 		ConstBufferDataColor* constMapMaterial = nullptr;
 	public:
-		HRESULT Initialize(ID3D12Device* device);
+		void Initialize(ID3D12Device* device);
 		D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress();
 
 	private:
-		short R, G, B, A;
-		float r, g, b, a;
+		short R = 0, G = 0, B = 0, A = 0;
+		float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
 
 	public:
-		HRESULT SetBright(int red, int green, int blue);
-		HRESULT SetAlpha(int alpha);
-		HRESULT SetColor(int red, int green, int blue, int alpha);
+		void SetBright(int red, int green, int blue);
+		void SetAlpha(int alpha);
+		void SetColor(int red, int green, int blue, int alpha);
 	};
 }

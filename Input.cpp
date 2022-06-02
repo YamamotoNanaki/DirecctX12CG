@@ -21,7 +21,7 @@ Input* IF::Input::getInstance()
 	return &inst;
 }
 
-HRESULT IF::Input::Initialize(HINSTANCE& hInstance, HWND& hwnd)
+void IF::Input::Initialize(HINSTANCE& hInstance, HWND& hwnd)
 {
 	HRESULT result = DirectInput8Create(
 		hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
@@ -43,11 +43,9 @@ HRESULT IF::Input::Initialize(HINSTANCE& hInstance, HWND& hwnd)
 	result = keyboard->SetCooperativeLevel(
 		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(result));
-
-	return result;
 }
 
-HRESULT Input::Update()
+void Input::Update()
 {
 	for (int i = 0; i < 256; i++)
 	{
@@ -62,8 +60,6 @@ HRESULT Input::Update()
 	result = devMouse->Acquire();	// マウス動作開始
 	// マウスの入力
 	result = devMouse->GetDeviceState(sizeof(mouse), &mouse);
-
-	return result;
 }
 
 bool Input::KTriggere(KeyCode keyCode)

@@ -42,8 +42,8 @@ namespace IF
 		float startY;
 
 	public:
-		HRESULT Initialize(ID3D12Device* device);
-		HRESULT VIInitialize(ID3D12Device* device);
+		void Initialize(ID3D12Device* device);
+		void VIInitialize(ID3D12Device* device);
 		void Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard = DirectX::XMMatrixIdentity()); 
 		void DrawBefore(ID3D12GraphicsCommandList* commandList,ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
 			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

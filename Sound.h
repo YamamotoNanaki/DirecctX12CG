@@ -39,7 +39,7 @@ namespace IF
 	{
 	private:
 		Microsoft::WRL::ComPtr<IXAudio2> xAudio;
-		IXAudio2MasteringVoice* masterVoice;
+		IXAudio2MasteringVoice* masterVoice = nullptr;
 
 	public:
 		void Initialize();

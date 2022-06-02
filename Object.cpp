@@ -23,7 +23,7 @@ void IF::Object::SetModel(Model* model)
 	this->model = model;
 }
 
-HRESULT IF::Object::Initialize(ID3D12Device* device, Model* model)
+void IF::Object::Initialize(ID3D12Device* device, Model* model)
 {
 	HRESULT result;
 	//定数バッファのヒープ設定
@@ -50,8 +50,6 @@ HRESULT IF::Object::Initialize(ID3D12Device* device, Model* model)
 	assert(SUCCEEDED(result));
 
 	this->model = model;
-
-	return result;
 }
 
 void Object::Update(XMMATRIX matView, XMMATRIX matProjection, XMFLOAT3 cameraPos, BillBoardMode mode)

@@ -4,7 +4,7 @@
 using namespace DirectX;
 using namespace IF;
 
-HRESULT Particle::Initialize(ID3D12Device* device)
+void Particle::Initialize(ID3D12Device* device)
 {
 	HRESULT result;
 	//定数バッファのヒープ設定
@@ -35,14 +35,11 @@ HRESULT Particle::Initialize(ID3D12Device* device)
 	};
 
 	vi->SetVerticleIndex(vertices, _countof(vertices));
-
-	return result;
 }
 
-HRESULT Particle::VIInitialize(ID3D12Device* device)
+void Particle::VIInitialize(ID3D12Device* device)
 {
-	HRESULT result = vi->Initialize(device);
-	return result;
+	vi->Initialize(device);
 }
 
 void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard)
@@ -79,7 +76,7 @@ void Particle::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPOR
 		//定数バッファビューの設定
 		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
 		//描画コマンド
-		commandList->DrawInstanced(vi->GetSize(), 1, 0, 0);
+		commandList->DrawInstanced((UINT)vi->GetSize(), 1, 0, 0);
 	}
 }
 

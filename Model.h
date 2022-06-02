@@ -20,7 +20,7 @@ namespace IF
 	private:
 		//定数バッファ
 		ComPtr<ID3D12Resource> constBuffTransform1;
-		ConstBufferMaterial* constMapMaterial;
+		ConstBufferMaterial* constMapMaterial = nullptr;
 
 	public:
 		struct Material
@@ -45,8 +45,8 @@ namespace IF
 	public:
 		MVI* vi;
 		Material material;
-		HRESULT LoadModel(ID3D12Device* device, std::string name, bool smoothing = false);
-		HRESULT VIInitialize(ID3D12Device* device, bool smoothing);
+		void LoadModel(ID3D12Device* device, std::string name, bool smoothing = false);
+		void VIInitialize(ID3D12Device* device, bool smoothing);
 		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport, ID3D12Resource* address);
 		~Model();
 	};

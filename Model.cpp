@@ -10,7 +10,7 @@ using namespace DirectX;
 using namespace IF;
 using namespace std;
 
-HRESULT Model::LoadModel(ID3D12Device* device, string name, bool smoothing)
+void Model::LoadModel(ID3D12Device* device, string name, bool smoothing)
 {
 	vi = new MVI;
 	const string modelname = name;
@@ -190,15 +190,12 @@ HRESULT Model::LoadModel(ID3D12Device* device, string name, bool smoothing)
 
 	constBuffTransform1->Unmap(0, nullptr);
 
-	result = VIInitialize(device, smoothing);
-
-	return result;
+	VIInitialize(device, smoothing);
 }
 
-HRESULT Model::VIInitialize(ID3D12Device* device, bool smoothing)
+void Model::VIInitialize(ID3D12Device* device, bool smoothing)
 {
-	HRESULT result = vi->Initialize(device, smoothing);
-	return result;
+	vi->Initialize(device, smoothing);
 }
 
 void IF::Model::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport, ID3D12Resource* address)
@@ -215,7 +212,7 @@ void IF::Model::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPO
 		commandList->SetGraphicsRootConstantBufferView(2, address->GetGPUVirtualAddress());
 		commandList->SetGraphicsRootConstantBufferView(3, constBuffTransform1->GetGPUVirtualAddress());
 		//•`‰æƒRƒ}ƒ“ƒh
-		commandList->DrawIndexedInstanced(vi->GetSize(), 1, 0, 0, 0);
+		commandList->DrawIndexedInstanced((UINT)vi->GetSize(), 1, 0, 0, 0);
 	}
 }
 

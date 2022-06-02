@@ -12,7 +12,7 @@ namespace IF
 		static const int fontHeight = 18;
 		static const int fontLineCount = 14;
 		static const int bufferSize = 256;
-		char buffer[bufferSize];
+		char buffer[bufferSize]{};
 
 	private:
 		Sprite sprites[maxCharCount];

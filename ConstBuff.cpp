@@ -1,7 +1,7 @@
 #include "ConstBuff.h"
 #include "Util.h"
 
-HRESULT IF::ConstBuff::Initialize(ID3D12Device* device)
+void IF::ConstBuff::Initialize(ID3D12Device* device)
 {
 	HRESULT result;
 	//ƒq[ƒvİ’è
@@ -34,7 +34,6 @@ HRESULT IF::ConstBuff::Initialize(ID3D12Device* device)
 
 	R = 255, G = 255, B = 255, A = 255;
 	r = 1, g = 1, b = 1, a = 1;
-	return result;
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS IF::ConstBuff::GetGPUAddress()
@@ -42,34 +41,31 @@ D3D12_GPU_VIRTUAL_ADDRESS IF::ConstBuff::GetGPUAddress()
 	return constBuffMaterial->GetGPUVirtualAddress();
 }
 
-HRESULT IF::ConstBuff::SetBright(int red, int green, int blue)
+void IF::ConstBuff::SetBright(int red, int green, int blue)
 {
-	if (red == R && green == G && blue == B)return S_OK;
+	if (red == R && green == G && blue == B)return;
 	if (red != R)r = TypeConversionByte(red);
 	if (green != G)g = TypeConversionByte(green);
 	if (blue != B)b = TypeConversionByte(blue);
 	R = red, G = green, B = blue;
 	constMapMaterial->color = XMFLOAT4(r, g, b, a);					//RGBA‚Å”¼“§–¾‚ÌÔ
-	return S_OK;
 }
 
-HRESULT IF::ConstBuff::SetAlpha(int alpha)
+void IF::ConstBuff::SetAlpha(int alpha)
 {
-	if (alpha == A)return S_OK;
+	if (alpha == A);
 	a = TypeConversionByte(alpha);
 	A = alpha;
 	constMapMaterial->color = XMFLOAT4(r, g, b, a);					//RGBA‚Å”¼“§–¾‚ÌÔ
-	return S_OK;
 }
 
-HRESULT IF::ConstBuff::SetColor(int red, int green, int blue, int alpha)
+void IF::ConstBuff::SetColor(int red, int green, int blue, int alpha)
 {
-	if (red == R && green == G && blue == B && alpha == A) return S_OK;
+	if (red == R && green == G && blue == B && alpha == A) return;
 	if (red != R)r = TypeConversionByte(red);
 	if (green != G)g = TypeConversionByte(green);
 	if (blue != B)b = TypeConversionByte(blue);
 	if (alpha != A)a = TypeConversionByte(alpha);
 	R = red, G = green, B = blue, A = alpha;
 	constMapMaterial->color = XMFLOAT4(r, g, b, a);					//RGBA‚Å”¼“§–¾‚ÌÔ
-	return S_OK;
 }

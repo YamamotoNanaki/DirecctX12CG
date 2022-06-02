@@ -21,8 +21,8 @@ namespace IF
 
 	public:
 		void SetVerticleIndex(VertexPos* vertices, int vertexCount);
-		HRESULT Initialize(ID3D12Device* device);
+		void Initialize(ID3D12Device* device);
 		D3D12_VERTEX_BUFFER_VIEW& GetVertexView();
-		unsigned int GetSize();
+		size_t GetSize();
 	};
 }

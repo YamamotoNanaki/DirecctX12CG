@@ -40,11 +40,11 @@ void IF::Scene::Initialize()
 	light->SetAmbientColor({ 1, 1, 1 });
 	Object::SetLight(light);
 	//定数バッファの初期化
-	HRESULT result = cb.Initialize(device);
+	cb.Initialize(device);
 
 	//画像関連初期化
-	result = graph.Initialize(device, tex->descRangeSRV, L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
-	result = graph.Initialize2D(device, tex->descRangeSRV, L"SpriteVS.hlsl", L"SpritePS.hlsl");
+	graph.Initialize(device, tex->descRangeSRV, L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
+	graph.Initialize2D(device, tex->descRangeSRV, L"SpriteVS.hlsl", L"SpritePS.hlsl");
 
 	//モデルの読み込みとオブジェクトとの紐付け(空と地面)
 	tex->setDevice(device);
@@ -56,7 +56,7 @@ void IF::Scene::Initialize()
 	groundObj.position = { 0,-2,0 };
 
 	//カメラ関連初期化
-	matPro = new Projection(45.0f, winWidth, winHeight);
+	matPro = new Projection(45.0f, (float)winWidth, (float)winHeight);
 	matView.eye = { 1,1,-5.0f };
 
 	//そのほかの初期化
@@ -71,7 +71,7 @@ void IF::Scene::Initialize()
 
 
 	//2D関連
-	sprite.StaticInitialize(device, commandList, winWidth, winHeight);
+	sprite.StaticInitialize(device, commandList, (float)winWidth, (float)winHeight);
 	SGraph = tex->LoadTexture("Resources/kakuninn.png");
 	sprite.Initialize(SGraph,{300,300});
 

@@ -13,7 +13,6 @@ void IF::Sound::Initialize()
 
 SoundData IF::Sound::LoadWave(const char* filename)
 {
-	HRESULT result;
 	std::ifstream file;
 
 	file.open(filename, std::ios_base::binary);

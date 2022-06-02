@@ -65,12 +65,12 @@ namespace IF
 		ComPtr<ID3D12PipelineState> pipelinestate[12]{ nullptr };
 
 	public:
-		HRESULT CompillerArray(LPCWSTR fillname, int num);
-		HRESULT Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs, char Compile = ShaderCompile::all);
+		void CompillerArray(LPCWSTR fillname, int num);
+		void Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs, char Compile = ShaderCompile::all);
 		//HRESULT Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV);
-		HRESULT Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps, LPCWSTR gs);
-		HRESULT Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps);
-		HRESULT InitializeParticle(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV);
+		void Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps, LPCWSTR gs);
+		void Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps);
+		void InitializeParticle(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV);
 		void DrawBlendMode(ID3D12GraphicsCommandList* commandList, Blend::Blend blend = Blend::NORMAL);
 	};
 }

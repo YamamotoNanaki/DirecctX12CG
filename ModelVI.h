@@ -32,11 +32,11 @@ namespace IF
 		D3D12_INDEX_BUFFER_VIEW ibView{};
 
 	public:
-		void SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, std::vector<unsigned short> indices, int indexCount);
-		HRESULT Initialize(ID3D12Device* device, bool smoothing, NormalFlag flag = NFALSE);
+		void SetVerticleIndex(std::vector<Vertex> vertices, size_t vertexCount, std::vector<unsigned short> indices, size_t indexCount);
+		void Initialize(ID3D12Device* device, bool smoothing, NormalFlag flag = NFALSE);
 		D3D12_VERTEX_BUFFER_VIEW& GetVertexView();
 		D3D12_INDEX_BUFFER_VIEW& GetIndexView();
-		unsigned int GetSize();
+		size_t GetSize();
 		void AddSmoothData(unsigned short indexPos, unsigned short indexVer);
 	};
 }

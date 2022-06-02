@@ -133,13 +133,13 @@ namespace IF
 	public:
 		static Input* getInstance(); 
 
-		HRESULT Initialize(HINSTANCE& hInstance, HWND& hwnd);
+		void Initialize(HINSTANCE& hInstance, HWND& hwnd);
 
 		/// <summary>
 		/// キーボード情報のアップデート
 		/// </summary>
 		/// <param name="result"></param>
-		HRESULT Update();
+		void Update();
 
 		/// <summary>
 		/// トリガー判定

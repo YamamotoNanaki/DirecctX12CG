@@ -12,7 +12,7 @@ void IF::PV::SetVerticleIndex(VertexPos* vertices, int vertexCount)
 	}
 }
 
-HRESULT PV::Initialize(ID3D12Device* device)
+void PV::Initialize(ID3D12Device* device)
 {
 	HRESULT result;
 
@@ -66,9 +66,6 @@ HRESULT PV::Initialize(ID3D12Device* device)
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	vbView.SizeInBytes = sizeVB;
 	vbView.StrideInBytes = sizeof(vertices[0]);
-
-
-	return result;
 }
 
 D3D12_VERTEX_BUFFER_VIEW& IF::PV::GetVertexView()
@@ -76,7 +73,7 @@ D3D12_VERTEX_BUFFER_VIEW& IF::PV::GetVertexView()
 	return vbView;
 }
 
-unsigned int IF::PV::GetSize()
+size_t IF::PV::GetSize()
 {
 	return vertices.size();
 }

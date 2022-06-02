@@ -3,7 +3,7 @@
 using namespace std;
 using namespace DirectX;
 
-void IF::MVI::SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, std::vector<unsigned short> indices, int indexCount)
+void IF::MVI::SetVerticleIndex(std::vector<Vertex> vertices, size_t vertexCount, std::vector<unsigned short> indices, size_t indexCount)
 {
 	for (int i = 0; i < vertexCount; i++)
 	{
@@ -15,7 +15,7 @@ void IF::MVI::SetVerticleIndex(std::vector<Vertex> vertices, int vertexCount, st
 	}
 }
 
-HRESULT IF::MVI::Initialize(ID3D12Device* device, bool smoothing, NormalFlag flag)
+void IF::MVI::Initialize(ID3D12Device* device, bool smoothing, NormalFlag flag)
 {
 	HRESULT result;
 
@@ -182,8 +182,6 @@ HRESULT IF::MVI::Initialize(ID3D12Device* device, bool smoothing, NormalFlag fla
 #pragma endregion インデックスバッファへのデータ転送
 
 	}
-
-	return result;
 }
 
 D3D12_VERTEX_BUFFER_VIEW& IF::MVI::GetVertexView()
@@ -196,7 +194,7 @@ D3D12_INDEX_BUFFER_VIEW& IF::MVI::GetIndexView()
 	return ibView;
 }
 
-unsigned int IF::MVI::GetSize()
+size_t IF::MVI::GetSize()
 {
 	return indices.size();
 }

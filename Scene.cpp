@@ -9,21 +9,24 @@ using namespace DirectX;
 using namespace std;
 
 IF::Scene::Scene(int winWidth, int winHeight, ID3D12Device* device, ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)
-:winWidth(winWidth),winHeight(winHeight),device(device),commandList(commandList),viewport(viewport) {}
+:winWidth(winWidth),winHeight(winHeight),device(device),commandList(commandList),viewport(viewport)
+{
+	Graphic::SetDevice(device);
+	Texture::setDevice(device);
+	Model::SetDevice(device);
+}
 
 IF::Scene::~Scene()
 {
 	delete matPro;
 	delete light;
-	delete sound;
+	sound->Reset();
 	sound->SoundUnLoad(&testSound);
 }
 
 void IF::Scene::Initialize()
 {
 	//音源
-	sound = new Sound;
-	sound->Initialize();
 	testSound = sound->LoadWave("Resources/Alarm01.wav");
 
 	//光源設定
@@ -43,14 +46,13 @@ void IF::Scene::Initialize()
 	cb.Initialize(device);
 
 	//画像関連初期化
-	graph.Initialize(device, tex->descRangeSRV, L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
-	graph.Initialize2D(device, tex->descRangeSRV, L"SpriteVS.hlsl", L"SpritePS.hlsl");
+	graph.Initialize(tex->descRangeSRV, L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
+	graph.Initialize2D(tex->descRangeSRV, L"SpriteVS.hlsl", L"SpritePS.hlsl");
 
 	//モデルの読み込みとオブジェクトとの紐付け(空と地面)
-	tex->setDevice(device);
 	tex->Initialize();
-	domeM.LoadModel(device, "skydome");
-	groundM.LoadModel(device, "ground");
+	domeM.LoadModel("skydome");
+	groundM.LoadModel("ground");
 	domeObj.Initialize(device, &domeM);
 	groundObj.Initialize(device, &groundM);
 	groundObj.position = { 0,-2,0 };
@@ -62,7 +64,7 @@ void IF::Scene::Initialize()
 	//そのほかの初期化
 	Rand::Initialize();
 
-	sphereM.LoadModel(device, "sphere", true);
+	sphereM.LoadModel("sphere", true);
 	sphereO.Initialize(device, &sphereM);
 
 	sphereO.position = { -1,0,0 };

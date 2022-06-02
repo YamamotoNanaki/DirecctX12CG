@@ -12,9 +12,9 @@ void Fire::Initialize(ID3D12Device* device)
 	HRESULT result;
 	for (int i = 0; i < _countof(particle); i++)
 	{
-		particle[i].Initialize(device);
-		particle[i].VIInitialize(device);
+		particle[i].Initialize();
 	}
+	Particle::VIInitialize();
 }
 
 void Fire::AddParticle()
@@ -69,6 +69,6 @@ void Fire::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT>vi
 	for (int i = 0; i < _countof(particle); i++)
 	{
 		if (particle[i].flag == false)continue;
-		particle[i].Draw(commandList, viewport);
+		particle[i].Draw(viewport);
 	}
 }

@@ -111,7 +111,7 @@ void IF::Sprite::Draw(std::vector<D3D12_VIEWPORT> viewport)
 {
 	for (int i = 0; i < viewport.size(); i++)
 	{
-		Texture::getInstance()->setTexture(commandList, texNum);
+		Texture::Instance()->setTexture(commandList, texNum);
 		commandList->RSSetViewports(1, &viewport[i]);
 		//頂点バッファの設定
 		commandList->IASetVertexBuffers(0, 1, &vi->GetVertexView());
@@ -175,7 +175,7 @@ void Sprite::TransferVertex()
 	vertices[RB].uv = { tex_right,	tex_bottom };
 	vertices[RT].uv = { tex_right,	tex_top };
 
-	ID3D12Resource* texBuff = Texture::getInstance()->tex[texNum].texbuff.Get();
+	ID3D12Resource* texBuff = Texture::Instance()->tex[texNum].texbuff.Get();
 
 	if (texBuff)
 	{

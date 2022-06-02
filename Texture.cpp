@@ -6,6 +6,8 @@
 using namespace DirectX;
 using namespace IF;
 
+ID3D12Device* Texture::device = nullptr;
+
 IF::Texture::Texture()
 {
 	descRangeSRV.NumDescriptors = 1;															//テクスチャ一つ
@@ -14,7 +16,7 @@ IF::Texture::Texture()
 	descRangeSRV.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 }
 
-Texture* IF::Texture::getInstance()
+Texture* IF::Texture::Instance()
 {
 	static Texture inst;
 	return &inst;
@@ -22,7 +24,7 @@ Texture* IF::Texture::getInstance()
 
 void IF::Texture::setDevice(ID3D12Device* device)
 {
-	this->device = device;
+	Texture::device = device;
 }
 
 void IF::Texture::Initialize()
@@ -60,7 +62,7 @@ unsigned short Texture::LoadTexture(const std::string filename)
 		if (tex[i].texName == filename)return S_OK;
 	}
 
-	unsigned short num;
+	unsigned short num = 0;
 	for (int i = 0; i < textureMax; i++)
 	{
 		if (tex[i].free == false)

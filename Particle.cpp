@@ -4,7 +4,11 @@
 using namespace DirectX;
 using namespace IF;
 
-void Particle::Initialize(ID3D12Device* device)
+ID3D12Device* Particle::device = nullptr;
+ID3D12GraphicsCommandList* Particle::commandList = nullptr;
+PV* Particle::vi = nullptr;
+
+void Particle::Initialize()
 {
 	HRESULT result;
 	//定数バッファのヒープ設定
@@ -28,6 +32,10 @@ void Particle::Initialize(ID3D12Device* device)
 	result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 	assert(SUCCEEDED(result));
 
+}
+
+void Particle::VIInitialize()
+{
 	VertexPos vertices[] = {
 		// x   y   z        u    v
 		//前
@@ -35,11 +43,13 @@ void Particle::Initialize(ID3D12Device* device)
 	};
 
 	vi->SetVerticleIndex(vertices, _countof(vertices));
+	vi->Initialize(device);
 }
 
-void Particle::VIInitialize(ID3D12Device* device)
+void IF::Particle::SetDeviceCommand(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
 {
-	vi->Initialize(device);
+	Particle::device = device;
+	Particle::commandList = commandList;
 }
 
 void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard)
@@ -59,14 +69,14 @@ void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBill
 	constMapTransform->matBillboard = matBillBoard;
 }
 
-void IF::Particle::DrawBefore(ID3D12GraphicsCommandList* commandList, ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
+void IF::Particle::DrawBefore(ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)
 {
 	commandList->SetGraphicsRootSignature(root);
 	commandList->IASetPrimitiveTopology(topology);
 	commandList->SetGraphicsRootConstantBufferView(0, GPUAddress);
 }
 
-void Particle::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)
+void Particle::Draw(vector<D3D12_VIEWPORT> viewport)
 {
 	for (int i = 0; i < viewport.size(); i++)
 	{

@@ -19,16 +19,16 @@ namespace IF
 		struct Tex
 		{
 			ComPtr<ID3D12Resource> texbuff = nullptr;
-			D3D12_CPU_DESCRIPTOR_HANDLE CPUHandle;
-			D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle;
-			std::string texName;
+			D3D12_CPU_DESCRIPTOR_HANDLE CPUHandle{};
+			D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle{};
+			std::string texName{};
 			bool free = false;
 		};
 
 	private:
 		static const short textureMax = 256;
 		unsigned short textureSize = 0;
-		ID3D12Device* device = nullptr;
+		static ID3D12Device* device;
 
 	public:
 		D3D12_DESCRIPTOR_RANGE descRangeSRV{};
@@ -42,8 +42,8 @@ namespace IF
 		~Texture() {}
 
 	public:
-		static Texture* getInstance();
-		void setDevice(ID3D12Device* device);
+		static Texture* Instance();
+		static void setDevice(ID3D12Device* device);
 		void Initialize();
 		void setTexture(ID3D12GraphicsCommandList* commandList, unsigned short texHandle);
 		unsigned short LoadTexture(const std::string filename);

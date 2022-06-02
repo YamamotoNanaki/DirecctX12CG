@@ -24,7 +24,9 @@ namespace IF
 		YBOARD
 	};
 	private:
-		PV* vi;
+		static PV* vi;
+		static ID3D12Device* device;
+		static ID3D12GraphicsCommandList* commandList;
 
 	public:
 		//定数バッファ
@@ -42,12 +44,13 @@ namespace IF
 		float startY;
 
 	public:
-		void Initialize(ID3D12Device* device);
-		void VIInitialize(ID3D12Device* device);
+		static void SetDeviceCommand(ID3D12Device* device,ID3D12GraphicsCommandList* commandList);
+		void Initialize();
+		static void VIInitialize();
 		void Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBillBoard = DirectX::XMMatrixIdentity()); 
-		void DrawBefore(ID3D12GraphicsCommandList* commandList,ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
+		void DrawBefore(ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress,
 			D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		void Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport);
+		void Draw(vector<D3D12_VIEWPORT> viewport);
 		~Particle();
 	};
 }

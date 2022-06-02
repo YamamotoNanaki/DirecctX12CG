@@ -5,12 +5,13 @@
 #include <sstream>
 #include <string>
 
-
 using namespace DirectX;
 using namespace IF;
 using namespace std;
 
-void Model::LoadModel(ID3D12Device* device, string name, bool smoothing)
+ID3D12Device* Model::device = nullptr;
+
+void Model::LoadModel(string name, bool smoothing)
 {
 	vi = new MVI;
 	const string modelname = name;
@@ -148,7 +149,7 @@ void Model::LoadModel(ID3D12Device* device, string name, bool smoothing)
 				if (key == "map_Kd")
 				{
 					line_stream >> material.textureFilename;
-					material.texNum = Texture::getInstance()->LoadTexture(directory + material.textureFilename);
+					material.texNum = Texture::Instance()->LoadTexture(directory + material.textureFilename);
 					material.tex = true;
 				}
 			}
@@ -190,19 +191,24 @@ void Model::LoadModel(ID3D12Device* device, string name, bool smoothing)
 
 	constBuffTransform1->Unmap(0, nullptr);
 
-	VIInitialize(device, smoothing);
+	VIInitialize(smoothing);
 }
 
-void Model::VIInitialize(ID3D12Device* device, bool smoothing)
+void Model::VIInitialize(bool smoothing)
 {
 	vi->Initialize(device, smoothing);
+}
+
+void IF::Model::SetDevice(ID3D12Device* device)
+{
+	Model::device = device;
 }
 
 void IF::Model::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport, ID3D12Resource* address)
 {
 	for (int i = 0; i < viewport.size(); i++)
 	{
-		if (material.tex == true)Texture::getInstance()->setTexture(commandList, material.texNum);
+		if (material.tex == true)Texture::Instance()->setTexture(commandList, material.texNum);
 		commandList->RSSetViewports(1, &viewport[i]);
 		//頂点バッファの設定
 		commandList->IASetVertexBuffers(0, 1, &vi->GetVertexView());

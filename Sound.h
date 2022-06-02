@@ -46,6 +46,13 @@ namespace IF
 		soundwave::SoundData LoadWave(const char* filename);
 		void SoundUnLoad(soundwave::SoundData* soundData);
 		void SoundPlay(const soundwave::SoundData& soundData);
-		~Sound();
+		static Sound* Instance();
+		void Reset();
+
+	private:
+		Sound() {};
+		Sound(const Sound&) {};
+		Sound& operator=(const Sound&) {}
+		~Sound() {};
 	};
 }

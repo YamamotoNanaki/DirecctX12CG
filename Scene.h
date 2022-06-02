@@ -33,8 +33,8 @@ namespace IF
 		int efect = 0;
 		int sky = 0;
 		int groundTex = 0;
-		Model sphereM;
-		Object sphereO;
+		Model sphereM{};
+		Object sphereO{};
 		DirectX::XMFLOAT3 slDir{ 0.0f,-1.0f,0.0f };
 		DirectX::XMFLOAT3 slPos{ 0.0f,5.0f,0.0f };
 		DirectX::XMFLOAT3 slColor{ 1.0f,1.0f,1.0f };
@@ -43,28 +43,28 @@ namespace IF
 		DirectX::XMFLOAT3 csDir{ 0.0f,-1.0f,0.0f };
 		DirectX::XMFLOAT3 csAtten{ 0.5f,0.6f,0.0f };
 		DirectX::XMFLOAT2 csAngle{ 0.0f,0.7f };
-		Sprite sprite;
+		Sprite sprite{};
 		unsigned int SGraph = 0;
-		soundwave::SoundData testSound;
+		soundwave::SoundData testSound{};
 
 		//-----------------------
 
 		//ínñ Ç∆ãÛ
-		Model domeM;
-		Model groundM;
-		Object domeObj;
-		Object groundObj;
+		Model domeM{};
+		Model groundM{};
+		Object domeObj{};
+		Object groundObj{};
 		//ÉJÉÅÉâ
 		View matView;
 		Projection* matPro = nullptr;
 		//åıåπ
 		LightManager* light = nullptr;
 		//âπåπ
-		Sound* sound;
+		Sound* sound = Sound::Instance();
 
 	public:
 		ConstBuff cb;
-		Texture* tex = Texture::getInstance();
+		Texture* tex = Texture::Instance();
 		Graphic graph;
 
 	private:

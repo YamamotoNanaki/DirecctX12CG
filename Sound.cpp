@@ -1,6 +1,7 @@
 #include "Sound.h"
 #include <cassert>
 
+using namespace IF;
 using namespace IF::soundwave;
 
 void IF::Sound::Initialize()
@@ -78,7 +79,13 @@ void IF::Sound::SoundPlay(const SoundData& soundData)
 	result = pSourceVoice->Start();
 }
 
-IF::Sound::~Sound()
+Sound* IF::Sound::Instance()
+{
+	static Sound inst;
+	return &inst;
+}
+
+void IF::Sound::Reset()
 {
 	xAudio.Reset();
 }

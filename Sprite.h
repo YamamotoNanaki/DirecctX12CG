@@ -25,14 +25,14 @@ namespace IF
 		static Matrix matPro;
 
 	private:
-		SV* vi;
-		unsigned int texNum;
+		SV* vi = nullptr;
+		unsigned int texNum = 0;
 
 	public:
 		//定数バッファ
 		ComPtr<ID3D12Resource> constBuffTransform;
 		//定数バッファマップ
-		ConstBufferMatrix* constMapTransform;
+		ConstBufferMatrix* constMapTransform = nullptr;
 		//アフィン変換情報
 		Float2 scale = { 1,1 };
 		float rotation = 0;

@@ -6,6 +6,13 @@
 using namespace std;
 using namespace IF;
 
+ID3D12Device* Graphic::device = nullptr;
+
+void IF::Graphic::SetDevice(ID3D12Device* device)
+{
+	Graphic::device = device;
+}
+
 void IF::Graphic::CompillerArray(LPCWSTR fillname, int num)
 {
 	HRESULT result;
@@ -114,7 +121,7 @@ void Graphic::Compiller(LPCWSTR vs, LPCWSTR ps, LPCWSTR gs, char compile)
 //
 //}
 
-void IF::Graphic::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps, LPCWSTR gs)
+void IF::Graphic::Initialize(D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps, LPCWSTR gs)
 {
 	HRESULT result;
 
@@ -171,7 +178,7 @@ void IF::Graphic::Initialize(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descR
 	assert(SUCCEEDED(result));
 }
 
-void IF::Graphic::Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps)
+void IF::Graphic::Initialize2D(D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps)
 {
 	HRESULT result;
 
@@ -225,7 +232,7 @@ void IF::Graphic::Initialize2D(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& des
 	assert(SUCCEEDED(result));
 }
 
-void IF::Graphic::InitializeParticle(ID3D12Device* device, D3D12_DESCRIPTOR_RANGE& descRangeSRV)
+void IF::Graphic::InitializeParticle(D3D12_DESCRIPTOR_RANGE& descRangeSRV)
 {
 	HRESULT result;
 

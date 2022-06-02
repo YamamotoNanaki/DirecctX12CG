@@ -17,7 +17,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	const int winHeight = 720;  // c•
 
 	Window* win = new Window(winWidth, winHeight);
-
 #ifdef _DEBUG
 	Debug();
 #endif // _DEBUG
@@ -26,6 +25,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	dx12->Initialize(win->hwnd, winWidth, winHeight);
 	Input::getInstance()->Initialize(win->w.hInstance, win->hwnd);
 	LightManager::GetInstance()->SetDevice(dx12->device.Get());
+	Sound::Instance()->Initialize();
 	Scene scene(winWidth, winHeight, dx12->device.Get(), dx12->commandList.Get(), dx12->viewport);
 	dx12->SetClearColor(0, 0, 0);
 	scene.Initialize();

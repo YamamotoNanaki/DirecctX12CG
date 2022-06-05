@@ -2,7 +2,6 @@
 #include "DirectX12.h"
 #include "Input.h"
 #include "Scene.h"
-#include "Util.h"
 #include "FPS.h"
 #include "Sound.h"
 #ifdef _DEBUG
@@ -16,7 +15,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	const int winWidth = 1280;  // 横幅
 	const int winHeight = 720;  // 縦幅
 
-	Window* win = new Window(winWidth, winHeight);
+	Window* win = Window::Instance();
+	win->Initialize(winWidth, winHeight);
 #ifdef _DEBUG
 	Debug();
 #endif // _DEBUG
@@ -26,9 +26,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	Input::getInstance()->Initialize(win->w.hInstance, win->hwnd);
 	LightManager::GetInstance()->SetDevice(dx12->device.Get());
 	Sound::Instance()->Initialize();
-	Scene scene(winWidth, winHeight, dx12->device.Get(), dx12->commandList.Get(), dx12->viewport);
+	IScene* scene = new Scene(winWidth, winHeight, dx12->device.Get(), dx12->commandList.Get(), dx12->viewport);
 	dx12->SetClearColor(0, 0, 0);
-	scene.Initialize();
+	scene->Initialize();
 	FPS fps;
 	fps.Initialize(60);
 
@@ -37,13 +37,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		//メッセージ
 		if (win->Message())break;
 
-		scene.Update();
+		scene->Update();
 
 		dx12->DrawBefore();
-		scene.Draw();
+		scene->Draw();
 		dx12->DrawAfter();
 		fps.FPSFixed();
 	}
-	delete win;
+	delete scene;
+	win->Unregister();
 	return 0;
 }

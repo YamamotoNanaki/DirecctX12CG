@@ -3,7 +3,13 @@
 
 using namespace IF;
 
-Window::Window(int window_width,int window_height)
+Window* IF::Window::Instance()
+{
+	static Window inst;
+	return &inst;
+}
+
+void IF::Window::Initialize(int window_width, int window_height)
 {
 	w.cbSize = sizeof(WNDCLASSEX);
 	w.lpfnWndProc = (WNDPROC)WindowProc; // ウィンドウプロシージャを設定
@@ -34,7 +40,7 @@ Window::Window(int window_width,int window_height)
 	ShowWindow(hwnd, SW_SHOW);
 }
 
-Window::~Window()
+void IF::Window::Unregister()
 {
 	UnregisterClass(w.lpszClassName, w.hInstance);
 }
@@ -54,4 +60,16 @@ bool Window::Message()
 		return true;
 	}
 	return false;
+}
+
+LRESULT IF::Window::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	// メッセージで分岐
+	switch (msg)
+	{
+	case WM_DESTROY: //ウィンドーが破壊された
+		PostQuitMessage(0); // OSに対して、アプリの終了を伝える
+		return 0;
+	}
+	return DefWindowProc(hwnd, msg, wparam, lparam); // 標準の処理を行う
 }

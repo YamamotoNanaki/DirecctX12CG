@@ -29,7 +29,7 @@ void IF::ConstBuff::Initialize(ID3D12Device* device)
 
 	result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);	//マッピング
 	assert(SUCCEEDED(result));
-	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1);					//RGBAで半透明の赤
+	constMapMaterial->color = Float4(1, 1, 1, 1);					//RGBAで半透明の赤
 	constBuffMaterial->Unmap(0, nullptr);							//マッピング解除
 
 	R = 255, G = 255, B = 255, A = 255;
@@ -48,7 +48,7 @@ void IF::ConstBuff::SetBright(int red, int green, int blue)
 	if (green != G)g = TypeConversionByte(green);
 	if (blue != B)b = TypeConversionByte(blue);
 	R = red, G = green, B = blue;
-	constMapMaterial->color = XMFLOAT4(r, g, b, a);					//RGBAで半透明の赤
+	constMapMaterial->color = Float4(r, g, b, a);					//RGBAで半透明の赤
 }
 
 void IF::ConstBuff::SetAlpha(int alpha)
@@ -56,7 +56,7 @@ void IF::ConstBuff::SetAlpha(int alpha)
 	if (alpha == A);
 	a = TypeConversionByte(alpha);
 	A = alpha;
-	constMapMaterial->color = XMFLOAT4(r, g, b, a);					//RGBAで半透明の赤
+	constMapMaterial->color = Float4(r, g, b, a);					//RGBAで半透明の赤
 }
 
 void IF::ConstBuff::SetColor(int red, int green, int blue, int alpha)
@@ -67,5 +67,5 @@ void IF::ConstBuff::SetColor(int red, int green, int blue, int alpha)
 	if (blue != B)b = TypeConversionByte(blue);
 	if (alpha != A)a = TypeConversionByte(alpha);
 	R = red, G = green, B = blue, A = alpha;
-	constMapMaterial->color = XMFLOAT4(r, g, b, a);					//RGBAで半透明の赤
+	constMapMaterial->color = Float4(r, g, b, a);					//RGBAで半透明の赤
 }

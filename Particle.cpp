@@ -1,5 +1,6 @@
 #include "Particle.h"
 #include "View.h"
+#include "MathConvert.h"
 
 using namespace DirectX;
 using namespace IF;
@@ -65,8 +66,8 @@ void Particle::Update(XMMATRIX matView, XMMATRIX matProjection, XMMATRIX matBill
 	matWorld *= matTrams;
 
 	//定数バッファへのデータ転送
-	constMapTransform->mat = matWorld * matView * matProjection;
-	constMapTransform->matBillboard = matBillBoard;
+	constMapTransform->mat = MatrixConvert(matWorld * matView * matProjection);
+	constMapTransform->matBillboard = MatrixConvert(matBillBoard);
 }
 
 void IF::Particle::DrawBefore(ID3D12RootSignature* root, ID3D12DescriptorHeap* srvHeap, D3D12_GPU_VIRTUAL_ADDRESS GPUAddress, D3D_PRIMITIVE_TOPOLOGY topology)

@@ -77,9 +77,9 @@ void Object::Update(XMMATRIX matView, XMMATRIX matProjection, XMFLOAT3 cameraPos
 	}
 
 	//定数バッファへのデータ転送
-	constMapTransform->viewPro = matView * matProjection;
-	constMapTransform->world = matWorld;
-	constMapTransform->cameraPos = cameraPos;
+	constMapTransform->viewPro = MatrixConvert(matView * matProjection);
+	constMapTransform->world = MatrixConvert(matWorld);
+	constMapTransform->cameraPos = Float3Convert(cameraPos);
 }
 
 void Object::Draw(ID3D12GraphicsCommandList* commandList, vector<D3D12_VIEWPORT> viewport)

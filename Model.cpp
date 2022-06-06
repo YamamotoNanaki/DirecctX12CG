@@ -1,6 +1,7 @@
 #include "Model.h"
 #include "View.h"
 #include "Texture.h"
+#include "MathConvert.h"
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -184,9 +185,9 @@ void Model::LoadModel(string name, bool smoothing)
 	result = constBuffTransform1->Map(0, nullptr, (void**)&constMapMaterial);
 	assert(SUCCEEDED(result));
 
-	constMapMaterial->ambient = material.ambient;
-	constMapMaterial->diffuse = material.diffuse;
-	constMapMaterial->specular = material.specular;
+	constMapMaterial->ambient = Float3Convert(material.ambient);
+	constMapMaterial->diffuse = Float3Convert(material.diffuse);
+	constMapMaterial->specular = Float3Convert(material.specular);
 	constMapMaterial->alpha = material.alpha;
 
 	constBuffTransform1->Unmap(0, nullptr);

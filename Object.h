@@ -1,6 +1,5 @@
 #pragma once
 #include <d3d12.h>
-#include <DirectXMath.h>
 #include <wrl.h>
 #include <vector>
 #include <string>
@@ -8,6 +7,7 @@
 #include "ModelVI.h"
 #include "ConstStruct.h"
 #include "Model.h"
+#include "MathConvert.h"
 
 #pragma comment(lib,"d3d12.lib") 
 

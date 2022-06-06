@@ -2,7 +2,6 @@
 #include <cassert>
 
 using namespace IF;
-using namespace IF::soundwave;
 
 void IF::Sound::Initialize()
 {
@@ -12,8 +11,23 @@ void IF::Sound::Initialize()
 	assert(SUCCEEDED(result) && "ƒTƒEƒ“ƒh‚Ì‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½");
 }
 
-SoundData IF::Sound::LoadWave(const char* filename)
+unsigned short IF::Sound::LoadWave(const char* filename)
 {
+	for (int i = 0; i < Sound::maxSound; i++)
+	{
+		if (soundDatas[i].free == false)continue;
+		if (soundDatas[i].name == filename)return i;
+	}
+
+	unsigned short num = 0;
+	for (int i = 0; i < Sound::maxSound; i++)
+	{
+		if (soundDatas[i].free == false)
+		{
+			num = i;
+			break;
+		}
+	}
 	std::ifstream file;
 
 	file.open(filename, std::ios_base::binary);
@@ -50,29 +64,32 @@ SoundData IF::Sound::LoadWave(const char* filename)
 	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
 	soundData.bufferSize = data.size;
 
-	return soundData;
+	soundDatas[num] = soundData;
+
+	return num;
 }
 
-void IF::Sound::SoundUnLoad(SoundData* soundData)
+void IF::Sound::SoundUnLoad(unsigned short soundNum)
 {
-	delete[]soundData->pBuffer;
+	delete[]soundDatas[soundNum].pBuffer;
 
-	soundData->pBuffer = 0;
-	soundData->bufferSize = 0;
-	soundData->wfex = {};
+	soundDatas[soundNum].pBuffer = 0;
+	soundDatas[soundNum].bufferSize = 0;
+	soundDatas[soundNum].wfex = {};
 }
 
-void IF::Sound::SoundPlay(const SoundData& soundData)
+void IF::Sound::SoundPlay(unsigned short soundNum, bool roop)
 {
 	HRESULT result;
-
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
-	result = xAudio->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+	result = xAudio->CreateSourceVoice(&pSourceVoice, &soundDatas[soundNum].wfex);
 	assert(SUCCEEDED(result));
 
 	XAUDIO2_BUFFER buf{};
-	buf.pAudioData = soundData.pBuffer;
-	buf.AudioBytes = soundData.bufferSize;
+	buf.pAudioData = soundDatas[soundNum].pBuffer;
+	buf.AudioBytes = soundDatas[soundNum].bufferSize;
+	if (roop)buf.LoopCount = XAUDIO2_LOOP_INFINITE;
+	else buf.LoopCount = 0;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
 
 	result = pSourceVoice->SubmitSourceBuffer(&buf);

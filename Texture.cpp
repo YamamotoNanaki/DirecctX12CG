@@ -59,7 +59,7 @@ unsigned short Texture::LoadTexture(const std::string filename)
 	for (int i = 0; i < textureMax; i++)
 	{
 		if (tex[i].free == false)continue;
-		if (tex[i].texName == filename)return S_OK;
+		if (tex[i].texName == filename)return i;
 	}
 
 	unsigned short num = 0;

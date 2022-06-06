@@ -2,13 +2,15 @@
 #include <xaudio2.h>
 #include <fstream>
 #include <wrl.h>
+#include <array>
 
 #pragma comment(lib,"xaudio2.lib")
 
 namespace IF
 {
-	namespace soundwave
+	class Sound
 	{
+	private:
 		struct ChunkHeader
 		{
 			char id[4];
@@ -32,20 +34,20 @@ namespace IF
 			WAVEFORMATEX wfex;
 			BYTE* pBuffer;
 			unsigned int bufferSize;
+			const char* name;
+			bool free = false;
 		};
-	}
-
-	class Sound
-	{
 	private:
 		Microsoft::WRL::ComPtr<IXAudio2> xAudio;
 		IXAudio2MasteringVoice* masterVoice = nullptr;
+		static const short maxSound = 128;
+		std::array<SoundData, maxSound> soundDatas;
 
 	public:
 		void Initialize();
-		soundwave::SoundData LoadWave(const char* filename);
-		void SoundUnLoad(soundwave::SoundData* soundData);
-		void SoundPlay(const soundwave::SoundData& soundData);
+		unsigned short LoadWave(const char* filename);
+		void SoundUnLoad(unsigned short soundNum);
+		void SoundPlay(unsigned short soundNum, bool roop = true);
 		static Sound* Instance();
 		void Reset();
 

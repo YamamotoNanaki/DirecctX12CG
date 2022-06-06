@@ -21,7 +21,7 @@ IF::Scene::~Scene()
 	delete matPro;
 	delete light;
 	sound->Reset();
-	sound->SoundUnLoad(&testSound);
+	sound->SoundUnLoad(testSound);
 }
 
 void IF::Scene::Initialize()

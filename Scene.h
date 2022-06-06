@@ -45,7 +45,7 @@ namespace IF
 		DirectX::XMFLOAT2 csAngle{ 0.0f,0.7f };
 		Sprite sprite{};
 		unsigned int SGraph = 0;
-		soundwave::SoundData testSound{};
+		unsigned int testSound = 0;
 
 		//-----------------------
 

@@ -6,16 +6,8 @@
 #include "Vector3.h"
 #include "Matrix.h"
 
-
 namespace IF
 {
-	const float IFPI = 3.141592654f;
-	const float IF2PI = 6.283185307f;
-	const float IF1DIVPI = 0.318309886f;
-	const float IF1DIV2PI = 0.159154943f;
-	const float IFPIDIV2 = 1.570796327f;
-	const float IFPIDIV4 = 0.785398163f;
-
 	Float4 SetFloat4ToFloat3(Float3 f, float z = 0);
 	Float4 SetFloat4ToFoat2(Float2 f, float z = 0, float w = 0);
 	Float3 SetFloat3ToFloat2(Float2 f, float z = 0);

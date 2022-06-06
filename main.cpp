@@ -15,19 +15,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	const int winWidth = 1280;  // 横幅
 	const int winHeight = 720;  // 縦幅
 
-	Window* win = Window::Instance();
-	win->Initialize(winWidth, winHeight);
+	Window::Instance()->Initialize(winWidth, winHeight);
 #ifdef _DEBUG
 	Debug();
 #endif // _DEBUG
 
-	DirectX12* dx12 = DirectX12::Instance();
-	dx12->Initialize(win->hwnd, winWidth, winHeight);
-	Input::getInstance()->Initialize(win->w.hInstance, win->hwnd);
-	LightManager::GetInstance()->SetDevice(dx12->device.Get());
+	DirectX12::Instance()->Initialize(Window::Instance()->hwnd, winWidth, winHeight);
+	Input::getInstance()->Initialize(Window::Instance()->w.hInstance, Window::Instance()->hwnd);
+	LightManager::GetInstance()->SetDevice(DirectX12::Instance()->device.Get());
 	Sound::Instance()->Initialize();
-	IScene* scene = new Scene(winWidth, winHeight, dx12->device.Get(), dx12->commandList.Get(), dx12->viewport);
-	dx12->SetClearColor(0, 0, 0);
+	IScene* scene = new Scene(winWidth, winHeight, DirectX12::Instance()->device.Get(),
+		DirectX12::Instance()->commandList.Get(), DirectX12::Instance()->viewport);
+	DirectX12::Instance()->SetClearColor(0, 0, 0);
 	scene->Initialize();
 	FPS fps;
 	fps.Initialize(60);
@@ -35,16 +34,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	while (!Input::getInstance()->KDown(KEY::ESC))
 	{
 		//メッセージ
-		if (win->Message())break;
+		if (Window::Instance()->Message())break;
 
 		scene->Update();
 
-		dx12->DrawBefore();
+		DirectX12::Instance()->DrawBefore();
 		scene->Draw();
-		dx12->DrawAfter();
+		DirectX12::Instance()->DrawAfter();
 		fps.FPSFixed();
 	}
 	delete scene;
-	win->Unregister();
+	Window::Instance()->Unregister();
 	return 0;
 }

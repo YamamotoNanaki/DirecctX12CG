@@ -1,4 +1,5 @@
 #include "IFMath.h"
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <cassert>
 
@@ -96,7 +97,7 @@ void IF::ScalarSinCos(float* pSin, float* pCos, float Value)
 	assert(pCos);
 
 	// Map Value to y in [-pi,pi], x = 2*pi*quotient + remainder.
-	float quotient = IF1DIV2PI * Value;
+	float quotient = M_PI_2 * Value;
 	if (Value >= 0.0f)
 	{
 		quotient = static_cast<float>(static_cast<int>(quotient + 0.5f));
@@ -105,18 +106,18 @@ void IF::ScalarSinCos(float* pSin, float* pCos, float Value)
 	{
 		quotient = static_cast<float>(static_cast<int>(quotient - 0.5f));
 	}
-	float y = Value - IF2PI * quotient;
+	float y = Value - M_PI * 2 * quotient;
 
 	// Map y to [-pi/2,pi/2] with sin(y) = sin(Value).
 	float sign;
-	if (y > IFPIDIV2)
+	if (y > M_PI_2)
 	{
-		y = IFPI - y;
+		y = M_PI - y;
 		sign = -1.0f;
 	}
-	else if (y < -IFPIDIV2)
+	else if (y < -M_PI_2)
 	{
-		y = -IFPI - y;
+		y = -M_PI - y;
 		sign = -1.0f;
 	}
 	else
@@ -136,7 +137,7 @@ void IF::ScalarSinCos(float* pSin, float* pCos, float Value)
 
 float IF::ConvertToRadians(float fDegrees)
 {
-	return fDegrees * (IFPI / 180.0f);
+	return fDegrees * (M_PI / 180.0f);
 }
 
 Vector3 IF::VectorNegate(Vector3 m)

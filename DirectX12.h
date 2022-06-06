@@ -3,7 +3,7 @@
 #include <dxgi1_6.h>
 #include <vector>
 #include <wrl.h>
-#include <DirectXMath.h>
+#include "IFMath.h"
 
 #pragma comment(lib,"d3d12.lib") 
 #pragma comment(lib,"dxgi.lib")
@@ -14,7 +14,6 @@ namespace IF
 	class DirectX12
 	{
 		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-		using XMFLOAT4 = DirectX::XMFLOAT4;
 		template<class T> using vector = std::vector<T>;
 
 	public:
@@ -52,7 +51,7 @@ namespace IF
 		void SetScissorrect(float left, float right, float top, float bottom);
 
 	public:
-		void SetClearColor(XMFLOAT4 color);
+		void SetClearColor(Float4 color);
 		void SetClearColor(float Red, float Green, float Bule);
 
 	private:

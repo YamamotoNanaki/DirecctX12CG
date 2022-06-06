@@ -1,5 +1,6 @@
 #include "ConstBuff.h"
 #include "Util.h"
+#include <cassert>
 
 void IF::ConstBuff::Initialize(ID3D12Device* device)
 {

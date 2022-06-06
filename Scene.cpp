@@ -74,7 +74,7 @@ void IF::Scene::Initialize()
 
 	//2D関連
 	sprite.StaticInitialize(device, commandList, (float)winWidth, (float)winHeight);
-	SGraph = tex->LoadTexture("Resources/kakuninn.png");
+	SGraph = tex->LoadTexture("Resources/texture.png");
 	sprite.Initialize(SGraph,{300,300});
 
 	sound->SoundPlay(testSound);
@@ -171,7 +171,7 @@ void IF::Scene::Draw()
 	//fire->Draw(commandList, viewport);
 	graph.DrawBlendMode(commandList, Blend::NORMAL2D);
 	sprite.DrawBefore(graph.rootsignature.Get(), cb.GetGPUAddress());
-	//sprite.Draw(viewport);
+	sprite.Draw(viewport);
 
 	//デバッグ用
 #ifdef _DEBUG

@@ -44,6 +44,7 @@ namespace IF
 
 	public:
 		static DirectX12* Instance();
+		static void DeleteInstance();
 		void Initialize(HWND hwnd, int window_width, int window_height);
 		void DrawBefore();
 		void DrawAfter();

@@ -15,10 +15,15 @@ Input::Input()
 	}
 }
 
-Input* IF::Input::getInstance()
+Input* IF::Input::Instance()
 {
-	static Input inst;
-	return &inst;
+	static Input* inst = new Input;
+	return inst;
+}
+
+void IF::Input::DeleteInstance()
+{
+	delete Input::Instance();
 }
 
 void IF::Input::Initialize(HINSTANCE& hInstance, HWND& hwnd)

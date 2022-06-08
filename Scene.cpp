@@ -18,10 +18,11 @@ IF::Scene::Scene(int winWidth, int winHeight, ID3D12Device* device, ID3D12Graphi
 
 IF::Scene::~Scene()
 {
+	//light->UnMap();
 	delete matPro;
-	delete light;
 	sound->Reset();
 	sound->SoundUnLoad(testSound);
+	Graphic::DeleteInstance();
 }
 
 void IF::Scene::Initialize()
@@ -30,7 +31,7 @@ void IF::Scene::Initialize()
 	testSound = sound->LoadWave("Resources/Alarm01.wav");
 
 	//光源設定
-	light = LightManager::GetInstance();
+	light = LightManager::Instance();
 	light->Initialize();
 	light->DefaultLightSetting();
 	for (int i = 0; i < 3; i++)
@@ -43,18 +44,18 @@ void IF::Scene::Initialize()
 	light->SetAmbientColor({ 1, 1, 1 });
 	Object::SetLight(light);
 	//定数バッファの初期化
-	cb.Initialize(device);
+	cb.Initialize(device.Get());
 
 	//画像関連初期化
-	graph.Initialize(tex->descRangeSRV, L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
-	graph.Initialize2D(tex->descRangeSRV, L"SpriteVS.hlsl", L"SpritePS.hlsl");
+	graph->Initialize(tex->descRangeSRV, L"ModelVS.hlsl", L"ModelPS.hlsl", L"ModelGS.hlsl");
+	graph->Initialize2D(tex->descRangeSRV, L"SpriteVS.hlsl", L"SpritePS.hlsl");
 
 	//モデルの読み込みとオブジェクトとの紐付け(空と地面)
 	tex->Initialize();
 	domeM.LoadModel("skydome");
 	groundM.LoadModel("ground");
-	domeObj.Initialize(device, &domeM);
-	groundObj.Initialize(device, &groundM);
+	domeObj.Initialize(device.Get(), &domeM);
+	groundObj.Initialize(device.Get(), &groundM);
 	groundObj.position = { 0,-2,0 };
 
 	//カメラ関連初期化
@@ -65,7 +66,7 @@ void IF::Scene::Initialize()
 	Rand::Initialize();
 
 	sphereM.LoadModel("sphere", true);
-	sphereO.Initialize(device, &sphereM);
+	sphereO.Initialize(device.Get(), &sphereM);
 
 	sphereO.position = { -1,0,0 };
 	sphereO.scale = { 0.5,0.5,0.5 };
@@ -73,7 +74,7 @@ void IF::Scene::Initialize()
 
 
 	//2D関連
-	sprite.StaticInitialize(device, commandList, (float)winWidth, (float)winHeight);
+	sprite.StaticInitialize(device.Get(), commandList.Get(), (float)winWidth, (float)winHeight);
 	SGraph = tex->LoadTexture("Resources/texture.png");
 	sprite.Initialize(SGraph,{300,300});
 
@@ -88,7 +89,7 @@ void IF::Scene::Initialize()
 
 void IF::Scene::Update()
 {
-	Input* input = Input::getInstance();
+	Input* input = Input::Instance();
 	input->Update();
 
 	//光源
@@ -155,22 +156,22 @@ void IF::Scene::Update()
 
 void IF::Scene::Draw()
 {
-	graph.DrawBlendMode(commandList);
-	domeObj.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
-	domeObj.Draw(commandList, viewport);
+	graph->DrawBlendMode(commandList.Get());
+	domeObj.DrawBefore(commandList.Get(), graph->rootsignature.Get(), cb.GetGPUAddress());
+	domeObj.Draw(commandList.Get(), viewport);
 
-	groundObj.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
-	groundObj.Draw(commandList, viewport);
+	groundObj.DrawBefore(commandList.Get(), graph->rootsignature.Get(), cb.GetGPUAddress());
+	groundObj.Draw(commandList.Get(), viewport);
 
-	sphereO.DrawBefore(commandList, graph.rootsignature.Get(), cb.GetGPUAddress());
-	sphereO.Draw(commandList, viewport);
+	sphereO.DrawBefore(commandList.Get(), graph->rootsignature.Get(), cb.GetGPUAddress());
+	sphereO.Draw(commandList.Get(), viewport);
 
 	//pgraph.DrawBlendMode(commandList, Blend::ADD);
 	//tex->setTexture(commandList, efect);
 	//fire->particle[0].DrawBefore(commandList, pgraph.rootsignature.Get(), tex->srvHeap.Get(), cb.GetGPUAddress(), D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	//fire->Draw(commandList, viewport);
-	graph.DrawBlendMode(commandList, Blend::NORMAL2D);
-	sprite.DrawBefore(graph.rootsignature.Get(), cb.GetGPUAddress());
+	graph->DrawBlendMode(commandList.Get(), Blend::NORMAL2D);
+	sprite.DrawBefore(graph->rootsignature.Get(), cb.GetGPUAddress());
 	sprite.Draw(viewport);
 
 	//デバッグ用

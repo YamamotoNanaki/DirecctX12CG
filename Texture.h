@@ -28,7 +28,7 @@ namespace IF
 	private:
 		static const short textureMax = 256;
 		unsigned short textureSize = 0;
-		static ID3D12Device* device;
+		static ComPtr<ID3D12Device> device;
 
 	public:
 		D3D12_DESCRIPTOR_RANGE descRangeSRV{};
@@ -39,10 +39,11 @@ namespace IF
 		Texture();
 		Texture(const Texture&);
 		Texture& operator=(const Texture&) {}
-		~Texture() {}
+		~Texture() {};
 
 	public:
 		static Texture* Instance();
+		static void DeleteInstance();
 		static void setDevice(ID3D12Device* device);
 		void Initialize();
 		void setTexture(ID3D12GraphicsCommandList* commandList, unsigned short texHandle);

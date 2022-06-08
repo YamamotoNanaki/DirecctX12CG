@@ -17,6 +17,7 @@ namespace IF
 
 	public:
 		static Window* Instance();
+		static void DeleteInstance();
 		void Initialize(int window_width, int window_height);
 		void Unregister();
 		bool Message();

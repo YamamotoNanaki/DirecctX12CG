@@ -3,9 +3,10 @@
 #include "Texture.h"
 
 using namespace IF;
+using namespace Microsoft::WRL;
 
-ID3D12GraphicsCommandList* Sprite::commandList = nullptr;
-ID3D12Device* Sprite::device = nullptr;
+ComPtr < ID3D12GraphicsCommandList> Sprite::commandList = nullptr;
+ComPtr < ID3D12Device> Sprite::device = nullptr;
 Matrix Sprite::matPro;
 
 void IF::Sprite::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, float winWidth, float winHeight)
@@ -63,7 +64,7 @@ void IF::Sprite::Initialize(unsigned int texNum, Float2 size, bool flipX, bool f
 	vertices[RT].uv = { tex_right,	tex_top };
 
 	vi->SetVerticle(vertices);
-	vi->Initialize(device);
+	vi->Initialize(device.Get());
 
 	HRESULT result;
 	//定数バッファのヒープ設定
@@ -111,7 +112,7 @@ void IF::Sprite::Draw(std::vector<D3D12_VIEWPORT> viewport)
 {
 	for (int i = 0; i < viewport.size(); i++)
 	{
-		Texture::Instance()->setTexture(commandList, texNum);
+		Texture::Instance()->setTexture(commandList.Get(), texNum);
 		commandList->RSSetViewports(1, &viewport[i]);
 		//頂点バッファの設定
 		commandList->IASetVertexBuffers(0, 1, &vi->GetVertexView());

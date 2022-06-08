@@ -5,8 +5,9 @@
 
 using namespace DirectX;
 using namespace IF;
+using namespace Microsoft::WRL;
 
-ID3D12Device* Texture::device = nullptr;
+ComPtr<ID3D12Device> Texture::device = nullptr;
 
 IF::Texture::Texture()
 {
@@ -18,8 +19,13 @@ IF::Texture::Texture()
 
 Texture* IF::Texture::Instance()
 {
-	static Texture inst;
-	return &inst;
+	static Texture* inst = new Texture;
+	return inst;
+}
+
+void IF::Texture::DeleteInstance()
+{
+	delete Texture::Instance();
 }
 
 void IF::Texture::setDevice(ID3D12Device* device)

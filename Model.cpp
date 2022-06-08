@@ -10,7 +10,7 @@ using namespace DirectX;
 using namespace IF;
 using namespace std;
 
-ID3D12Device* Model::device = nullptr;
+Microsoft::WRL::ComPtr<ID3D12Device> Model::device = nullptr;
 
 void Model::LoadModel(string name, bool smoothing)
 {
@@ -197,7 +197,7 @@ void Model::LoadModel(string name, bool smoothing)
 
 void Model::VIInitialize(bool smoothing)
 {
-	vi->Initialize(device, smoothing);
+	vi->Initialize(device.Get(), smoothing);
 }
 
 void IF::Model::SetDevice(ID3D12Device* device)

@@ -16,7 +16,7 @@ namespace IF
 		using XMFLOAT4 = DirectX::XMFLOAT4;
 		using XMVECTOR = DirectX::XMVECTOR;
 		using XMMATRIX = DirectX::XMMATRIX;
-	
+
 	private:
 		static const int PLightNum = 3;
 		static const int DLightNum = 3;
@@ -37,15 +37,18 @@ namespace IF
 	private:
 		static ID3D12Device* device;
 		ComPtr<ID3D12Resource> constBuff;
-		XMFLOAT3 ambientColor;
+		XMFLOAT3 ambientColor = { 1,1,1 };
 		DLight dLight[DLightNum];
 		PLight pLight[PLightNum];
 		SLight sLight[SLightNum];
 		CShadow cShadow[CShadowNum];
 		bool dirty = false;
+		LightManager() {};
+		LightManager(const LightManager&) {};
+		LightManager& operator=(const LightManager&) {};
+		~LightManager() {};
 
 	public:
-		~LightManager();
 		static void SetDevice(ID3D12Device* device);
 		void Initialize();
 		void TransferConstBuffer();
@@ -71,7 +74,9 @@ namespace IF
 		void SetCircleShadowAtten(int index, const XMFLOAT3& shadowAtten);
 		void SetCircleShadowFactorAngle(int index, const XMFLOAT2& shadowFactorAngle);
 		void Update();
-		void Draw(ID3D12GraphicsCommandList*commandList,UINT rootParameterIndex);
-		static LightManager* GetInstance();
+		void Draw(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndex);
+		static LightManager* Instance();
+		static void DeleteInstance();
+		void UnMap();
 	};
 }

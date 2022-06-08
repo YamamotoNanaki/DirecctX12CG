@@ -131,7 +131,8 @@ namespace IF
 		Input& operator=(const Input&) {}
 		~Input() {}
 	public:
-		static Input* getInstance(); 
+		static Input* Instance(); 
+		static void DeleteInstance(); 
 
 		void Initialize(HINSTANCE& hInstance, HWND& hwnd);
 

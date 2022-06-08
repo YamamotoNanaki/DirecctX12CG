@@ -20,8 +20,8 @@ namespace IF
 	{
 		template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 	private:
-		static ID3D12GraphicsCommandList* commandList;
-		static ID3D12Device* device;
+		static ComPtr<ID3D12GraphicsCommandList> commandList;
+		static ComPtr<ID3D12Device> device;
 		static Matrix matPro;
 
 	private:

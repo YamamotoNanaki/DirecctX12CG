@@ -7,9 +7,14 @@ using namespace IF;
 
 DirectX12* IF::DirectX12::Instance()
 {
-	static DirectX12 inst;
+	static DirectX12* inst=new DirectX12;
 
-	return &inst;
+	return inst;
+}
+
+void IF::DirectX12::DeleteInstance()
+{
+	delete DirectX12::Instance();
 }
 
 void DirectX12::Initialize(HWND hwnd, int window_width, int window_height)

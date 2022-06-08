@@ -98,8 +98,13 @@ void IF::Sound::SoundPlay(unsigned short soundNum, bool roop)
 
 Sound* IF::Sound::Instance()
 {
-	static Sound inst;
-	return &inst;
+	static Sound* inst = new Sound;
+	return inst;
+}
+
+void IF::Sound::DeleteInstance()
+{
+	delete Sound::Instance();
 }
 
 void IF::Sound::Reset()

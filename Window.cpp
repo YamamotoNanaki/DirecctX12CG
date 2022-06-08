@@ -5,8 +5,14 @@ using namespace IF;
 
 Window* IF::Window::Instance()
 {
-	static Window inst;
-	return &inst;
+	static Window* inst = new Window;
+	return inst;
+}
+
+void IF::Window::DeleteInstance()
+{
+	Window::Instance()->Unregister();
+	delete Window::Instance();
 }
 
 void IF::Window::Initialize(int window_width, int window_height)

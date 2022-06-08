@@ -23,6 +23,7 @@ namespace IF
 	class Scene :public IScene
 	{
 		template <class T>using vector = std::vector<T>;
+		template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 	private:
 		//変数宣言
 		//-----------------------
@@ -65,13 +66,13 @@ namespace IF
 	public:
 		ConstBuff cb;
 		Texture* tex = Texture::Instance();
-		Graphic graph;
+		Graphic* graph = Graphic::Instance();
 
 	private:
 		int winWidth;
 		int winHeight;
-		ID3D12Device* device;
-		ID3D12GraphicsCommandList* commandList;
+		ComPtr<ID3D12Device> device;
+		ComPtr<ID3D12GraphicsCommandList> commandList;
 		vector<D3D12_VIEWPORT> viewport;
 
 		//デバッグ用

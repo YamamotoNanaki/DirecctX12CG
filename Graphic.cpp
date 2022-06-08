@@ -13,6 +13,17 @@ void IF::Graphic::SetDevice(ID3D12Device* device)
 	Graphic::device = device;
 }
 
+Graphic* IF::Graphic::Instance()
+{
+	static Graphic* inst = new Graphic;
+	return inst;
+}
+
+void IF::Graphic::DeleteInstance()
+{
+	delete Graphic::Instance();
+}
+
 void IF::Graphic::CompillerArray(LPCWSTR fillname, int num)
 {
 	HRESULT result;

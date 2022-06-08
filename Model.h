@@ -21,7 +21,7 @@ namespace IF
 		//定数バッファ
 		ComPtr<ID3D12Resource> constBuffTransform1;
 		ConstBufferMaterial* constMapMaterial = nullptr;
-		static ID3D12Device* device;
+		static ComPtr<ID3D12Device> device;
 
 	public:
 		struct Material

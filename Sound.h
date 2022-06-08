@@ -49,6 +49,7 @@ namespace IF
 		void SoundUnLoad(unsigned short soundNum);
 		void SoundPlay(unsigned short soundNum, bool roop = true);
 		static Sound* Instance();
+		static void DeleteInstance();
 		void Reset();
 
 	private:

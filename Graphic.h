@@ -73,5 +73,13 @@ namespace IF
 		void Initialize2D(D3D12_DESCRIPTOR_RANGE& descRangeSRV, LPCWSTR vs, LPCWSTR ps);
 		void InitializeParticle(D3D12_DESCRIPTOR_RANGE& descRangeSRV);
 		void DrawBlendMode(ID3D12GraphicsCommandList* commandList, Blend::Blend blend = Blend::NORMAL);
+		static Graphic* Instance();
+		static void DeleteInstance();
+
+	private:
+		Graphic() {};
+		Graphic(const Graphic&) {};
+		Graphic& operator=(const Graphic&) {}
+		~Graphic() {}
 	};
 }

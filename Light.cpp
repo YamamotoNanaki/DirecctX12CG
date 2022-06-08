@@ -5,11 +5,6 @@ using namespace IF;
 
 ID3D12Device* IF::LightManager::device = nullptr;
 
-IF::LightManager::~LightManager()
-{
-	constBuff->Unmap(0, nullptr);
-}
-
 void IF::LightManager::SetDevice(ID3D12Device* device)
 {
 	assert(!LightManager::device);
@@ -271,8 +266,18 @@ void IF::LightManager::Draw(ID3D12GraphicsCommandList* commandList, UINT rootPar
 	commandList->SetGraphicsRootConstantBufferView(rootParameterIndex, constBuff->GetGPUVirtualAddress());
 }
 
-LightManager* IF::LightManager::GetInstance()
+LightManager* IF::LightManager::Instance()
 {
 	LightManager* instance = new LightManager;
 	return instance;
+}
+
+void IF::LightManager::DeleteInstance()
+{
+	delete LightManager::Instance();
+}
+
+void IF::LightManager::UnMap()
+{
+	constBuff->Unmap(0, nullptr);
 }
